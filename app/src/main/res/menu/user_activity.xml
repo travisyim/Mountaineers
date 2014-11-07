@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.MainActivity" >
+    <item android:id="@+id/search"
+        android:title="@string/search_title"
+        android:icon="@drawable/ic_action_search"
+        android:showAsAction="collapseActionView|ifRoom"
+        android:actionViewClass="android.widget.SearchView"/>
+    <item android:id="@+id/action_filter"
+        android:title="@string/action_filter"
+        android:showAsAction="withText|ifRoom" />
+    <!--<item android:id="@+id/action_map"-->
+        <!--android:title="@string/action_map"-->
+        <!--android:icon="@drawable/ic_action_map"-->
+        <!--android:showAsAction="ifRoom" />-->
+    <!--<item android:id="@+id/action_settings"-->
+        <!--android:title="@string/action_settings"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:showAsAction="never" />-->
+    <item android:id="@+id/action_logOut"
+        android:title="@string/action_log_out"
+        android:orderInCategory="101"
+        android:showAsAction="never" />
+</menu>

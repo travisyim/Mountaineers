@@ -1,0 +1,10 @@
+<resources>
+    <color name="ribbit_color">#6b4c90</color>
+    <color name="light_gray">#bbbbbb</color>
+    <color name="text_color">#250054</color>
+    <color name="light_purple_background">#e9e4ed</color>
+    <color name="swipe_refresh1">#165B92</color>
+    <color name="swipe_refresh2">#8BAB19</color>
+    <color name="swipe_refresh3">#0DA2CD</color>
+    <color name="swipe_refresh4">#88A612</color>
+</resources>

@@ -1,0 +1,819 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@android:color/white"
+    tools:context=".FilterFragment" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textViewDateHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:clickable="true"
+            android:text="@string/filter_header_date_range_collapse"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <RelativeLayout
+            android:id="@+id/dateFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textViewDateHeader"
+            android:layout_marginLeft="20dp"
+            android:visibility="visible">
+
+            <Button
+                android:id="@+id/buttonStartDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true" />
+
+            <TextView
+                android:id="@+id/textViewTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/buttonStartDate"
+                android:padding="8dp"
+                android:text="@string/filter_date_range_to"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+            <Button
+                android:id="@+id/buttonEndDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/buttonStartDate"
+                android:layout_toRightOf="@+id/textViewTo"/>
+
+            </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textViewActivityTypeHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/dateFilter"
+            android:layout_marginTop="8dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_header_activity_type_expand"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textViewTypeAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dateFilter"
+            android:layout_toRightOf="@+id/textViewActivityTypeHeader"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_select_all"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/textViewTypeNone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dateFilter"
+            android:layout_toRightOf="@+id/textViewTypeAll"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_select_none"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:visibility="gone"/>
+
+        <RelativeLayout
+            android:id="@+id/activityTypeFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textViewActivityTypeHeader"
+            android:layout_marginLeft="16dp"
+            android:visibility="gone">
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeAdventureClub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="Adventure Club"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeBackpacking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeAdventureClub"
+                android:text="Backpacking"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeClimbing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeBackpacking"
+                android:text="Climbing"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeDayHiking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeClimbing"
+                android:text="Day Hiking"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeExplorers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeDayHiking"
+                android:text="Explorers"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeExploringNature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeExplorers"
+                android:text="Exploring Nature"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeGlobalAdventures"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeExploringNature"
+                android:text="Global Adventures"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeMountainWorkshop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeGlobalAdventures"
+                android:text="Mountain Workshop"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeNavigation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeMountainWorkshop"
+                android:text="Navigation"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypePhotography"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeNavigation"
+                android:text="Photography"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeSailing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypePhotography"
+                android:text="Sailing"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeScrambling"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeSailing"
+                android:text="Scrambling"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeSeaKayaking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeScrambling"
+                android:text="Sea Kayaking"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeSkiingSnowboarding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeSeaKayaking"
+                android:text="Skiing/Snowboarding"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeSnowshoeing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeSkiingSnowboarding"
+                android:text="Snowshoeing"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeStewardship"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeSnowshoeing"
+                android:text="Stewardship"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeTrailRunning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeStewardship"
+                android:text="Trail Running"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeUrbanAdventure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeTrailRunning"
+                android:text="Urban Adventure"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxTypeYouth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxTypeUrbanAdventure"
+                android:text="Youth"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textViewActivityRatingHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/activityTypeFilter"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:text="@string/filter_header_activity_difficulty_expand"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textViewRatingAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/activityTypeFilter"
+            android:layout_toRightOf="@+id/textViewActivityRatingHeader"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_select_all"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/textViewRatingNone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/activityTypeFilter"
+            android:layout_toRightOf="@+id/textViewRatingAll"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_select_none"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:visibility="gone"/>
+
+        <RelativeLayout
+            android:id="@+id/activityRatingFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textViewActivityRatingHeader"
+            android:layout_marginLeft="16dp"
+            android:visibility="gone">
+
+            <CheckBox
+                android:id="@+id/checkBoxRatingForBeginners"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="For Beginners (Getting Started Series)"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxRatingEasy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxRatingForBeginners"
+                android:text="Easy"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxRatingModerate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxRatingEasy"
+                android:text="Moderate"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxRatingChallenging"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxRatingModerate"
+                android:text="Challenging"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textViewAudienceHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/activityRatingFilter"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:text="@string/filter_header_for_expand"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textViewAudienceAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/activityRatingFilter"
+            android:layout_toRightOf="@+id/textViewAudienceHeader"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_select_all"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/textViewAudienceNone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/activityRatingFilter"
+            android:layout_toRightOf="@+id/textViewAudienceAll"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_select_none"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:visibility="gone"/>
+
+        <RelativeLayout
+            android:id="@+id/audienceFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textViewAudienceHeader"
+            android:layout_marginLeft="16dp"
+            android:visibility="gone">
+
+            <CheckBox
+                android:id="@+id/checkBoxAudienceAdults"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="Adults"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxAudienceFamilies"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxAudienceAdults"
+                android:text="Families"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxAudienceRetiredRovers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxAudienceFamilies"
+                android:text="Retired Rovers"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxAudienceSingles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxAudienceRetiredRovers"
+                android:text="Singles"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxAudience2030Somethings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxAudienceSingles"
+                android:text="20-30 Somethings"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxAudienceYouth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxAudience2030Somethings"
+                android:text="Youth"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textViewBranchHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/audienceFilter"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:text="@string/filter_header_branch_expand"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textViewBranchAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/audienceFilter"
+            android:layout_toRightOf="@+id/textViewBranchHeader"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_select_all"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/textViewBranchNone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/audienceFilter"
+            android:layout_toRightOf="@+id/textViewBranchAll"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_select_none"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:visibility="gone"/>
+
+        <RelativeLayout
+            android:id="@+id/branchFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textViewBranchHeader"
+            android:layout_marginLeft="16dp"
+            android:visibility="gone">
+
+            <CheckBox
+                android:id="@+id/checkBoxBranchTheMountaineers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="The Mountaineers"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxBranchBellingham"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxBranchTheMountaineers"
+                android:text="Bellingham"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxBranchEverett"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxBranchBellingham"
+                android:text="Everett"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxBranchFoothills"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxBranchEverett"
+                android:text="Foothills"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxBranchKitsap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxBranchFoothills"
+                android:text="Kitsap"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxBranchOlympia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxBranchKitsap"
+                android:text="Olympia"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxBranchOutdoorCenters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxBranchOlympia"
+                android:text="Outdoor Centers"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxBranchSeattle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxBranchOutdoorCenters"
+                android:text="Seattle"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxBranchTacoma"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxBranchSeattle"
+                android:text="Tacoma"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textViewClimbingHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/branchFilter"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:text="@string/filter_header_climbing_expand"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textViewClimbingAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/branchFilter"
+            android:layout_toRightOf="@+id/textViewClimbingHeader"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_select_all"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/textViewClimbingNone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/branchFilter"
+            android:layout_toRightOf="@+id/textViewClimbingAll"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_select_none"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:visibility="gone"/>
+
+        <RelativeLayout
+            android:id="@+id/climbingFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textViewClimbingHeader"
+            android:layout_marginLeft="16dp"
+            android:visibility="gone">
+
+            <CheckBox
+                android:id="@+id/checkBoxClimbingBasicAlpine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="Basic Alpine"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxClimbingIntermediateAlpine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxClimbingBasicAlpine"
+                android:text="Intermediate Alpine"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxClimbingRockClimb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxClimbingIntermediateAlpine"
+                android:text="Rock Climb"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxClimbingAidClimb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxClimbingRockClimb"
+                android:text="Aid Climb"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textViewSkiingHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/climbingFilter"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:text="@string/filter_header_skiing_expand"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textViewSkiingAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textViewSkiingHeader"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_select_all"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/textViewSkiingNone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textViewSkiingHeader"
+            android:layout_toRightOf="@+id/textViewSkiingAll"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_select_none"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:visibility="gone"/>
+
+        <RelativeLayout
+            android:id="@+id/skiingFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textViewSkiingAll"
+            android:layout_marginLeft="16dp"
+            android:visibility="gone">
+
+            <CheckBox
+                android:id="@+id/checkBoxSkiingCrossCountry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="Cross-country"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxSkiingBackcountry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxSkiingCrossCountry"
+                android:text="Backcountry"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxSkiingGlacier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxSkiingBackcountry"
+                android:text="Glacier"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textViewSnowshoeingHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/skiingFilter"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:text="@string/filter_header_snowshoeing_expand"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textViewSnowshoeingAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textViewSnowshoeingHeader"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_select_all"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/textViewSnowshoeingNone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textViewSnowshoeingHeader"
+            android:layout_toRightOf="@+id/textViewSnowshoeingAll"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:clickable="true"
+            android:text="@string/filter_select_none"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:visibility="gone"/>
+
+        <RelativeLayout
+            android:id="@+id/snowshoeingFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textViewSnowshoeingAll"
+            android:layout_marginLeft="16dp"
+            android:visibility="gone">
+
+            <CheckBox
+                android:id="@+id/checkBoxSnowshoeingBeginner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="Beginner"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxSnowshoeingBasic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxSnowshoeingBeginner"
+                android:text="Basic"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxSnowshoeingIntermediate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/checkBoxSnowshoeingBasic"
+                android:text="Intermediate"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

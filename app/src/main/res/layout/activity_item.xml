@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/listview_padding"
+        android:layout_marginLeft="@dimen/listview_padding"
+        android:layout_marginRight="@dimen/listview_padding"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:id="@+id/imageViewActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="70dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:src="@drawable/default_activity"/>
+        <!-- android:adjustViewBounds="true" not working it 4.2 (i.e. buggy).
+            It prevents panoramic shots from showing up -->
+
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:paddingTop="8dp"
+            android:text="Activity Location"
+            android:layout_toRightOf="@+id/imageViewActivity"
+            android:paddingLeft="@dimen/activity_horizontal_margin"/>
+
+        <TextView
+            android:id="@+id/textViewType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="Activity Type"
+            android:layout_toRightOf="@+id/imageViewActivity"
+            android:layout_below="@id/textViewName"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:textColor="@android:color/darker_gray"/>
+
+        <TextView
+            android:id="@+id/textViewDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="Activity Date"
+            android:layout_toRightOf="@+id/imageViewActivity"
+            android:layout_below="@id/textViewType"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:textColor="@android:color/darker_gray"/>
+
+        <TextView
+            android:id="@+id/textViewLeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="Leader"
+            android:layout_toRightOf="@+id/imageViewActivity"
+            android:layout_below="@id/textViewDate"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:textColor="@android:color/darker_gray"/>
+
+        <TextView
+            android:id="@+id/textViewAvailability"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="Availability"
+            android:layout_toRightOf="@+id/imageViewActivity"
+            android:layout_below="@id/textViewLeader"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:textColor="@android:color/darker_gray"/>
+
+        <TextView
+            android:id="@+id/textViewRegInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="Registration Information"
+            android:layout_toRightOf="@+id/imageViewActivity"
+            android:paddingBottom="8dp"
+            android:layout_below="@id/textViewAvailability"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:textColor="@android:color/darker_gray"/>
+
+        <TextView
+            android:id="@+id/textViewRole"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="Role"
+            android:layout_toRightOf="@+id/imageViewActivity"
+            android:layout_below="@id/textViewRegInfo"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:textColor="@android:color/darker_gray"/>
+
+        <TextView
+            android:id="@+id/textViewStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="Status"
+            android:layout_toRightOf="@+id/imageViewActivity"
+            android:paddingBottom="8dp"
+            android:layout_below="@id/textViewRole"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:textColor="@android:color/darker_gray"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
