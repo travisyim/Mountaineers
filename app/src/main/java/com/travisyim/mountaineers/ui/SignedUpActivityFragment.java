@@ -240,8 +240,6 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Fragment fragment;
-
         super.onListItemClick(l, v, position, id);
 
         // Check to see if the Signed Up Activity fragment is still updating results
@@ -255,16 +253,12 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
             // Launch Activity Details fragment to show activity's webpage
             if (mActivityDetailsFragment == null) {
                 // TODO: Fix up section numbering scheme
-                fragment = ActivityDetailsFragment.newInstance
-                        (this, (float) (this.getArguments().getInt(ARG_SECTION_NUMBER) + 0.1),
+                mActivityDetailsFragment = ActivityDetailsFragment.newInstance
+                        ((float) (this.getArguments().getInt(ARG_SECTION_NUMBER) + 0.1),
                                 getActivity().getActionBar().getTitle().toString());
-                mActivityDetailsFragment = fragment;
-            }
-            else {
-                fragment = mActivityDetailsFragment;
             }
 
-            Bundle args = fragment.getArguments();
+            Bundle args = mActivityDetailsFragment.getArguments();
 
             // Pass the following in a bundle because the data changes with each click
             args.putString(ARG_ACTIVITY_NAME, mActivityList.get(position).getTitle());
@@ -303,7 +297,7 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
             getActivity().getActionBar().setTitle(getString(R.string.title_activity_details));
 
             // Load activity details fragment
-            getFragmentManager().beginTransaction().replace(R.id.container, fragment)
+            getFragmentManager().beginTransaction().replace(R.id.container, mActivityDetailsFragment)
                     .addToBackStack(null).commit();
         }
         else {  // Still updating so prevent user from moving to the Activity Details page
@@ -314,8 +308,6 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        FilterFragment fragment;
-
         switch (item.getItemId()) {
             case R.id.action_logOut:  // Log Out
                 mIsCanceled = true;  // Alerts processes to cancel
@@ -333,19 +325,16 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
                         // Not updating so load filter fragment
                         if (mFilterFragment == null) {
                             // TODO: Fix up section numbering scheme
-                            fragment = mFilterFragment.newInstance(this,
-                                    (float) (this.getArguments().getFloat(ARG_SECTION_NUMBER) + 0.1),
+                            mFilterFragment = FilterFragment.newInstance
+                                    ((float) (this.getArguments().getFloat(ARG_SECTION_NUMBER) + 0.1),
                                     mFilterOptions, getActivity().getActionBar().getTitle().toString());
-                            mFilterFragment = fragment;
-                        } else {
-                            fragment = mFilterFragment;
                         }
 
                         // Update ActionBar title to show name
                         getActivity().getActionBar().setTitle(getString(R.string.title_activity_filters));
 
                         // Launch Filter fragment
-                        getFragmentManager().beginTransaction().replace(R.id.container, fragment)
+                        getFragmentManager().beginTransaction().replace(R.id.container, mFilterFragment)
                                 .addToBackStack(null).commit();
                     } else {  // Still updating so prevent user from moving to the filter page
                         Toast.makeText(getActivity(), getActivity().getString(R.string.toast_filter_wait),

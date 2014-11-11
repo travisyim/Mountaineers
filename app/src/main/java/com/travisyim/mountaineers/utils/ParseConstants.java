@@ -35,7 +35,7 @@ public class ParseConstants {
     public static final String KEY_FEE_MEMBER = "feeMember";
     public static final String KEY_IMAGE_URL = "imgUrl";
     public static final String KEY_KEYWORDS = "keywords";
-    public static final String KEY_LAST_VIEWED = "lastViewed";
+    public static final String KEY_LAST_ACCESS = "lastAccess";
     public static final String KEY_LEADER_NAME = "leaderName";
     public static final String KEY_LEADER_ROLE = "leaderRole";
     public static final String KEY_PREREQUISITES = "prereq";
@@ -49,6 +49,7 @@ public class ParseConstants {
     public static final String KEY_STATUS = "status";
     public static final String KEY_TYPE = "type";
     public static final String KEY_USER_ID = "userId";
+    public static final String KEY_UPDATE_COUNT = "updateCount";
 
     // Filter Categories
     // Audience

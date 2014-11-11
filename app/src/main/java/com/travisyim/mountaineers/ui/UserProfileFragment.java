@@ -131,17 +131,17 @@ public class UserProfileFragment extends Fragment {
                     t.setScreenName("Edit Profile");
                     t.send(new HitBuilders.AppViewBuilder().build());
 
-                    // Update ActionBar title to show name
-                    getActivity().getActionBar().setTitle(getString(R.string.title_profile_edit));
-
                     // Launch Profile Edit fragment to show user profile's edit webpage
                     if (mProfileEditFragment == null) {
                         // TODO: Fix up section numbering scheme
                         mProfileEditFragment = ProfileEditFragment.newInstance
-                                (this, (float) (this.getArguments().getInt(ARG_SECTION_NUMBER) + 0.1),
+                                ((float) (this.getArguments().getInt(ARG_SECTION_NUMBER) + 0.1),
                                         getActivity().getActionBar().getTitle().toString(),
                                         mMember.getMemberUrl() + "/edit");
                     }
+
+                    // Update ActionBar title to show name
+                    getActivity().getActionBar().setTitle(getString(R.string.title_profile_edit));
 
                     // Load activity details fragment
                     getFragmentManager().beginTransaction().replace

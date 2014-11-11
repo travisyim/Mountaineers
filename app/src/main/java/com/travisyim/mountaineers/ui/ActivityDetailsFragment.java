@@ -51,8 +51,7 @@ public class ActivityDetailsFragment extends Fragment {
     private static final String ARG_ACTIVITY_REG_CLOSE_DATE = "regCloseDate";
 
     // Returns a new instance of this fragment for the given section number
-    public static ActivityDetailsFragment newInstance(final Fragment parentFragment,
-                                                      final float sectionNumber,
+    public static ActivityDetailsFragment newInstance(final float sectionNumber,
                                                       final String parentFragmentTitle) {
         ActivityDetailsFragment fragment = new ActivityDetailsFragment();
         Bundle args = new Bundle();
@@ -64,7 +63,6 @@ public class ActivityDetailsFragment extends Fragment {
         args.putString(ARG_PARENT_TITLE, parentFragmentTitle);
 
         fragment.setArguments(args);
-
         return fragment;
     }
 
@@ -72,19 +70,13 @@ public class ActivityDetailsFragment extends Fragment {
     }
 
     @Override
-    public void setArguments(Bundle args) {
-        super.setArguments(args);
-
-        // Set arguments
-        // Get the parent fragment's title
-        mParentFragmentTitle = args.getString(ARG_PARENT_TITLE);
-    }
-
-    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         // Set additional arguments passed in after creating new fragment instance
+        // Get the parent fragment's title
+        mParentFragmentTitle = getArguments().getString(ARG_PARENT_TITLE);
+
         mIsFavorite = getArguments().getBoolean(ARG_FAVORITE);  // Get favorite status
         mActivityName = getArguments().getString(ARG_ACTIVITY_NAME);  // Activity name
         mActivityURL = getArguments().getString(ARG_ACTIVITY_URL);  // Activity URL
@@ -188,6 +180,11 @@ public class ActivityDetailsFragment extends Fragment {
                 t.setScreenName("Favorite Activities");
 
                 ((FavoriteActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
+                        .onFavoriteSelected(mIsFavorite);
+            }
+            else {  // Saved search activity search
+                t.setScreenName("Activity Search (Saved Search)");
+                ((ActivitySearchFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
                         .onFavoriteSelected(mIsFavorite);
             }
 

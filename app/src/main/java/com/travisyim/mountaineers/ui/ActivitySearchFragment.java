@@ -59,6 +59,8 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<String> mFavoritesList;
     private Date mPreviousSearchStartDate;
+    private String mParentFragmentTitle;
+    private String mSavedSearchName;
     private String mQueryText;
     private String mPreviousSearch;
     private int mActivityPosition;
@@ -70,9 +72,14 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     private boolean mHasSearchLostFocus = false;
     private boolean mIsCanceled = false;
     private boolean mIsSubmitted = false;
+    private boolean mIsSavedSearch = false;
 
     private final String TAG = ActivitySearchFragment.class.getSimpleName() + ":";
+    private static final String ARG_PARENT_TITLE = "parentFragmentTitle";
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private static final String ARG_SAVED_SEARCH_NAME = "savedSearchName";
+    private static final String ARG_FILTER_OPTIONS = "filterOptions";
+    private static final String ARG_QUERY_TEXT = "queryText";
     private static final String ARG_ACTIVITY_NAME = "activityName";
     private static final String ARG_ACTIVITY_URL = "activityURL";
     private static final String ARG_LOCATION = "location";
@@ -85,11 +92,20 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     public ActivitySearchFragment() {
     }
 
-    // Returns a new instance of this fragment for the given section number
-    public static ActivitySearchFragment newInstance(int sectionNumber) {
+    // Returns a new instance of this fragment
+    public static ActivitySearchFragment newInstance(final int sectionNumber,
+                                                     final String parentFragmentTitle) {
         ActivitySearchFragment fragment = new ActivitySearchFragment();
         Bundle args = new Bundle();
+
+        /* Save the arguments to be accessed later in setArguments (must wait because member
+         * variables are not yet accessible */
+        // TODO: Clean up number formats
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+
+        // There will only be a parent fragment title if this is created from the saved search fragment
+        args.putString(ARG_PARENT_TITLE, parentFragmentTitle);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -97,7 +113,26 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        // Set additional arguments passed in after creating new fragment instance
         ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+
+        /* If any of the data below is provided that means this was created from the Saved Search
+         * fragment.  Otherwise, this exists because we are looking at the default Activity Search
+         * fragment in which the app starts in (after the user logs in) */
+        // Get the reference to the filter options
+        if (getArguments().getString(ARG_PARENT_TITLE) != null) {
+            mIsSavedSearch = true;
+
+            // Get the parent fragment's title
+            mParentFragmentTitle = getArguments().getString(ARG_PARENT_TITLE);
+            mSavedSearchName = getArguments().getString(ARG_SAVED_SEARCH_NAME);
+            mFilterOptions = (FilterOptions) getArguments().getSerializable(ARG_FILTER_OPTIONS);
+            mQueryText = getArguments().getString(ARG_QUERY_TEXT);  // Query text
+
+            // Update ActionBar title to show saved search name
+            getActivity().getActionBar().setTitle(mSavedSearchName);
+        }
     }
 
     @Override
@@ -113,11 +148,15 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             t.setScreenName("Activity Search");
             t.send(new HitBuilders.AppViewBuilder().build());
 
-            mFilterOptions = new FilterOptions();  // Create new filter options
+            // If the FilterOptions object was not passed in, then create it
+            // The FilterOptions object is only passed in when opening a Saved Search
+            if (mFilterOptions == null) {
+                mFilterOptions = new FilterOptions();  // Create new filter options
 
-            // Set the default date range of the results shown starting from the current date
-            mFilterOptions.setStartDate(DateUtil.convertToDate(DateUtil.convertToString(new Date(),
-                    DateUtil.TYPE_BUTTON_DATE), DateUtil.TYPE_BUTTON_DATE));
+                // Set the default date range of the results shown starting from the current date
+                mFilterOptions.setStartDate(DateUtil.convertToDate(DateUtil.convertToString(new Date(),
+                        DateUtil.TYPE_BUTTON_DATE), DateUtil.TYPE_BUTTON_DATE));
+            }
         }
     }
 
@@ -197,6 +236,22 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             else if (mReturnFromDetails) {
                 mReturnFromDetails = false;  // Reset flag
             }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (mIsSavedSearch && !mIsCanceled) {
+            // Reset the title back to that of the parent fragment
+            getActivity().getActionBar().setTitle(mParentFragmentTitle);
+
+            // Google Analytics tracking code - User Profile
+            Tracker t = ((MountaineersApp) getActivity().getApplication()).getTracker
+                    (MountaineersApp.TrackerName.APP_TRACKER);
+            t.setScreenName("Saved Search");
+            t.send(new HitBuilders.AppViewBuilder().build());
         }
     }
 
@@ -314,8 +369,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Fragment fragment;
-
         super.onListItemClick(l, v, position, id);
 
         // Check to see if the Activity Search fragment is still updating results
@@ -329,16 +382,12 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             // Launch ActivityDetails fragment to show activity's webpage
             if (mActivityDetailsFragment == null) {
                 // TODO: Fix up section numbering scheme
-                fragment = ActivityDetailsFragment.newInstance
-                        (this, (float) (this.getArguments().getInt(ARG_SECTION_NUMBER) + 0.1),
+                mActivityDetailsFragment = ActivityDetailsFragment.newInstance
+                        ((float) (this.getArguments().getInt(ARG_SECTION_NUMBER) + 0.1),
                                 getActivity().getActionBar().getTitle().toString());
-                mActivityDetailsFragment = fragment;
-            }
-            else {
-                fragment = mActivityDetailsFragment;
             }
 
-            Bundle args = fragment.getArguments();
+            Bundle args = mActivityDetailsFragment.getArguments();
 
             // Pass the following in a bundle because the data changes with each click
             args.putString(ARG_ACTIVITY_NAME, mActivityList.get(position).getTitle());
@@ -377,7 +426,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             getActivity().getActionBar().setTitle(getString(R.string.title_activity_details));
 
             // Load activity details fragment
-            getFragmentManager().beginTransaction().replace(R.id.container, fragment)
+            getFragmentManager().beginTransaction().replace(R.id.container, mActivityDetailsFragment)
                     .addToBackStack(null).commit();
         }
         else {  // Still updating so prevent user from moving to the activity details page
@@ -388,8 +437,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        FilterFragment fragment;
-
         switch (item.getItemId()) {
             case R.id.action_logOut:  // Log Out
                 mIsCanceled = true;  // Alerts processes to cancel
@@ -407,19 +454,16 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
                         // Not updating so load filter fragment
                         if (mFilterFragment == null) {
-                            fragment = mFilterFragment.newInstance(this,
-                                    (float) (this.getArguments().getFloat(ARG_SECTION_NUMBER) + 0.1),
+                            mFilterFragment = FilterFragment.newInstance
+                                    ((float) (this.getArguments().getFloat(ARG_SECTION_NUMBER) + 0.1),
                                     mFilterOptions, getActivity().getActionBar().getTitle().toString());
-                            mFilterFragment = fragment;
-                        } else {
-                            fragment = mFilterFragment;
                         }
 
                         // Update ActionBar title to show name
                         getActivity().getActionBar().setTitle(getString(R.string.title_activity_filters));
 
                         // Launch Filter fragment
-                        getFragmentManager().beginTransaction().replace(R.id.container, fragment)
+                        getFragmentManager().beginTransaction().replace(R.id.container, mFilterFragment)
                                 .addToBackStack(null).commit();
                     } else {  // Still updating so prevent user from moving to the filter page
                         Toast.makeText(getActivity(), getActivity().getString(R.string.toast_filter_wait),
@@ -764,7 +808,10 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
         // Save user and search date
         savedSearch.put(ParseConstants.KEY_USER_ID, ParseUser.getCurrentUser().getObjectId());
-        savedSearch.put(ParseConstants.KEY_LAST_VIEWED, DateUtil.convertToUNC(new Date()));
+        savedSearch.put(ParseConstants.KEY_LAST_ACCESS, DateUtil.convertToUNC(new Date()));
+
+        // Reset update counter
+        savedSearch.put(ParseConstants.KEY_UPDATE_COUNT, 0);
 
         // Check if query string is defined
         if (mQueryText != null && mQueryText.length() > 0) {

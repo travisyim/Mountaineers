@@ -18,16 +18,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.travisyim.mountaineers.MountaineersApp;
 import com.travisyim.mountaineers.R;
-import com.travisyim.mountaineers.adapters.ActivityAdapter;
+import com.travisyim.mountaineers.adapters.SavedSearchAdapter;
+import com.travisyim.mountaineers.objects.FilterOptions;
 import com.travisyim.mountaineers.objects.Mountaineer;
-import com.travisyim.mountaineers.objects.MountaineerActivity;
-import com.travisyim.mountaineers.utils.ActivityLoader;
+import com.travisyim.mountaineers.objects.SavedSearch;
 import com.travisyim.mountaineers.utils.OnParseTaskCompleted;
 import com.travisyim.mountaineers.utils.ParseConstants;
 import com.travisyim.mountaineers.utils.SavedSearchLoader;
@@ -36,30 +39,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SavedSearchFragment extends ListFragment implements OnParseTaskCompleted {
-    private Fragment mActivityDetailsFragment;
+    private Fragment mActivitySearchFragment;
     private Mountaineer mMember;
-    private FilterFragment mFilterFragment;
-    private List<MountaineerActivity> mActivityList = new ArrayList<MountaineerActivity>();
+    private FilterOptions mFilterOptions;
+    private List<SavedSearch> mSavedSearchList = new ArrayList<SavedSearch>();
     private DrawerLayout mDrawerLayout;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private String mQueryText;
-    private int activityPosition;
+    private int savedSearchPosition;
     private boolean newSearch;
     private boolean mAlreadyLoaded = false;
-    private boolean mIsCollapsed = false;
-    private boolean mHasSearchLostFocus = false;
     private boolean mIsCanceled = false;
 
     private final String TAG = SavedSearchFragment.class.getSimpleName() + ":";
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private static final String ARG_ACTIVITY_NAME = "activityName";
-    private static final String ARG_ACTIVITY_URL = "activityURL";
-    private static final String ARG_LOCATION = "location";
-    private static final String ARG_FAVORITE = "isFavorite";
-    private static final String ARG_ACTIVITY_START_DATE = "startDate";
-    private static final String ARG_ACTIVITY_END_DATE = "endDate";
-    private static final String ARG_ACTIVITY_REG_OPEN_DATE = "regOpenDate";
-    private static final String ARG_ACTIVITY_REG_CLOSE_DATE = "regCloseDate";
+    private static final String ARG_SAVED_SEARCH_NAME = "savedSearchName";
+    private static final String ARG_FILTER_OPTIONS = "filterOptions";
+    private static final String ARG_QUERY_TEXT = "queryText";
     private static final String ARG_MEMBER = "member";
 
     // Returns a new instance of this fragment for the given section number
@@ -105,7 +100,7 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
         if (savedInstanceState == null && !mAlreadyLoaded) {
             mAlreadyLoaded = true;
 
-            // Flag as updating saved search update count
+            // Flag as updating saved searches
             ((MainActivity) getActivity()).setLoadingActivities(true);
             mSwipeRefreshLayout.setRefreshing(true);  // Turn on update indicator
             getSavedSearchList();  // Get saved search update count from Parse data
@@ -129,7 +124,7 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
         super.onResume();
 
         // Make sure the user is logged in before completing the following activities
-        if (ParseUser.getCurrentUser() != null) {
+        if (ParseUser.getCurrentUser() != null && !mAlreadyLoaded) {
             // Flag as updating saved search update count
             ((MainActivity) getActivity()).setLoadingActivities(true);
             mSwipeRefreshLayout.setRefreshing(true);  // Turn on update indicator
@@ -146,74 +141,52 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Fragment fragment;
-
         super.onListItemClick(l, v, position, id);
 
-        // Check to see if the Favorite Activity fragment is still updating results
+        // Check to see if the Saved Search fragment is still updating results
         if (!mSwipeRefreshLayout.isRefreshing()) {
-            mHasSearchLostFocus = true;  // Flag this as clicked
-            // Set the keyboard state as hidden
-            ((ActivityAdapter) getListAdapter()).setKeyboardState(false);
+            savedSearchPosition = position;  // Capture position of listitem clicked
 
-            activityPosition = position;  // Capture position of listitem clicked
+            // Google Analytics tracking code - Edit user profile
+            Tracker t = ((MountaineersApp) getActivity().getApplication()).getTracker
+                    (MountaineersApp.TrackerName.APP_TRACKER);
+            t.setScreenName("Activity Search (Saved Search)");
+            t.send(new HitBuilders.AppViewBuilder().build());
 
-            // Launch ActivityDetails fragment to show activity's webpage
-            if (mActivityDetailsFragment == null) {
+            // Create new Filter Options if it does not already exist
+            if (mFilterOptions == null) {
+                mFilterOptions = new FilterOptions();
+            }
+
+            // Load all filter options for the selected saved search into FilterOptions object
+            loadFilterOptions(mMember.getSavedSearchList().get(position));
+
+            // Launch ActivitySearch fragment to show search results
+            if (mActivitySearchFragment == null) {
                 // TODO: Fix up section numbering scheme
-                fragment = ActivityDetailsFragment.newInstance
-                        (this, (float) (this.getArguments().getInt(ARG_SECTION_NUMBER) + 0.1),
-                                getActivity().getActionBar().getTitle().toString());
-                mActivityDetailsFragment = fragment;
-            }
-            else {
-                fragment = mActivityDetailsFragment;
+                // 2 represents (position + 1) drawer index for Activity Search fragment
+                mActivitySearchFragment = ActivitySearchFragment.newInstance
+                        (2, getActivity().getActionBar().getTitle().toString());
             }
 
-            Bundle args = fragment.getArguments();
+            Bundle args = mActivitySearchFragment.getArguments();
 
             // Pass the following in a bundle because the data changes with each click
-            args.putString(ARG_ACTIVITY_NAME, mActivityList.get(position).getTitle());
-            args.putString(ARG_ACTIVITY_URL, mActivityList.get(position).getActivityUrl());
-            args.putBoolean(ARG_FAVORITE, mActivityList.get(position).isFavorite());
-            args.putLong(ARG_ACTIVITY_START_DATE,
-                    mActivityList.get(position).getActivityStartDate().getTime());
-            args.putLong(ARG_ACTIVITY_END_DATE,
-                    mActivityList.get(position).getActivityEndDate().getTime());
+            // Saved search name
+            args.putString(ARG_SAVED_SEARCH_NAME, mSavedSearchList.get(position).getSearchName());
 
-            if (mActivityList.get(position).getRegistrationOpenTime() != null) {
-                args.putLong(ARG_ACTIVITY_REG_OPEN_DATE,
-                        mActivityList.get(position).getRegistrationOpenTime().getTime());
-            }
+            // Filter options
+            args.putSerializable(ARG_FILTER_OPTIONS, mFilterOptions);
 
-            if (mActivityList.get(position).getRegistrationCloseTime() != null) {
-                args.putLong(ARG_ACTIVITY_REG_CLOSE_DATE,
-                        mActivityList.get(position).getRegistrationCloseTime().getTime());
-            }
+            // Search query text
+            args.putString(ARG_QUERY_TEXT, mSavedSearchList.get(position).getQueryText());
 
-            if (mActivityList.get(position).getStartLatitude() != -999 &&
-                    mActivityList.get(position).getStartLongitude() != -999) {
-                args.putString(ARG_LOCATION, mActivityList.get(position).getStartLatitude() + ", " +
-                        mActivityList.get(position).getStartLongitude());
-            }
-            else if (mActivityList.get(position).getEndLatitude() != -999 &&
-                    mActivityList.get(position).getEndLongitude() != -999) {
-                args.putString(ARG_LOCATION, mActivityList.get(position).getEndLatitude() + ", " +
-                        mActivityList.get(position).getEndLongitude());
-            }
-            else {
-                args.putString(ARG_LOCATION, "");
-            }
-
-            // Update ActionBar title to show name
-            getActivity().getActionBar().setTitle(getString(R.string.title_activity_details));
-
-            // Load activity details fragment
-            getFragmentManager().beginTransaction().replace(R.id.container, fragment)
-                    .addToBackStack(null).commit();
+            // Load activity search fragment
+            getFragmentManager().beginTransaction().replace(R.id.container, mActivitySearchFragment,
+                    mSavedSearchList.get(position).getSearchName()).addToBackStack(null).commit();
         }
-        else {  // Still updating so prevent user from moving to the activity details page
-            Toast.makeText(getActivity(), getActivity().getString(R.string.toast_filter_wait),
+        else {  // Still updating so prevent user from moving to the activity search page
+            Toast.makeText(getActivity(), getActivity().getString(R.string.toast_activity_search_wait),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -235,11 +208,15 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
     public void onParseTaskCompleted(List<ParseObject> resultList, ParseException e) {
         // Ensure all processes have not been canceled
         if (!mIsCanceled) {
-            // This method is called when the task of retrieving the full set of activities is complete
-            mActivityList.clear();
+            // This method is called when the task of retrieving the full set of saved searches is complete
+            mSavedSearchList.clear();
 
             if (e == null) {
-                mActivityList.addAll(ActivityLoader.load(resultList, true));
+                // Load saved search results and assign to the current Mountaineer object
+                mMember.setSavedSearchList(SavedSearchLoader.load(resultList));
+
+                // Add all of these SavedSearches to the ListView
+                mSavedSearchList.addAll(mMember.getSavedSearchList());
 
                 // Update search results
                 refreshActivities();
@@ -262,7 +239,6 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
 
     private void getSavedSearchList() {
         ParseQuery<ParseObject> query;
-        List<ParseObject> results = null;
 
         // This method is called to retrieve all of the saved searches from the backend
         // Intermediate check to ensure all processes have not been canceled
@@ -273,50 +249,78 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
             query.setLimit(1000); // limit to 1000 results max
 
             query.findInBackground(new FindCallback<ParseObject>() {
-                public void done(List<ParseObject> results, ParseException e) {
-                    if (e == null) {  // No error
-
-
-
-                    }
-                    else {  // No matches?
-                        Toast toast = Toast.makeText(getActivity(), getActivity().getString
-                                (R.string.toast_empty_favorites), Toast.LENGTH_LONG);
-                        ((TextView) ((LinearLayout) toast.getView()).getChildAt(0))
-                                .setGravity(Gravity.CENTER_HORIZONTAL);
-                        toast.show();
-
-                        getListView().setEmptyView(getActivity().findViewById(R.id.textViewEmpty));
-
-                        // Flag as updating activities
-                        ((MainActivity) getActivity()).setLoadingActivities(false);
-                        mSwipeRefreshLayout.setRefreshing(false);  // Turn off update indicator
-                    }
+                public void done(List<ParseObject> resultList, ParseException e) {
+                    // Forward the results and error variable to the custom OnParseTaskCompleted method
+                    onParseTaskCompleted(resultList, e);
                 }
             });
-
-            // Load saved search results and assign to the current Mountaineer object
-            mMember.setSavedSearches(SavedSearchLoader.load(results));
-
         }
         else {
             mIsCanceled = false;
         }
+    }
 
-//            if (favoritesList != null) {
-//                query = ParseQuery.getQuery(ParseConstants.CLASS_ACTIVITY);
-//                query.whereContainedIn(ParseConstants.KEY_OBJECT_ID, favoritesList);
-//
-//                query.findInBackground(new FindCallback<ParseObject>() {
-//                    public void done(List<ParseObject> resultList, ParseException e) {
-//                        // Forward the results and error variable to the custom OnParseTaskCompleted method
-//                        onParseTaskCompleted(resultList, e);
-//                    }
-//                });
-//            } else {
-//
-//            }
+    private void loadFilterOptions(SavedSearch savedSearch) {
+        // This method loads all of the selected saved search filter options to the FilterOptions object
+        // Start and end dates
+        mFilterOptions.setStartDate(savedSearch.getActivityStartDate());
+        mFilterOptions.setEndDate(savedSearch.getActivityEndDate());
 
+        // Audience filters
+        mFilterOptions.setAudience2030Somethings(savedSearch.isAudience2030Somethings());
+        mFilterOptions.setAudienceAdults(savedSearch.isAudienceAdults());
+        mFilterOptions.setAudienceFamilies(savedSearch.isAudienceFamilies());
+        mFilterOptions.setAudienceRetiredRovers(savedSearch.isAudienceRetiredRovers());
+        mFilterOptions.setAudienceSingles(savedSearch.isAudienceSingles());
+        mFilterOptions.setAudienceYouth(savedSearch.isAudienceYouth());
+
+        mFilterOptions.setBranchTheMountaineers(savedSearch.isBranchTheMountaineers());
+        mFilterOptions.setBranchBellingham(savedSearch.isBranchBellingham());
+        mFilterOptions.setBranchEverett(savedSearch.isBranchEverett());
+        mFilterOptions.setBranchFoothills(savedSearch.isBranchFoothills());
+        mFilterOptions.setBranchKitsap(savedSearch.isBranchKitsap());
+        mFilterOptions.setBranchOlympia(savedSearch.isBranchOlympia());
+        mFilterOptions.setBranchOutdoorCenters(savedSearch.isBranchOutdoorCenters());
+        mFilterOptions.setBranchSeattle(savedSearch.isBranchSeattle());
+        mFilterOptions.setBranchTacoma(savedSearch.isBranchTacoma());
+
+        mFilterOptions.setClimbingBasicAlpine(savedSearch.isClimbingBasicAlpine());
+        mFilterOptions.setClimbingIntermediateAlpine(savedSearch.isClimbingIntermediateAlpine());
+        mFilterOptions.setClimbingAidClimb(savedSearch.isClimbingAidClimb());
+        mFilterOptions.setClimbingRockClimb(savedSearch.isClimbingRockClimb());
+
+        mFilterOptions.setRatingForBeginners(savedSearch.isRatingForBeginners());
+        mFilterOptions.setRatingEasy(savedSearch.isRatingEasy());
+        mFilterOptions.setRatingModerate(savedSearch.isRatingModerate());
+        mFilterOptions.setRatingChallenging(savedSearch.isRatingChallenging());
+
+        mFilterOptions.setSkiingCrossCountry(savedSearch.isSkiingCrossCountry());
+        mFilterOptions.setSkiingBackcountry(savedSearch.isSkiingBackcountry());
+        mFilterOptions.setSkiingGlacier(savedSearch.isSkiingGlacier());
+
+        mFilterOptions.setSnowshoeingBeginner(savedSearch.isSnowshoeingBeginner());
+        mFilterOptions.setSnowshoeingBasic(savedSearch.isSnowshoeingBasic());
+        mFilterOptions.setSnowshoeingIntermediate(savedSearch.isSnowshoeingIntermediate());
+
+        mFilterOptions.setTypeAdventureClub(savedSearch.isTypeAdventureClub());
+        mFilterOptions.setTypeBackpacking(savedSearch.isTypeBackpacking());
+        mFilterOptions.setTypeClimbing(savedSearch.isTypeClimbing());
+        mFilterOptions.setTypeDayHiking(savedSearch.isTypeDayHiking());
+        mFilterOptions.setTypeExplorers(savedSearch.isTypeExplorers());
+        mFilterOptions.setTypeExploringNature(savedSearch.isTypeExploringNature());
+        mFilterOptions.setTypeGlobalAdventures(savedSearch.isTypeGlobalAdventures());
+        mFilterOptions.setTypeMountainWorkshop(savedSearch.isTypeMountainWorkshop());
+        mFilterOptions.setTypeNavigation(savedSearch.isTypeNavigation());
+        mFilterOptions.setTypePhotography(savedSearch.isTypePhotography());
+        mFilterOptions.setTypeSailing(savedSearch.isTypeSailing());
+        mFilterOptions.setTypeScrambling(savedSearch.isTypeScrambling());
+        mFilterOptions.setTypeSeaKayaking(savedSearch.isTypeSeaKayaking());
+        mFilterOptions.setTypeSkiingSnowboarding(savedSearch.isTypeSkiingSnowboarding());
+        mFilterOptions.setTypeSnowshoeing(savedSearch.isTypeSnowshoeing());
+        mFilterOptions.setTypeStewardship(savedSearch.isTypeStewardship());
+        mFilterOptions.setTypeTrailRunning(savedSearch.isTypeTrailRunning());
+        mFilterOptions.setTypeUrbanAdventure(savedSearch.isTypeUrbanAdventure());
+        mFilterOptions.setTypeYouth(savedSearch.isTypeYouth());
     }
 
     private void refreshActivities() {
@@ -324,19 +328,15 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
         if (!mIsCanceled) {
             // Pass the list to the adapter
             if (getListView().getAdapter() == null) {  // First time using the list adapter
-                ActivityAdapter adapter = new ActivityAdapter(getListView().getContext(), mActivityList);
+                SavedSearchAdapter adapter = new SavedSearchAdapter(getListView().getContext(), mSavedSearchList);
                 setListAdapter(adapter);
             } else {  // Results already shown so update the list
-                ((ActivityAdapter) getListAdapter()).setMasterActivityList(mActivityList);
-
-                // Apply user defined filters to the latest list of activities
-                ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-//                ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+                ((SavedSearchAdapter) getListAdapter()).notifyDataSetChanged();
             }
 
-            if (mActivityList.size() == 0) {
+            if (mSavedSearchList.size() == 0) {
                 Toast toast = Toast.makeText(getActivity(), getActivity().getString
-                        (R.string.toast_empty_favorites), Toast.LENGTH_LONG);
+                        (R.string.toast_empty_saved_searches), Toast.LENGTH_LONG);
                 ((TextView) ((LinearLayout) toast.getView()).getChildAt(0))
                         .setGravity(Gravity.CENTER_HORIZONTAL);
                 toast.show();
@@ -358,8 +358,8 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
     public void resetFragment() {
         mAlreadyLoaded = false;
         mIsCanceled = false;
-        mQueryText = "";  // Reset search text
-        mFilterFragment = null;
-//        mFilterOptions = new FilterOptions();  // Create new filter options
+//        mQueryText = "";  // Reset search text
+//        mFilterFragment = null;
+        mFilterOptions = null;  // Create new filter options
     }
 }

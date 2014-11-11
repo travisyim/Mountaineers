@@ -6,9 +6,11 @@ import java.util.Date;
 public class SavedSearch implements Serializable {
     private Date mActivityStartDate;
     private Date mActivityEndDate;
+    private Date mLastAccessDate;
     private String mSearchName;
     private String mObjectID;
-    private String mQueryString;
+    private String mQueryText;
+    private int mUpdateCounter;
 
     // Filter Categories
     // Audience
@@ -64,7 +66,7 @@ public class SavedSearch implements Serializable {
     private boolean mTypeSnowshoeing = false;
     private boolean mTypeStewardship = false;
     private boolean mTypeTrailRunning = false;
-    private boolean mTypeUrbanAdventures = false;
+    private boolean mTypeUrbanAdventure = false;
     private boolean mTypeYouth = false;
 
     public SavedSearch() {
@@ -86,6 +88,14 @@ public class SavedSearch implements Serializable {
         mActivityEndDate = activityEndDate;
     }
 
+    public final Date getLastAccessDateDate() {
+        return mLastAccessDate;
+    }
+
+    public final void setLastAccessDate(final Date lastAccessDate) {
+        mLastAccessDate = lastAccessDate;
+    }
+
     public final String getSearchName() {
         return mSearchName;
     }
@@ -102,12 +112,20 @@ public class SavedSearch implements Serializable {
         mObjectID = objectID;
     }
 
-    public String getQueryString() {
-        return mQueryString;
+    public String getQueryText() {
+        return mQueryText;
     }
 
-    public void setQueryString(String queryString) {
-        mQueryString = queryString;
+    public void setQueryText(String queryText) {
+        mQueryText = queryText;
+    }
+
+    public int getUpdateCounter() {
+        return mUpdateCounter;
+    }
+
+    public void setUpdateCounter(int updateCounter) {
+        mUpdateCounter = updateCounter;
     }
 
     public boolean isTypeAdventureClub() {
@@ -246,12 +264,12 @@ public class SavedSearch implements Serializable {
         mTypeTrailRunning = isTypeTrailRunning;
     }
 
-    public boolean isTypeUrbanAdventures() {
-        return mTypeUrbanAdventures;
+    public boolean isTypeUrbanAdventure() {
+        return mTypeUrbanAdventure;
     }
 
-    public void setTypeUrbanAdventures(boolean isTypeUrbanAdventures) {
-        mTypeUrbanAdventures = isTypeUrbanAdventures;
+    public void setTypeUrbanAdventure(boolean isTypeUrbanAdventure) {
+        mTypeUrbanAdventure = isTypeUrbanAdventure;
     }
 
     public boolean isTypeYouth() {
@@ -318,7 +336,7 @@ public class SavedSearch implements Serializable {
         mAudienceRetiredRovers = isAudienceRetiredRovers;
     }
 
-    public boolean isAudiencerSingles() {
+    public boolean isAudienceSingles() {
         return mAudienceSingles;
     }
 

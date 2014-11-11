@@ -239,7 +239,7 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
     }
 
     public void setMasterActivityList(final List<MountaineerActivity> activities) {
-        mMasterActivities.clear();  // Clear all activities in the master lister
+        mMasterActivities.clear();  // Clear all activities in the master list
         mMasterActivities.addAll(activities);  // Save all new activity results
     }
 

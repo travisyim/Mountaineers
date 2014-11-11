@@ -121,8 +121,7 @@ public class FilterFragment extends Fragment {
     private boolean mIsAlreadyLoaded = false;
 
     // Returns a new instance of this fragment for the given section number
-    public static FilterFragment newInstance(final Fragment parentFragment,
-                                             final float sectionNumber,
+    public static FilterFragment newInstance(final float sectionNumber,
                                              final FilterOptions filterOptions,
                                              final String parentFragmentTitle) {
         FilterFragment fragment = new FilterFragment();
@@ -143,16 +142,11 @@ public class FilterFragment extends Fragment {
     }
 
     @Override
-    public void setArguments(Bundle args) {
-        super.setArguments(args);
-
-        // Get the parent fragment's title
-        mParentFragmentTitle = args.getString(ARG_PARENT_TITLE);
-    }
-
-    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        // Get the parent fragment's title
+        mParentFragmentTitle = getArguments().getString(ARG_PARENT_TITLE);
 
         // Get the reference to the filter options
         mFilterOptions = (FilterOptions) getArguments().getSerializable(ARG_FILTER_OPTIONS);
@@ -207,7 +201,6 @@ public class FilterFragment extends Fragment {
             Tracker t = ((MountaineersApp) getActivity().getApplication()).getTracker
                     (MountaineersApp.TrackerName.APP_TRACKER);
 
-            // Send the filter options back to the previous fragment for implementation
             // Check which fragment this filter was launched from
             if (mParentFragmentTitle.equals(getString(R.string.title_section2))) {  // Activity Search
                 t.setScreenName("Activity Search");
@@ -227,6 +220,11 @@ public class FilterFragment extends Fragment {
             else if (mParentFragmentTitle.equals(getString(R.string.title_section5))) {  // Favorite Activity
                 t.setScreenName("Favorite Activities");
                 ((FavoriteActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
+                        .onFiltersSelected(mFilterOptions);
+            }
+            else {  // Saved search activity search
+                t.setScreenName("Activity Search (Saved Search)");
+                ((ActivitySearchFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
                         .onFiltersSelected(mFilterOptions);
             }
 

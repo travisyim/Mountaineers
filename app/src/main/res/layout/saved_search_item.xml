@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/listview_padding"
+        android:layout_marginLeft="@dimen/listview_padding"
+        android:layout_marginRight="@dimen/listview_padding"
+        android:background="@android:color/white">
+
+        <!-- android:adjustViewBounds="true" not working it 4.2 (i.e. buggy).
+            It prevents panoramic shots from showing up -->
+
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:paddingTop="8dp"
+            android:text="Saved Search Name"
+            android:paddingLeft="@dimen/activity_horizontal_margin"/>
+
+        <TextView
+            android:id="@+id/textViewAccessDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="Last Access Date"
+            android:layout_below="@id/textViewName"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:textColor="@android:color/darker_gray"/>
+
+        <TextView
+            android:id="@+id/textViewUpdateCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="0"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:textColor="@android:color/darker_gray"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -152,11 +152,11 @@ public final class Mountaineer implements Serializable {
         mRegDate = regDate;
     }
 
-    public final List<SavedSearch> getSavedSearches() {
+    public final List<SavedSearch> getSavedSearchList() {
         return mSavedSearches;
     }
 
-    public final void setSavedSearches(final List<SavedSearch> savedSearches) {
+    public final void setSavedSearchList(final List<SavedSearch> savedSearches) {
         mSavedSearches = savedSearches;
     }
 
@@ -630,8 +630,11 @@ public final class Mountaineer implements Serializable {
 
             query = ParseQuery.getQuery(ParseConstants.CLASS_SAVED_SEARCH);
             query.whereEqualTo(ParseConstants.KEY_USER_ID, ParseUser.getCurrentUser().getObjectId());
+            query.orderByAscending(ParseConstants.KEY_SAVE_NAME);
+            query.setLimit(1000); // limit to 1000 results max
 
             try {
+                // Get results from Parse (no need to find in background as this is running in AsyncTask)
                 results = query.find();
             }
             catch (ParseException e) {
@@ -641,7 +644,7 @@ public final class Mountaineer implements Serializable {
             }
 
             // Load saved search results and assign to the current Mountaineer object
-            mMember.setSavedSearches(SavedSearchLoader.load(results));
+            mMember.setSavedSearchList(SavedSearchLoader.load(results));
 
             // Saving of credentials successful
             return new AsyncTaskResult<Boolean>(true);

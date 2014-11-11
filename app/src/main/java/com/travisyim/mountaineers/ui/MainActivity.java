@@ -45,8 +45,8 @@ public class MainActivity extends Activity
     private boolean mFinishedUserData = false;
     private boolean mLoadingActivities = false;
     private boolean mIsDrawerOpen = false;
+    protected String mCookie;
 
-    protected static String mCookie;
     private static final String TAG = MainActivity.class.getSimpleName() + ":";
     private static final String ARG_MEMBER = "member";
 
@@ -158,7 +158,7 @@ public class MainActivity extends Activity
                 mTitle = getString(R.string.title_section2);
 
                 if (mActivitySearchFragment == null) {
-                    fragment = ActivitySearchFragment.newInstance(position + 1);
+                    fragment = ActivitySearchFragment.newInstance(position + 1, null);
                     mActivitySearchFragment = fragment;
                 }
                 else {
@@ -321,6 +321,7 @@ public class MainActivity extends Activity
             // Scrape member profile data from website
             mMember.getMemberData(this);
         }
+        // 99 represents pressing back when the user is on the Login screen
         else if (requestCode == 1 && resultCode == 99) {
             finish();
         }

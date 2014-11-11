@@ -71,3 +71,5 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+app/src/main/java/com/travisyim/mountaineers/utils/SimpleCrypto.java
+app/src/main/res/values/strings.xml

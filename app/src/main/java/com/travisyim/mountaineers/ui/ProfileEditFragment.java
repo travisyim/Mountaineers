@@ -13,7 +13,6 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.FrameLayout;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -23,7 +22,6 @@ import com.travisyim.mountaineers.R;
 
 public class ProfileEditFragment extends Fragment {
     private WebView mWebView;
-    private FrameLayout mWebContainer;
     private String mParentFragmentTitle;
     private String mProfileEditURL;
     private String mCookie;
@@ -34,8 +32,7 @@ public class ProfileEditFragment extends Fragment {
     private static final String ARG_EDIT_PROFILE_URL = "editProfileURL";
 
     // Returns a new instance of this fragment for the given section number
-    public static ProfileEditFragment newInstance(final Fragment parentFragment,
-                                                      final float sectionNumber,
+    public static ProfileEditFragment newInstance(final float sectionNumber,
                                                       final String parentFragmentTitle,
                                                       final String editProfileURL) {
         ProfileEditFragment fragment = new ProfileEditFragment();
@@ -57,19 +54,14 @@ public class ProfileEditFragment extends Fragment {
     }
 
     @Override
-    public void setArguments(Bundle args) {
-        super.setArguments(args);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
 
         // Set arguments
         // Get the parent fragment's title
-        mParentFragmentTitle = args.getString(ARG_PARENT_TITLE);
+        mParentFragmentTitle = getArguments().getString(ARG_PARENT_TITLE);
         // User profile edit webpage URL
         mProfileEditURL = getArguments().getString(ARG_EDIT_PROFILE_URL);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
 
         mCookie = ((MainActivity) activity).mCookie;  // Get cookie - YUM!
     }
