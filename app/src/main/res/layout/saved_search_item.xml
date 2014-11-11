@@ -31,6 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"
+            android:paddingBottom="8dp"
             android:text="Last Access Date"
             android:layout_below="@id/textViewName"
             android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -38,14 +39,17 @@
 
         <TextView
             android:id="@+id/textViewUpdateCounter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:layout_width="40dp"
+            android:layout_height="25dp"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textStyle="bold"
             android:text="0"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:textColor="@android:color/darker_gray"/>
+            android:background="@drawable/notification_square"
+            android:textColor="@color/swipe_refresh3"/>
 
     </RelativeLayout>
 
