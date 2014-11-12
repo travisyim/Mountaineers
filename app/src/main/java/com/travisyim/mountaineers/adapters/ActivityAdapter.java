@@ -1,7 +1,6 @@
 package com.travisyim.mountaineers.adapters;
 
 import android.content.Context;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +19,11 @@ import com.travisyim.mountaineers.utils.PicassoCustom;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
     private Context mContext;
@@ -29,7 +31,6 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
     // A master copy of the full list of the activities
     private List<MountaineerActivity> mMasterActivities = new ArrayList<MountaineerActivity>();
     private Toast toast;
-    private boolean mIsKeyboardShowing = false;
 
     public ActivityAdapter(Context context, List<MountaineerActivity> activities) {
         super(context, R.layout.activity_item, activities);
@@ -245,26 +246,35 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
 
     public void applyTextFilter(final String queryText) {
         boolean found;
-        String[] keywords = new String[0];
+        Set<String> keywords = new HashSet<String>();
 
         this.clear();  // Clear all activities from the adapter
 
         // Filter the activities list based on the search text
-        if (queryText != null && !queryText.equals("")) {  // Search string defined
-            keywords = queryText.trim().toLowerCase().split("\\s+");
+        if (queryText != null && !queryText.isEmpty()) {  // Search string defined
+            // Add all keywords when query String is split by spaces
+            keywords.addAll(Arrays.asList(queryText.trim().toLowerCase().split("\\s+")));
+            // Add all keywords when query String is split by spaces
+            keywords.addAll(Arrays.asList(queryText.trim().toLowerCase().split("\\b")));
 
             // Loop through master list of activities to search for keywords
             for (MountaineerActivity activity : mMasterActivities) {
-                found = true;
+                found = false;
 
                 /* Search activity name and leader name to ensure all keywords are present (all
                  * keywords must be found) */
                 for (String keyword : keywords) {
                     try {
-                        if (!activity.getTitle().toLowerCase().contains(keyword) &&
-                                !activity.getLeaderName().join(" ").toLowerCase().contains(keyword)) {
-                            found = false;
-                            break;
+                        // Ensure we are not evaluating either blank space or "'s"
+                        if (!keyword.trim().isEmpty() && !keyword.equals("'s") &&
+                                !keyword.equals("'") && !keyword.equals("s")) {
+                            // Search for the given keyword as a whole word (bounded by \b)
+                            if (activity.getTitle().toLowerCase().matches(".*\\b" + keyword + "\\b.*")
+                                    || activity.getLeaderName().join(" ").toLowerCase()
+                                    .matches(".*\\b" + keyword + "\\b.*")) {
+                                found = true;
+                                break;
+                            }
                         }
                     }
                     catch (JSONException e) { /* Intentionally left blank */}
@@ -461,19 +471,10 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
             toast = Toast.makeText(getContext(), getContext().getString(R.string.toast_activities_found,
                     mActivities.size()), Toast.LENGTH_SHORT);
 
-            if (mIsKeyboardShowing) {  // Center the toast if keyboard is showing
-                toast.setGravity(Gravity.CENTER, 0, 0);
-            }
-
             toast.show();
         }
 
         notifyDataSetChanged();
-    }
-
-    // This method sets the keyboard state and tells us when to reposition toasts
-    public void setKeyboardState (final boolean isKeyboardShowing) {
-        mIsKeyboardShowing = isKeyboardShowing;
     }
 
     public static boolean areAllEqual(boolean... values) {

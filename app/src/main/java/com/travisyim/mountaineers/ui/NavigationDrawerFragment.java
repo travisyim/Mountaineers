@@ -145,32 +145,38 @@ public class NavigationDrawerFragment extends Fragment {
 
         // Load drawer items to list
         for (int i = 0; i < 6; i++) {
-            String drawerItem[] = new String[2];
+            String drawerItem[] = new String[3];
 
             switch (i) {
                 case 0:
                     drawerItem[0] = getString(R.string.title_section1);
                     drawerItem[1] = Integer.toString(R.drawable.ic_action_person);
+                    drawerItem[2] = null;
                     break;
                 case 1:
                     drawerItem[0] = getString(R.string.title_section2);
                     drawerItem[1] = Integer.toString(R.drawable.ic_action_search);
+                    drawerItem[2] = null;
                     break;
                 case 2:
                     drawerItem[0] = getString(R.string.title_section3);
                     drawerItem[1] = Integer.toString(R.drawable.ic_action_accept);
+                    drawerItem[2] = null;
                     break;
                 case 3:
                     drawerItem[0] = getString(R.string.title_section4);
                     drawerItem[1] = Integer.toString(R.drawable.ic_action_view_as_list);
+                    drawerItem[2] = null;
                     break;
                 case 4:
                     drawerItem[0] = getString(R.string.title_section5);
                     drawerItem[1] = Integer.toString(R.drawable.ic_action_important);
+                    drawerItem[2] = null;
                     break;
                 case 5:
                     drawerItem[0] = getString(R.string.title_section6);
                     drawerItem[1] = Integer.toString(R.drawable.ic_action_save);
+                    drawerItem[2] = "0";
                     break;
             }
 
@@ -403,5 +409,11 @@ public class NavigationDrawerFragment extends Fragment {
             mDrawerLayout.openDrawer(mFragmentContainerView);
             getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
         }
+    }
+
+    public void updateSavedSearchCounter(int counter) {
+        // This method updates the saved search counter in the navigation drawer
+        mDrawerItems.get(mDrawerItems.size() - 1)[2] = String.valueOf(counter);
+        ((DrawerAdapter) mDrawerListView.getAdapter()).notifyDataSetChanged();
     }
 }

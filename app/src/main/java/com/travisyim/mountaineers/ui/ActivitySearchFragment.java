@@ -6,7 +6,6 @@ import android.app.Fragment;
 import android.app.ListFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Gravity;
@@ -41,6 +40,8 @@ import com.travisyim.mountaineers.utils.ActivityLoader;
 import com.travisyim.mountaineers.utils.DateUtil;
 import com.travisyim.mountaineers.utils.OnParseTaskCompleted;
 import com.travisyim.mountaineers.utils.ParseConstants;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -154,8 +155,8 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                 mFilterOptions = new FilterOptions();  // Create new filter options
 
                 // Set the default date range of the results shown starting from the current date
-                mFilterOptions.setStartDate(DateUtil.convertToDate(DateUtil.convertToString(new Date(),
-                        DateUtil.TYPE_BUTTON_DATE), DateUtil.TYPE_BUTTON_DATE));
+                mFilterOptions.setStartDate(DateUtil.convertToDate(DateUtil.convertToString
+                        (new Date(), DateUtil.TYPE_BUTTON_DATE), DateUtil.TYPE_BUTTON_DATE));
             }
         }
     }
@@ -178,6 +179,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             /* Get full activity list from the latest Parse data if this is the first time creating
              * this fragment */
             if (savedInstanceState == null && !mAlreadyLoaded) {
+                mAlreadyLoaded = true;
                 mSwipeRefreshLayout.setRefreshing(true);  // Turn on update indicator
                 // Flag as updating activities
                 ((MainActivity) getActivity()).setLoadingActivities(true);
@@ -206,16 +208,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
          * just logged in.  This code would be ignored if the user was logged in from a previous
          * session (i.e. returning Current User). */
         if (ParseUser.getCurrentUser() != null) {
-            /* Get full activity list from the latest Parse data if this is the first time creating
-             * this fragment */
-            if (!mAlreadyLoaded) {
-                mSwipeRefreshLayout.setRefreshing(true);  // Turn on update indicator
-                // Flag as updating activities
-                ((MainActivity) getActivity()).setLoadingActivities(true);
-                getActivityList();
-            }
-            // User returning from filter
-            else if (mReturnFromFilter) {
+            if (mReturnFromFilter) {
                 mReturnFromFilter = false;
                 mSwipeRefreshLayout.setRefreshing(true);  // Turn on update indicator
                 // Flag as updating activities
@@ -274,11 +267,38 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
         // Set on click listener
         submitButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
+                // This is triggered when the submit button on the search menu is clicked
+                mQueryText = String.valueOf(mSearchView.getQuery());  // Save query text
                 mIsSubmitted = true;
                 mSearchMenuItem.collapseActionView();  // Collapse search view
+
+                // Update results
+                ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
+                ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+            }
+        });
+
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // This is triggered when the enter button on the keyboard is pressed
+                mQueryText = query;  // Save query text
+                mIsSubmitted = true;
+                mSearchMenuItem.collapseActionView();  // Collapse search view
+
+                // Update results
+                ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
+                ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // This is triggered when the query string changes but is not currently used
+                return false;
             }
         });
 
@@ -287,8 +307,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             public boolean onMenuItemActionExpand(MenuItem item) {
                 mIsNewSearch = true;  // Mark this as a new search
                 mIsCollapsed = false;  // Set this collapsed flag
-                // Set the keyboard state as shown
-                ((ActivityAdapter) getListAdapter()).setKeyboardState(true);
 
                 // Run the old search text (must be done in a runnable or will not work)
                 mSearchView.post(new Runnable() {
@@ -296,8 +314,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                     public void run() {
                         mSearchView.setQuery(mQueryText, false);
 
-                        /* The following allows the user to input text after the previous query
-                         * text */
+                        // The following allows the user to input text after the previous query text
                         mSearchView.setIconified(false);
                     }
                 });
@@ -320,47 +337,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                 }
 
                 mIsCollapsed = true;  // Set this collapsed flag
-                // Set the keyboard state as hidden
-                ((ActivityAdapter) getListAdapter()).setKeyboardState(false);
-                return true;
-            }
-        });
-
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                mQueryText = query;  // Save query text
-                mIsSubmitted = true;
-                mSearchMenuItem.collapseActionView();  // Collapse search view
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                /* Check to see if this change is due to the user clicking on the Navigation Drawer
-                 * icon.  If so, do not reset the query text. */
-                if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {  // User is trying to search
-                    if (mIsNewSearch && newText.equals("")) {  // New search by user
-                        mIsNewSearch = false;
-                    }
-                    else if (mIsCollapsed) { // Triggered by collapsing Searchview
-                        mIsCollapsed = false;
-                    }
-                    else if (mHasSearchLostFocus) { // Triggered by clicking an activity or filter
-                        mHasSearchLostFocus = false;
-                    }
-                    // Check to see if the Activity Search fragment is still updating results
-                    else if (!mSwipeRefreshLayout.isRefreshing() ||
-                            (mIsNewSearch && !newText.equals(""))) {
-                        mIsNewSearch = false;
-                        mQueryText = newText;  // Update previously searched query text
-
-                        // Not updating so apply both text and filter options to the activity list
-                        ((ActivityAdapter) getListAdapter()).applyTextFilter(newText);
-                        ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
-                    }
-                }
 
                 return true;
             }
@@ -374,8 +350,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
         // Check to see if the Activity Search fragment is still updating results
         if (!mSwipeRefreshLayout.isRefreshing()) {
             mHasSearchLostFocus = true;  // Flag this as clicked
-            // Set the keyboard state as hidden
-            ((ActivityAdapter) getListAdapter()).setKeyboardState(false);
 
             mActivityPosition = position;  // Capture position of listitem clicked
 
@@ -449,8 +423,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                 if (!((MainActivity) getActivity()).isDrawerOpen()) {
                     if (!mSwipeRefreshLayout.isRefreshing()) {
                         mHasSearchLostFocus = true;  // Flag this as clicked
-                        // Set the keyboard state as hidden
-                        ((ActivityAdapter) getListAdapter()).setKeyboardState(false);
 
                         // Not updating so load filter fragment
                         if (mFilterFragment == null) {
@@ -721,11 +693,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
             ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
 
-            // If not already loaded, change this flag
-            if (!mAlreadyLoaded) {
-                mAlreadyLoaded = true;
-            }
-
             getListView().setEmptyView(getActivity().findViewById(R.id.textViewEmpty));
 
             // Flag as finished updating activities
@@ -800,137 +767,176 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
     // This method saves the current search
     private void saveSearch(String name) {
-        // Check if name is already defined
-        final ParseObject savedSearch = new ParseObject(ParseConstants.CLASS_SAVED_SEARCH);
+        ParseObject savedSearch = null;
+        boolean errorEncountered = false;
 
-        // Save search criteria to Search table
-        savedSearch.put(ParseConstants.KEY_SAVE_NAME, name);  // Name of saved search
+        // Check if name is already defined (i.e. is already a saved search)
+        if (mIsSavedSearch) {  // Yes
+            ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstants.CLASS_SAVED_SEARCH);
+            query.whereEqualTo(ParseConstants.KEY_SAVE_NAME, name);
 
-        // Save user and search date
-        savedSearch.put(ParseConstants.KEY_USER_ID, ParseUser.getCurrentUser().getObjectId());
-        savedSearch.put(ParseConstants.KEY_LAST_ACCESS, DateUtil.convertToUNC(new Date()));
-
-        // Reset update counter
-        savedSearch.put(ParseConstants.KEY_UPDATE_COUNT, 0);
-
-        // Check if query string is defined
-        if (mQueryText != null && mQueryText.length() > 0) {
-            // Keywords array
-            savedSearch.addAllUnique(ParseConstants.KEY_KEYWORDS,
-                    Arrays.asList(mQueryText.trim().toLowerCase().split("\\s+")));
-        }
-
-        // Start Date
-        if (mFilterOptions.getStartDate() != null) {
-            savedSearch.put(ParseConstants.KEY_ACTIVITY_START_DATE,
-                    DateUtil.convertToUNC(mFilterOptions.getStartDate()));
-        }
-
-        // End Date
-        if (mFilterOptions.getEndDate() != null) {
-            savedSearch.put(ParseConstants.KEY_ACTIVITY_END_DATE,
-                    DateUtil.convertToUNC(mFilterOptions.getEndDate()));
-        }
-
-        // Filter Options
-        savedSearch.put(ParseConstants.KEY_TYPE_ADVENTURE_CLUB, mFilterOptions.isTypeAdventureClub());
-        savedSearch.put(ParseConstants.KEY_TYPE_BACKPACKING, mFilterOptions.isTypeBackpacking());
-        savedSearch.put(ParseConstants.KEY_TYPE_CLIMBING, mFilterOptions.isTypeClimbing());
-        savedSearch.put(ParseConstants.KEY_TYPE_DAY_HIKING, mFilterOptions.isTypeDayHiking());
-        savedSearch.put(ParseConstants.KEY_TYPE_EXPLORERS, mFilterOptions.isTypeExplorers());
-        savedSearch.put(ParseConstants.KEY_TYPE_EXPLORING_NATURE, mFilterOptions.isTypeExploringNature());
-        savedSearch.put(ParseConstants.KEY_TYPE_GLOBAL_ADVENTURES, mFilterOptions.isTypeGlobalAdventures());
-        savedSearch.put(ParseConstants.KEY_TYPE_MOUNTAIN_WORKSHOP, mFilterOptions.isTypeMountainWorkshop());
-        savedSearch.put(ParseConstants.KEY_TYPE_NAVIGATION, mFilterOptions.isTypeNavigation());
-        savedSearch.put(ParseConstants.KEY_TYPE_PHOTOGRAPHY, mFilterOptions.isTypePhotography());
-        savedSearch.put(ParseConstants.KEY_TYPE_SAILING, mFilterOptions.isTypeSailing());
-        savedSearch.put(ParseConstants.KEY_TYPE_SCRAMBLING, mFilterOptions.isTypeScrambling());
-        savedSearch.put(ParseConstants.KEY_TYPE_SEA_KAYAKING, mFilterOptions.isTypeSeaKayaking());
-        savedSearch.put(ParseConstants.KEY_TYPE_SKIING_SNOWBOARDING, mFilterOptions.isTypeSkiingSnowboarding());
-        savedSearch.put(ParseConstants.KEY_TYPE_SNOWSHOEING, mFilterOptions.isTypeSnowshoeing());
-        savedSearch.put(ParseConstants.KEY_TYPE_STEWARDSHIP, mFilterOptions.isTypeStewardship());
-        savedSearch.put(ParseConstants.KEY_TYPE_TRAIL_RUNNING, mFilterOptions.isTypeTrailRunning());
-        savedSearch.put(ParseConstants.KEY_TYPE_URBAN_ADVENTURE, mFilterOptions.isTypeUrbanAdventure());
-        savedSearch.put(ParseConstants.KEY_TYPE_YOUTH, mFilterOptions.isTypeYouth());
-        savedSearch.put(ParseConstants.KEY_RATING_FOR_BEGINNERS, mFilterOptions.isRatingForBeginners());
-        savedSearch.put(ParseConstants.KEY_RATING_EASY, mFilterOptions.isRatingEasy());
-        savedSearch.put(ParseConstants.KEY_RATING_MODERATE, mFilterOptions.isRatingModerate());
-        savedSearch.put(ParseConstants.KEY_RATING_CHALLENGING, mFilterOptions.isRatingChallenging());
-        savedSearch.put(ParseConstants.KEY_AUDIENCE_ADULTS, mFilterOptions.isAudienceAdults());
-        savedSearch.put(ParseConstants.KEY_AUDIENCE_FAMILIES, mFilterOptions.isAudienceFamilies());
-        savedSearch.put(ParseConstants.KEY_AUDIENCE_RETIRED_ROVERS, mFilterOptions.isAudienceRetiredRovers());
-        savedSearch.put(ParseConstants.KEY_AUDIENCE_SINGLES, mFilterOptions.isAudienceSingles());
-        savedSearch.put(ParseConstants.KEY_AUDIENCE_20_30_SOMETHINGS, mFilterOptions.isAudience2030Somethings());
-        savedSearch.put(ParseConstants.KEY_AUDIENCE_YOUTH, mFilterOptions.isAudienceYouth());
-        savedSearch.put(ParseConstants.KEY_BRANCH_THE_MOUNTAINEERS, mFilterOptions.isBranchTheMountaineers());
-        savedSearch.put(ParseConstants.KEY_BRANCH_BELLINGHAM, mFilterOptions.isBranchBellingham());
-        savedSearch.put(ParseConstants.KEY_BRANCH_EVERETT, mFilterOptions.isBranchEverett());
-        savedSearch.put(ParseConstants.KEY_BRANCH_FOOTHILLS, mFilterOptions.isBranchFoothills());
-        savedSearch.put(ParseConstants.KEY_BRANCH_KITSAP, mFilterOptions.isBranchKitsap());
-        savedSearch.put(ParseConstants.KEY_BRANCH_OLYMPIA, mFilterOptions.isBranchOlympia());
-        savedSearch.put(ParseConstants.KEY_BRANCH_OUTDOOR_CENTERS, mFilterOptions.isBranchOutdoorCenters());
-        savedSearch.put(ParseConstants.KEY_BRANCH_SEATTLE, mFilterOptions.isBranchSeattle());
-        savedSearch.put(ParseConstants.KEY_BRANCH_TACOMA, mFilterOptions.isBranchTacoma());
-        savedSearch.put(ParseConstants.KEY_CLIMBING_BASIC_ALPINE, mFilterOptions.isClimbingBasicAlpine());
-        savedSearch.put(ParseConstants.KEY_CLIMBING_INTERMEDIATE_ALPINE, mFilterOptions.isClimbingIntermediateAlpine());
-        savedSearch.put(ParseConstants.KEY_CLIMBING_AID_CLIMB, mFilterOptions.isClimbingAidClimb());
-        savedSearch.put(ParseConstants.KEY_CLIMBING_ROCK_CLIMB, mFilterOptions.isClimbingRockClimb());
-        savedSearch.put(ParseConstants.KEY_SKIING_CROSS_COUNTRY, mFilterOptions.isSkiingCrossCountry());
-        savedSearch.put(ParseConstants.KEY_SKIING_BACKCOUNTRY, mFilterOptions.isSkiingBackcountry());
-        savedSearch.put(ParseConstants.KEY_SKIING_GLACIER, mFilterOptions.isSkiingGlacier());
-        savedSearch.put(ParseConstants.KEY_SNOWSHOEING_BEGINNER, mFilterOptions.isSnowshoeingBeginner());
-        savedSearch.put(ParseConstants.KEY_SNOWSHOEING_BASIC, mFilterOptions.isSnowshoeingBasic());
-        savedSearch.put(ParseConstants.KEY_SNOWSHOEING_INTERMEDIATE, mFilterOptions.isSnowshoeingIntermediate());
-
-        // Save search to Parse backend
-        savedSearch.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null) {  // Error saving search
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle(getActivity().getString(R.string.error_title));
-                    alert.setMessage(e.getMessage());
-                    alert.show();
-                }
-                else {  // Saving successful
-                    Toast.makeText(getActivity(), getActivity().getString(R.string.toast_save),
-                            Toast.LENGTH_SHORT).show();
-                }
+            try {
+                savedSearch = query.getFirst();
             }
-        });
+            catch (ParseException e) {
+                errorEncountered = true;
+            }
+        }
+        else {  // No
+            // Create new savedSearch object
+            savedSearch = new ParseObject(ParseConstants.CLASS_SAVED_SEARCH);
+        }
+
+        // If no error was encountered while retrieving saved search object from Parse (if applicable)
+        if (!errorEncountered) {
+            // Save search criteria to Search table
+            savedSearch.put(ParseConstants.KEY_SAVE_NAME, name);  // Name of saved search
+
+            // Save user and search date
+            savedSearch.put(ParseConstants.KEY_USER_ID, ParseUser.getCurrentUser().getObjectId());
+            // Save this in the equivalent UNC time (automatically happens when sending to Parse)
+            savedSearch.put(ParseConstants.KEY_LAST_ACCESS, new Date());
+
+            // Reset update counter
+            savedSearch.put(ParseConstants.KEY_UPDATE_COUNT, 0);
+
+            // Check if query string is defined
+            if (mQueryText != null && mQueryText.length() > 0) {
+                // Keywords array
+                savedSearch.put(ParseConstants.KEY_KEYWORDS, new JSONArray());  // Clear previous keywords
+                savedSearch.addAllUnique(ParseConstants.KEY_KEYWORDS,
+                        Arrays.asList(mQueryText.trim().toLowerCase().split("\\s+")));
+            }
+
+            // Start Date
+            if (mFilterOptions.getStartDate() != null) {
+                savedSearch.put(ParseConstants.KEY_ACTIVITY_START_DATE,
+                        DateUtil.convertToUNC(mFilterOptions.getStartDate()));
+            }
+
+            // End Date
+            if (mFilterOptions.getEndDate() != null) {
+                savedSearch.put(ParseConstants.KEY_ACTIVITY_END_DATE,
+                        DateUtil.convertToUNC(mFilterOptions.getEndDate()));
+            }
+
+            // Filter Options
+            savedSearch.put(ParseConstants.KEY_TYPE_ADVENTURE_CLUB, mFilterOptions.isTypeAdventureClub());
+            savedSearch.put(ParseConstants.KEY_TYPE_BACKPACKING, mFilterOptions.isTypeBackpacking());
+            savedSearch.put(ParseConstants.KEY_TYPE_CLIMBING, mFilterOptions.isTypeClimbing());
+            savedSearch.put(ParseConstants.KEY_TYPE_DAY_HIKING, mFilterOptions.isTypeDayHiking());
+            savedSearch.put(ParseConstants.KEY_TYPE_EXPLORERS, mFilterOptions.isTypeExplorers());
+            savedSearch.put(ParseConstants.KEY_TYPE_EXPLORING_NATURE, mFilterOptions.isTypeExploringNature());
+            savedSearch.put(ParseConstants.KEY_TYPE_GLOBAL_ADVENTURES, mFilterOptions.isTypeGlobalAdventures());
+            savedSearch.put(ParseConstants.KEY_TYPE_MOUNTAIN_WORKSHOP, mFilterOptions.isTypeMountainWorkshop());
+            savedSearch.put(ParseConstants.KEY_TYPE_NAVIGATION, mFilterOptions.isTypeNavigation());
+            savedSearch.put(ParseConstants.KEY_TYPE_PHOTOGRAPHY, mFilterOptions.isTypePhotography());
+            savedSearch.put(ParseConstants.KEY_TYPE_SAILING, mFilterOptions.isTypeSailing());
+            savedSearch.put(ParseConstants.KEY_TYPE_SCRAMBLING, mFilterOptions.isTypeScrambling());
+            savedSearch.put(ParseConstants.KEY_TYPE_SEA_KAYAKING, mFilterOptions.isTypeSeaKayaking());
+            savedSearch.put(ParseConstants.KEY_TYPE_SKIING_SNOWBOARDING, mFilterOptions.isTypeSkiingSnowboarding());
+            savedSearch.put(ParseConstants.KEY_TYPE_SNOWSHOEING, mFilterOptions.isTypeSnowshoeing());
+            savedSearch.put(ParseConstants.KEY_TYPE_STEWARDSHIP, mFilterOptions.isTypeStewardship());
+            savedSearch.put(ParseConstants.KEY_TYPE_TRAIL_RUNNING, mFilterOptions.isTypeTrailRunning());
+            savedSearch.put(ParseConstants.KEY_TYPE_URBAN_ADVENTURE, mFilterOptions.isTypeUrbanAdventure());
+            savedSearch.put(ParseConstants.KEY_TYPE_YOUTH, mFilterOptions.isTypeYouth());
+            savedSearch.put(ParseConstants.KEY_RATING_FOR_BEGINNERS, mFilterOptions.isRatingForBeginners());
+            savedSearch.put(ParseConstants.KEY_RATING_EASY, mFilterOptions.isRatingEasy());
+            savedSearch.put(ParseConstants.KEY_RATING_MODERATE, mFilterOptions.isRatingModerate());
+            savedSearch.put(ParseConstants.KEY_RATING_CHALLENGING, mFilterOptions.isRatingChallenging());
+            savedSearch.put(ParseConstants.KEY_AUDIENCE_ADULTS, mFilterOptions.isAudienceAdults());
+            savedSearch.put(ParseConstants.KEY_AUDIENCE_FAMILIES, mFilterOptions.isAudienceFamilies());
+            savedSearch.put(ParseConstants.KEY_AUDIENCE_RETIRED_ROVERS, mFilterOptions.isAudienceRetiredRovers());
+            savedSearch.put(ParseConstants.KEY_AUDIENCE_SINGLES, mFilterOptions.isAudienceSingles());
+            savedSearch.put(ParseConstants.KEY_AUDIENCE_20_30_SOMETHINGS, mFilterOptions.isAudience2030Somethings());
+            savedSearch.put(ParseConstants.KEY_AUDIENCE_YOUTH, mFilterOptions.isAudienceYouth());
+            savedSearch.put(ParseConstants.KEY_BRANCH_THE_MOUNTAINEERS, mFilterOptions.isBranchTheMountaineers());
+            savedSearch.put(ParseConstants.KEY_BRANCH_BELLINGHAM, mFilterOptions.isBranchBellingham());
+            savedSearch.put(ParseConstants.KEY_BRANCH_EVERETT, mFilterOptions.isBranchEverett());
+            savedSearch.put(ParseConstants.KEY_BRANCH_FOOTHILLS, mFilterOptions.isBranchFoothills());
+            savedSearch.put(ParseConstants.KEY_BRANCH_KITSAP, mFilterOptions.isBranchKitsap());
+            savedSearch.put(ParseConstants.KEY_BRANCH_OLYMPIA, mFilterOptions.isBranchOlympia());
+            savedSearch.put(ParseConstants.KEY_BRANCH_OUTDOOR_CENTERS, mFilterOptions.isBranchOutdoorCenters());
+            savedSearch.put(ParseConstants.KEY_BRANCH_SEATTLE, mFilterOptions.isBranchSeattle());
+            savedSearch.put(ParseConstants.KEY_BRANCH_TACOMA, mFilterOptions.isBranchTacoma());
+            savedSearch.put(ParseConstants.KEY_CLIMBING_BASIC_ALPINE, mFilterOptions.isClimbingBasicAlpine());
+            savedSearch.put(ParseConstants.KEY_CLIMBING_INTERMEDIATE_ALPINE, mFilterOptions.isClimbingIntermediateAlpine());
+            savedSearch.put(ParseConstants.KEY_CLIMBING_AID_CLIMB, mFilterOptions.isClimbingAidClimb());
+            savedSearch.put(ParseConstants.KEY_CLIMBING_ROCK_CLIMB, mFilterOptions.isClimbingRockClimb());
+            savedSearch.put(ParseConstants.KEY_SKIING_CROSS_COUNTRY, mFilterOptions.isSkiingCrossCountry());
+            savedSearch.put(ParseConstants.KEY_SKIING_BACKCOUNTRY, mFilterOptions.isSkiingBackcountry());
+            savedSearch.put(ParseConstants.KEY_SKIING_GLACIER, mFilterOptions.isSkiingGlacier());
+            savedSearch.put(ParseConstants.KEY_SNOWSHOEING_BEGINNER, mFilterOptions.isSnowshoeingBeginner());
+            savedSearch.put(ParseConstants.KEY_SNOWSHOEING_BASIC, mFilterOptions.isSnowshoeingBasic());
+            savedSearch.put(ParseConstants.KEY_SNOWSHOEING_INTERMEDIATE, mFilterOptions.isSnowshoeingIntermediate());
+
+            // Save search to Parse backend
+            savedSearch.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null) {  // Error saving search
+                        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                        alert.setTitle(getActivity().getString(R.string.error_title));
+                        alert.setMessage(e.getMessage());
+                        alert.show();
+                    } else {  // Saving successful
+                        // Determine the message to be shown to the user
+                        if (mIsSavedSearch) {  // Saved existing search
+                            Toast.makeText(getActivity(), getActivity().getString
+                                    (R.string.toast_save_existing), Toast.LENGTH_SHORT).show();
+                        }
+                        else {  // Saved new search
+                            Toast.makeText(getActivity(), getActivity().getString
+                                    (R.string.toast_save_new), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        }
+        else {  // Error encountered trying to get existing saved search object from Parse
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            alert.setTitle(getActivity().getString(R.string.error_title));
+            alert.setMessage(getActivity().getString(R.string.error_message_saved_search));
+            alert.show();
+        }
     }
 
     private void showSaveDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-        alert.setTitle(getActivity().getString(R.string.dialog_save_title));
-        alert.setMessage(getActivity().getString(R.string.dialog_save_message));
+        // Check if the save is coming from saved search results
+        if (mIsSavedSearch) {  // Yes
+            // Save using existing name
+            saveSearch(mSavedSearchName);
+        } else {  // No - get a name from the user
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            alert.setTitle(getActivity().getString(R.string.dialog_save_title));
+            alert.setMessage(getActivity().getString(R.string.dialog_save_message));
 
-        // Set an EditText view to get user input
-        final EditText input = new EditText(getActivity());
-        input.setSingleLine();
-        alert.setView(input);
+            // Set an EditText view to get user input
+            final EditText input = new EditText(getActivity());
+            input.setSingleLine();
+            alert.setView(input);
 
-        alert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                if (!input.getText().toString().trim().equals("")) {
-                    // Check for existing Saved Search name from this user
+            alert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    if (!input.getText().toString().trim().isEmpty()) {
+                        // Check for existing Saved Search name from this user
 
 
-                    // Save the search with the provided name
-                    saveSearch(input.getText().toString().trim());
+                        // Save the search with the provided name
+                        saveSearch(input.getText().toString().trim());
+                    } else {  // Invalid name
+                        showSaveDialog();  // Show dialog again
+                    }
                 }
-                else {  // Invalid name
-                    showSaveDialog();  // Show dialog again
+            });
+
+            alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    // Canceled - intentionally left blank
                 }
-            }
-        });
+            });
 
-        alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled - intentionally left blank
-            }
-        });
-
-        alert.show();
+            alert.show();
+        }
     }
 }

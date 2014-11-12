@@ -54,7 +54,7 @@ public class SavedSearchAdapter extends ArrayAdapter<SavedSearch> {
         if (savedSearch.getUpdateCounter() <= 50) {
             holder.textViewUpdateCounter.setText(Integer.toString(savedSearch.getUpdateCounter()));
         }
-        else {  // More than 100 updates so shorten the text
+        else {  // More than 50 updates so shorten the text
             holder.textViewUpdateCounter.setText("50+");
         }
 
@@ -76,6 +76,7 @@ public class SavedSearchAdapter extends ArrayAdapter<SavedSearch> {
     }
 
     private String timeSinceLastView(Date lastView) {
+        // This method calculates the time since the saved search was last viewed
         StringBuffer str = new StringBuffer();
         long delta;
 
@@ -86,24 +87,28 @@ public class SavedSearchAdapter extends ArrayAdapter<SavedSearch> {
 
         // Determine when the saved search was last viewed
         if (delta / 1000 < 10) {
-            // Less than 10 seconds
-            str.append("A moment ago");
+            // Less than 10 seconds ago
+            str.append(mContext.getString(R.string.lastViewMoment));
         }
         else if (delta / 1000 < 60) {
-            // Less than a minute ago
-            str.append("Less than a minute ago");
+            // X seconds ago
+            str.append(mContext.getResources().getQuantityString(R.plurals.lastViewedSeconds,
+                    (int) (delta / 1000), (int) (delta / 1000)));
         }
         else if (delta / (1000 * 60) < 60) {
             // X minute(s) ago
-            str.append(((int) delta / (1000 * 60)) + " minute(s) ago");
+            str.append(mContext.getResources().getQuantityString(R.plurals.lastViewedMinutes,
+                    (int) (delta / (1000 * 60)), (int) (delta / (1000 * 60))));
         }
         else if (delta / (1000 * 60 * 60) < 24) {
             // X hours(s) ago
-            str.append(((int) delta / (1000 * 60 * 60)) + " hours(s) ago");
+            str.append(mContext.getResources().getQuantityString(R.plurals.lastViewedHours,
+                    (int) (delta / (1000 * 60 * 60)), (int) (delta / (1000 * 60 * 60))));
         }
         else {
             // X day(s) ago
-            str.append(((int) delta / (1000 * 60 * 60 * 24)) + " day(s) ago");
+            str.append(mContext.getResources().getQuantityString(R.plurals.lastViewedDays,
+                    (int) (delta / (1000 * 60 * 60 * 24)), (int) (delta / (1000 * 60 * 60 * 24))));
         }
 
         return str.toString();

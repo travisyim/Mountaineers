@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:paddingRight="10dp" />
+        android:paddingRight="@dimen/activity_horizontal_margin" />
 
     <TextView
         android:id="@+id/textView"
@@ -22,9 +22,23 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/imageView"
-        android:paddingRight="10dp"
+        android:paddingRight="@dimen/activity_horizontal_margin"
         android:text="Folder name here."
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
-        android:textColor="#ffffff" />
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/textViewUpdateCounter"
+        android:layout_width="30dp"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:textStyle="bold"
+        android:text="0"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/notification_square_white"
+        android:textColor="@color/swipe_refresh4"/>
 
 </RelativeLayout>

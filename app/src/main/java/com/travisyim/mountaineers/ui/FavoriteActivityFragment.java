@@ -156,8 +156,6 @@ public class FavoriteActivityFragment extends ListFragment implements OnParseTas
             public boolean onMenuItemActionExpand(MenuItem item) {
                 newSearch = true;  // Mark this as a new search
                 mIsCollapsed = false;  // Set this collapsed flag
-                // Set the keyboard state as shown
-                ((ActivityAdapter) getListAdapter()).setKeyboardState(true);
 
                 // Run the old search text (must be done in a runnable or will not work)
                 mSearchView.post(new Runnable() {
@@ -177,8 +175,7 @@ public class FavoriteActivityFragment extends ListFragment implements OnParseTas
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 mIsCollapsed = true;  // Set this collapsed flag
-                // Set the keyboard state as hidden
-                ((ActivityAdapter) getListAdapter()).setKeyboardState(false);
+
                 return true;
             }
         });
@@ -230,8 +227,6 @@ public class FavoriteActivityFragment extends ListFragment implements OnParseTas
         // Check to see if the Favorite Activity fragment is still updating results
         if (!mSwipeRefreshLayout.isRefreshing()) {
             mHasSearchLostFocus = true;  // Flag this as clicked
-            // Set the keyboard state as hidden
-            ((ActivityAdapter) getListAdapter()).setKeyboardState(false);
 
             activityPosition = position;  // Capture position of listitem clicked
 
@@ -306,8 +301,6 @@ public class FavoriteActivityFragment extends ListFragment implements OnParseTas
                     // Check to see if the Favorite Activity fragment is still updating results
                     if (!mSwipeRefreshLayout.isRefreshing()) {
                         mHasSearchLostFocus = true;  // Flag this as clicked
-                        // Set the keyboard state as hidden
-                        ((ActivityAdapter) getListAdapter()).setKeyboardState(false);
 
                         // Not updating so load filter fragment
                         if (mFilterFragment == null) {

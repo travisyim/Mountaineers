@@ -39,7 +39,6 @@ public class MainActivity extends Activity
     private Fragment mFavoriteActivityFragment;
     private Fragment mSavedSearchFragment;
     private Mountaineer mMember;
-    private SavedSearch mSavedSearch;
     private CharSequence mTitle;
     private boolean mFirstResume = true;
     private boolean mFinishedUserData = false;
@@ -391,6 +390,9 @@ public class MainActivity extends Activity
                          // Save the cookie!
                          mCookie = mMember.getCookies().get(0);
 
+                         // Update the navigation drawer to show saved search updates
+                         updateNavigationDrawerContents();
+
                          // Scrape member profile data from website
                          mMember.getMemberData(this);
                      }
@@ -509,5 +511,19 @@ public class MainActivity extends Activity
     // Sets the state of the drawer
     public void setDrawerOpen(final boolean isDrawerOpen) {
         mIsDrawerOpen = isDrawerOpen;
+    }
+
+    public void updateNavigationDrawerContents() {
+        int navDrawerCounter = 0;
+
+        // Count saved searches with updates and update the counter in the notification drawer
+        for (SavedSearch ss : mMember.getSavedSearchList()) {
+            if (ss.getUpdateCounter() > 0) {
+                navDrawerCounter++;
+            }
+        }
+
+        // Update the navigation drawer to show saved search updates
+        mNavigationDrawerFragment.updateSavedSearchCounter(navDrawerCounter);
     }
 }

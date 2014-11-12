@@ -34,6 +34,7 @@ public class DrawerAdapter extends ArrayAdapter<String[]> {
             holder = new ViewHolder();
             holder.imageView = (ImageView) convertView.findViewById(R.id.imageView);
             holder.textViewName = (TextView) convertView.findViewById(R.id.textView);
+            holder.textViewUpdateCounter = (TextView) convertView.findViewById(R.id.textViewUpdateCounter);
             convertView.setTag(holder);
         }
         else { // Yes
@@ -45,11 +46,28 @@ public class DrawerAdapter extends ArrayAdapter<String[]> {
         holder.textViewName.setText(drawerItem[0]);  // Drawer item title
         holder.imageView.setImageResource(Integer.parseInt(drawerItem[1]));  // Image
 
+        // Update counter
+        if (drawerItem[2] == null || Integer.parseInt(drawerItem[2]) == 0) {
+            // Hide the counter if not representing saved search or if the count is 0
+            holder.textViewUpdateCounter.setVisibility(View.GONE);
+        }
+        else {
+            holder.textViewUpdateCounter.setVisibility(View.VISIBLE);  // Show counter
+
+            if (Integer.parseInt(drawerItem[2]) <= 9) {
+                holder.textViewUpdateCounter.setText(String.valueOf(Integer.parseInt(drawerItem[2])));
+            }
+            else {  // More than 9 updates so shorten the text
+                holder.textViewUpdateCounter.setText("9+");
+            }
+        }
+
         return convertView;
     }
 
     private class ViewHolder {
         ImageView imageView;
         TextView textViewName;
+        TextView textViewUpdateCounter;
     }
 }

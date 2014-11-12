@@ -6,6 +6,7 @@ import android.app.ListFragment;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.FindCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -31,11 +33,15 @@ import com.travisyim.mountaineers.adapters.SavedSearchAdapter;
 import com.travisyim.mountaineers.objects.FilterOptions;
 import com.travisyim.mountaineers.objects.Mountaineer;
 import com.travisyim.mountaineers.objects.SavedSearch;
+import com.travisyim.mountaineers.utils.SavedSearchComparator;
 import com.travisyim.mountaineers.utils.OnParseTaskCompleted;
 import com.travisyim.mountaineers.utils.ParseConstants;
 import com.travisyim.mountaineers.utils.SavedSearchLoader;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class SavedSearchFragment extends ListFragment implements OnParseTaskCompleted {
@@ -153,6 +159,27 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
             t.setScreenName("Activity Search (Saved Search)");
             t.send(new HitBuilders.AppViewBuilder().build());
 
+            /* Tell Parse backend that user is now viewing this saved search so go ahead and update
+             * the last viewed timestamp and reset the update counter to 0 */
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put(ParseConstants.KEY_OBJECT_ID, mMember.getSavedSearchList().get(position).getObjectID());
+            try {
+                ParseCloud.callFunction("resetUpdateCounter", params);
+
+                // Locally reset counter and time last viewed (instead of pulling it from Parse)
+                mMember.getSavedSearchList().get(position).setUpdateCounter(0);
+                mMember.getSavedSearchList().get(position).setLastAccessDate(new Date());
+
+                // Update ListView contents
+                ((SavedSearchAdapter) getListAdapter()).notifyDataSetChanged();
+
+                // Update the navigation drawer to show saved search updates
+                ((MainActivity) getActivity()).updateNavigationDrawerContents();
+            }
+            catch (ParseException e) {
+                Log.e(TAG, "Error occurred resetting the counter!");
+            }
+
             // Create new Filter Options if it does not already exist
             if (mFilterOptions == null) {
                 mFilterOptions = new FilterOptions();
@@ -215,11 +242,14 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
                 // Load saved search results and assign to the current Mountaineer object
                 mMember.setSavedSearchList(SavedSearchLoader.load(resultList));
 
+                // Reorganize the saved searches with updates by name
+                reorganizeList(mMember.getSavedSearchList());
+
                 // Add all of these SavedSearches to the ListView
                 mSavedSearchList.addAll(mMember.getSavedSearchList());
 
                 // Update search results
-                refreshActivities();
+                refreshSavedSearches();
             } else {
                 Toast toast = Toast.makeText(getActivity(), getActivity().getString
                         (R.string.toast_parse_error), Toast.LENGTH_LONG);
@@ -237,6 +267,33 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
         }
     }
 
+    private void reorganizeList(List<SavedSearch> list) {
+        /* This method takes in a list that is sorted first by descending update counter and then
+        ascending name and reorganizes so that the saved searches with updates are sorted by
+        ascending name (update counter does not matter except those with 0 should all be at the
+        bottom) */
+        int endSubList = 0;
+
+        if (list.size() != 0) {  // Make sure there is at least one entry (i.e. saved search)
+            // Make sure the first entry has updates or the list does not need to be reorganized
+            if (list.get(0).getUpdateCounter() != 0) {  // First entry has updates
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).getUpdateCounter() == 0) {
+                        // Get the index for the end of the saved searches with updates
+                        endSubList = i;
+                        break;
+                    }
+                }
+
+                // Create a sub-list of the saved searches with counter results and sort it based on name
+                Collections.sort(list.subList(0, endSubList), new SavedSearchComparator());
+
+                // Do this again for all remaining 0-counter results (helps reorg by ignoring case)
+                Collections.sort(list.subList(endSubList, list.size()), new SavedSearchComparator());
+            }
+        }
+    }
+
     private void getSavedSearchList() {
         ParseQuery<ParseObject> query;
 
@@ -245,7 +302,8 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
         if (!mIsCanceled) {
             query = ParseQuery.getQuery(ParseConstants.CLASS_SAVED_SEARCH);
             query.whereEqualTo(ParseConstants.KEY_USER_ID, ParseUser.getCurrentUser().getObjectId());
-            query.orderByAscending(ParseConstants.KEY_SAVE_NAME);
+            query.orderByDescending(ParseConstants.KEY_UPDATE_COUNT);
+            query.addAscendingOrder(ParseConstants.KEY_SAVE_NAME);
             query.setLimit(1000); // limit to 1000 results max
 
             query.findInBackground(new FindCallback<ParseObject>() {
@@ -323,7 +381,9 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
         mFilterOptions.setTypeYouth(savedSearch.isTypeYouth());
     }
 
-    private void refreshActivities() {
+    private void refreshSavedSearches() {
+        int navDrawerCounter = 0;
+
         // Ensure all processes have not been canceled
         if (!mIsCanceled) {
             // Pass the list to the adapter
@@ -343,6 +403,9 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
             }
 
             getListView().setEmptyView(getActivity().findViewById(R.id.textViewEmpty));
+
+            // Update the navigation drawer to show saved search updates
+            ((MainActivity) getActivity()).updateNavigationDrawerContents();
 
             // Flag as updating activities
             ((MainActivity) getActivity()).setLoadingActivities(false);
