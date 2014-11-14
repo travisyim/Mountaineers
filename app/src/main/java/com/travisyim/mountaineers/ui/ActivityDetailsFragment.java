@@ -156,39 +156,58 @@ public class ActivityDetailsFragment extends Fragment {
             Tracker t = ((MountaineersApp) getActivity().getApplication()).getTracker
                     (MountaineersApp.TrackerName.APP_TRACKER);
 
-            // Send the favorite status back to the previous fragment for implementation
             // Check which fragment this filter was launched from
-            if (mParentFragmentTitle == getString(R.string.title_section2)) {  // Activity Search
+            // Activity Search
+            if (mParentFragmentTitle.equals(getString(R.string.title_section2))) {
                 t.setScreenName("Activity Search");
-
-                ((ActivitySearchFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
-                        .onFavoriteSelected(mIsFavorite);
             }
-            else if (mParentFragmentTitle == getString(R.string.title_section3)) {  // Completed Activity
+            // Completed Activity
+            else if (mParentFragmentTitle.equals(getString(R.string.title_section3))) {
                 t.setScreenName("Completed Activities");
-
-                ((CompletedActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
-                        .onFavoriteSelected(mIsFavorite);
             }
-            else if (mParentFragmentTitle == getString(R.string.title_section4)) {  // Signed Up Activity
+            // Signed Up Activity
+            else if (mParentFragmentTitle.equals(getString(R.string.title_section4))) {
                 t.setScreenName("Signed Up Activities");
-
-                ((SignedUpActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
-                        .onFavoriteSelected(mIsFavorite);
             }
-            else if (mParentFragmentTitle == getString(R.string.title_section5)) {  // Favorite Activity
+            // Favorite Activity
+            else if (mParentFragmentTitle.equals(getString(R.string.title_section5))) {
                 t.setScreenName("Favorite Activities");
-
-                ((FavoriteActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
-                        .onFavoriteSelected(mIsFavorite);
             }
             else {  // Saved search activity search
                 t.setScreenName("Activity Search (Saved Search)");
-                ((ActivitySearchFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
-                        .onFavoriteSelected(mIsFavorite);
             }
 
             t.send(new HitBuilders.AppViewBuilder().build());
+
+            // Determine if favorite has changed
+            if (mIsFavorite != getArguments().getBoolean(ARG_FAVORITE)) {  // Favorite status changed
+                // Send the favorite status back to the previous fragment for implementation
+                // Check which fragment this filter was launched from
+                // Activity Search
+                if (mParentFragmentTitle.equals(getString(R.string.title_section2))) {
+                    ((ActivitySearchFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
+                            .onFavoriteSelected(mIsFavorite);
+                }
+                // Completed Activity
+                else if (mParentFragmentTitle.equals(getString(R.string.title_section3))) {
+                    ((CompletedActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
+                            .onFavoriteSelected(mIsFavorite);
+                }
+                // Signed Up Activity
+                else if (mParentFragmentTitle.equals(getString(R.string.title_section4))) {
+                    ((SignedUpActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
+                            .onFavoriteSelected(mIsFavorite);
+                }
+                // Favorite Activity
+                else if (mParentFragmentTitle.equals(getString(R.string.title_section5))) {
+                    ((FavoriteActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
+                            .onFavoriteSelected(mIsFavorite);
+                }
+                else {  // Saved search activity search
+                    ((ActivitySearchFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
+                            .onFavoriteSelected(mIsFavorite);
+                }
+            }
         }
     }
 

@@ -57,8 +57,6 @@ public class ActivityLoader {
             activity.setAvailabilityParticipant
                     (result.getInt(ParseConstants.KEY_AVAILABILITY_PARTICIPANT));
             activity.setBranch(result.getString(ParseConstants.KEY_BRANCH));  // Branch
-            // Difficulty
-            activity.setDifficulty(result.getJSONArray(ParseConstants.KEY_DIFFICULTY));
             // End latitude
             activity.setEndLatitude(result.getDouble(ParseConstants.KEY_END_LATITUDE));
             // End longitude
@@ -66,20 +64,14 @@ public class ActivityLoader {
             // Activity picture URL
             activity.setImageUrl(result.getString(ParseConstants.KEY_IMAGE_URL));
             activity.setLeaderName(result.getJSONArray(ParseConstants.KEY_LEADER_NAME));  // Leader name
-            activity.setLeaderRole(result.getJSONArray(ParseConstants.KEY_LEADER_ROLE));  // Leader role
-            // Qualified youth leader
-            activity.setQYL(result.getJSONArray(ParseConstants.KEY_QUALIFIED_YOUTH_LEAD));
             // Activity title
             activity.setTitle(result.getString(ParseConstants.KEY_ACTIVITY_TITLE));
             activity.setObjectID(result.getObjectId());  // Parse object ID
-            // Prerequisites
-            activity.setPrerequisites(result.getJSONArray(ParseConstants.KEY_PREREQUISITES));
             // Registration open and close dates
             activity.setRegistrationOpenTime(DateUtil.convertFromUNC(result.getDate
                     (ParseConstants.KEY_REGISTRATION_OPEN_TIME)));
             activity.setRegistrationCloseTime(DateUtil.convertFromUNC(result.getDate
                     (ParseConstants.KEY_REGISTRATION_CLOSE_TIME)));
-            activity.setCanceled(result.getBoolean(ParseConstants.KEY_REGISTRATION_CANCELED));
             // Start latitude
             activity.setStartLatitude(result.getDouble(ParseConstants.KEY_START_LATITUDE));
             // Start longitude

@@ -3,10 +3,10 @@ package com.travisyim.mountaineers.ui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -38,6 +38,7 @@ import com.travisyim.mountaineers.objects.FilterOptions;
 import com.travisyim.mountaineers.objects.MountaineerActivity;
 import com.travisyim.mountaineers.utils.ActivityLoader;
 import com.travisyim.mountaineers.utils.DateUtil;
+import com.travisyim.mountaineers.utils.ListUtil;
 import com.travisyim.mountaineers.utils.OnParseTaskCompleted;
 import com.travisyim.mountaineers.utils.ParseConstants;
 
@@ -54,7 +55,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     private FilterFragment mFilterFragment;
     private FilterOptions mFilterOptions;
     private List<MountaineerActivity> mActivityList = new ArrayList<MountaineerActivity>();
-    private DrawerLayout mDrawerLayout;
     private MenuItem mSearchMenuItem;
     private SearchView mSearchView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -63,17 +63,14 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     private String mParentFragmentTitle;
     private String mSavedSearchName;
     private String mQueryText;
-    private String mPreviousSearch;
     private int mActivityPosition;
-    private boolean mIsNewSearch;
     private boolean mAlreadyLoaded;
     private boolean mReturnFromFilter = false;
     private boolean mReturnFromDetails = false;
-    private boolean mIsCollapsed = false;
-    private boolean mHasSearchLostFocus = false;
+    private boolean mIsSubstantialUpdate = false;
     private boolean mIsCanceled = false;
-    private boolean mIsSubmitted = false;
     private boolean mIsSavedSearch = false;
+    private boolean mIsUpdatingSavedSearch = false;
 
     private final String TAG = ActivitySearchFragment.class.getSimpleName() + ":";
     private static final String ARG_PARENT_TITLE = "parentFragmentTitle";
@@ -133,6 +130,18 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
             // Update ActionBar title to show saved search name
             getActivity().getActionBar().setTitle(mSavedSearchName);
+
+            /* Check to see if this is a different search being opened in this fragment (applies
+             * only to saved searches) */
+            if (mAlreadyLoaded) {  // Previous saved search results already loaded
+                mIsUpdatingSavedSearch = true;
+
+                // Run filter update code to determine activity list should be treated
+                FilterUpdates();
+
+                // Ensure the desired post filter update behavior (just like if filters were just applied)
+                mReturnFromFilter = true;
+            }
         }
     }
 
@@ -146,7 +155,14 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             // Google Analytics tracking code - Activity Search first load
             Tracker t = ((MountaineersApp) getActivity().getApplication()).getTracker
                     (MountaineersApp.TrackerName.APP_TRACKER);
-            t.setScreenName("Activity Search");
+
+            if (mIsSavedSearch) {
+                t.setScreenName("Activity Search (Saved Search)");
+            }
+            else {
+                t.setScreenName("Activity Search");
+            }
+
             t.send(new HitBuilders.AppViewBuilder().build());
 
             // If the FilterOptions object was not passed in, then create it
@@ -166,26 +182,9 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_activity_search, container, false);
 
-        mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setColorScheme(R.color.swipe_refresh1, R.color.swipe_refresh2,
                 R.color.swipe_refresh3, R.color.swipe_refresh4);
-
-        /* Check to make sure the user is logged in before loading activities (the user's favorites
-         * are required for this process). The code below does not run for a user who has not logged
-         * in yet.  Once the user logs in, the same code will be run in the onResume() method */
-        if (ParseUser.getCurrentUser() != null) {
-            /* Get full activity list from the latest Parse data if this is the first time creating
-             * this fragment */
-            if (savedInstanceState == null && !mAlreadyLoaded) {
-                mAlreadyLoaded = true;
-                mSwipeRefreshLayout.setRefreshing(true);  // Turn on update indicator
-                // Flag as updating activities
-                ((MainActivity) getActivity()).setLoadingActivities(true);
-                getActivityList();
-            }
-        }
 
         // Setup SwipeRefresh behavior
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -204,26 +203,43 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     public void onResume() {
         super.onResume();
 
-        /* The intent of the code below is to download the latest activity data when the user has
-         * just logged in.  This code would be ignored if the user was logged in from a previous
-         * session (i.e. returning Current User). */
+        // Ensure there is a user logged in
         if (ParseUser.getCurrentUser() != null) {
-            if (mReturnFromFilter) {
-                mReturnFromFilter = false;
-                mSwipeRefreshLayout.setRefreshing(true);  // Turn on update indicator
+            /* Get full activity list from the latest Parse data if this is the first time creating
+             * this fragment */
+            if (!mAlreadyLoaded) {
+                mAlreadyLoaded = true;
+
                 // Flag as updating activities
                 ((MainActivity) getActivity()).setLoadingActivities(true);
-            }
-            // Only run if activities had been previously populated in the listview
-            else if (!mReturnFromDetails && mActivityList.size() != 0) {
-                /* Refresh favorites (important in case the user has deselected a favorite Completed
-                 * activity from the Favorites fragment */
                 mSwipeRefreshLayout.setRefreshing(true);  // Turn on update indicator
-                refreshFavorites();
 
-                // Apply user defined filters to the latest list of activities
-                ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+                getActivityList();  // Get the activity list for the defined filter and query options
+            }
+            // User returning from filter options
+            else if (mReturnFromFilter) {
+                mReturnFromFilter = false;  // Reset this flag
+
+                // Being returned from filter application that requires a new Parse query (significant date change)
+                if (mIsSubstantialUpdate) {
+                    mIsSubstantialUpdate = false;  // Reset this flag
+
+                    // Flag as updating activities
+                    ((MainActivity) getActivity()).setLoadingActivities(true);
+                    mSwipeRefreshLayout.setRefreshing(true);  // Turn on update indicator
+                }
+            }
+            /* Refresh favorite activity status if coming from another fragment other than the filter
+             * or activity detail fragments */
+            else if (!mReturnFromDetails && !mReturnFromFilter) {
+                /* Refresh favorites (e.g. user has deselected a favorite Completed activity and
+                 * that favorite status needs to the same activity in this list */
+                mSwipeRefreshLayout.setRefreshing(true);  // Turn on update indicator
+
+                /* Update activity list to reflect latest set of Favorite activities.  This is
+                 * typically completed in the ActivityLoader but we are loading any activities -
+                 * just updating the showing activities */
+                refreshFavorites();
             }
             // User returning from activity details
             else if (mReturnFromDetails) {
@@ -236,7 +252,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     public void onDestroy() {
         super.onDestroy();
 
-        if (mIsSavedSearch && !mIsCanceled) {
+        if (mIsSavedSearch && !mIsCanceled) {  // Only applies when returning to saved search fragment
             // Reset the title back to that of the parent fragment
             getActivity().getActionBar().setTitle(mParentFragmentTitle);
 
@@ -271,7 +287,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             public void onClick(View v) {
                 // This is triggered when the submit button on the search menu is clicked
                 mQueryText = String.valueOf(mSearchView.getQuery());  // Save query text
-                mIsSubmitted = true;
+
                 mSearchMenuItem.collapseActionView();  // Collapse search view
 
                 // Update results
@@ -285,7 +301,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             public boolean onQueryTextSubmit(String query) {
                 // This is triggered when the enter button on the keyboard is pressed
                 mQueryText = query;  // Save query text
-                mIsSubmitted = true;
+
                 mSearchMenuItem.collapseActionView();  // Collapse search view
 
                 // Update results
@@ -305,9 +321,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
         mSearchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                mIsNewSearch = true;  // Mark this as a new search
-                mIsCollapsed = false;  // Set this collapsed flag
-
                 // Run the old search text (must be done in a runnable or will not work)
                 mSearchView.post(new Runnable() {
                     @Override
@@ -324,20 +337,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                // Check to see if query was submitted or if back button / up was pressed
-                if (!mIsSubmitted) {  // User canceled query
-                    // Reload previous search results
-                    mQueryText = mPreviousSearch;
-                    ((ActivityAdapter) getListAdapter()).applyTextFilter(mPreviousSearch);
-                    ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
-                }
-                else {  // User submitted new query
-                    mIsSubmitted = false;
-                    mPreviousSearch = mQueryText;  // Save previous search
-                }
-
-                mIsCollapsed = true;  // Set this collapsed flag
-
                 return true;
             }
         });
@@ -349,9 +348,8 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
         // Check to see if the Activity Search fragment is still updating results
         if (!mSwipeRefreshLayout.isRefreshing()) {
-            mHasSearchLostFocus = true;  // Flag this as clicked
-
             mActivityPosition = position;  // Capture position of listitem clicked
+            mReturnFromDetails = true;  // User is launching an activity details fragment
 
             // Launch ActivityDetails fragment to show activity's webpage
             if (mActivityDetailsFragment == null) {
@@ -399,9 +397,12 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             // Update ActionBar title to show name
             getActivity().getActionBar().setTitle(getString(R.string.title_activity_details));
 
-            // Load activity details fragment
-            getFragmentManager().beginTransaction().replace(R.id.container, mActivityDetailsFragment)
-                    .addToBackStack(null).commit();
+            // Load activity details fragment with fade and slide animations
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out,
+                    R.animator.slide_in_right, R.animator.slide_out_right);
+
+            transaction.replace(R.id.container, mActivityDetailsFragment).addToBackStack(null).commit();
         }
         else {  // Still updating so prevent user from moving to the activity details page
             Toast.makeText(getActivity(), getActivity().getString(R.string.toast_filter_wait),
@@ -422,21 +423,34 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                  * drawer is open */
                 if (!((MainActivity) getActivity()).isDrawerOpen()) {
                     if (!mSwipeRefreshLayout.isRefreshing()) {
-                        mHasSearchLostFocus = true;  // Flag this as clicked
-
                         // Not updating so load filter fragment
                         if (mFilterFragment == null) {
                             mFilterFragment = FilterFragment.newInstance
                                     ((float) (this.getArguments().getFloat(ARG_SECTION_NUMBER) + 0.1),
                                     mFilterOptions, getActivity().getActionBar().getTitle().toString());
                         }
+                        else {  // Update the filter fragment's parent fragment title
+                            Bundle args = mFilterFragment.getArguments();
+
+                            /* Pass the following in a bundle because the original title is created
+                             * through newInstance.  In this case, we are reusing an existing
+                             * FilterFragment. */
+                            args.putString(ARG_PARENT_TITLE,
+                                    getActivity().getActionBar().getTitle().toString());
+                        }
+
+                        // Set this flag to produce null behavior when hitting back in filter fragment
+                        mReturnFromFilter = true;
 
                         // Update ActionBar title to show name
                         getActivity().getActionBar().setTitle(getString(R.string.title_activity_filters));
 
-                        // Launch Filter fragment
-                        getFragmentManager().beginTransaction().replace(R.id.container, mFilterFragment)
-                                .addToBackStack(null).commit();
+                        // Load filter fragment with fade and slide animations
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out,
+                                R.animator.slide_in_right, R.animator.slide_out_right);
+
+                        transaction.replace(R.id.container, mFilterFragment).addToBackStack(null).commit();
                     } else {  // Still updating so prevent user from moving to the filter page
                         Toast.makeText(getActivity(), getActivity().getString(R.string.toast_filter_wait),
                                 Toast.LENGTH_SHORT).show();
@@ -455,8 +469,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
     @Override
     public void onFavoriteSelected(boolean isFavorite) {
-        mReturnFromDetails = true;
-
         // Update activity with the favorite state if it has changed
         if (mActivityList.get(mActivityPosition).isFavorite() != isFavorite) {
             // Favorite value has changed so update it
@@ -486,99 +498,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
          * Activity Search fragment */
         mFilterOptions = filterOptions;
 
-        /* Either submit a new query or apply filters depending on how the start date selection has
-         * changed (if it has at all) */
-        if (mFilterOptions.getStartDate() == null) {  // No start date defined
-            if (mPreviousSearchStartDate == null) {  // No start date defined previously
-                // No start date change - apply both text and filter options to the activity list
-                ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
-            }
-            else {  // Previous query used a defined start date
-                /* Flag that we're returning from the filter so we can start the swipe refreshing
-                 * (does not work if we call the refreshing command directly) */
-                mReturnFromFilter = true;
-
-                // Search again since the start date has been opened up
-                getActivityList();
-            }
-        }
-        else {  // Defined start date
-            if (mPreviousSearchStartDate == null) {  // No start date defined previously
-                // Check for the number of activities
-                if (((ActivityAdapter) getListAdapter()).getMasterActivityListCount() == 1000) {
-                    // More than 1000 results (Parse will only return 1000 results at a time
-                    if (mFilterOptions.getStartDate().getTime() <
-                            ((ActivityAdapter) getListAdapter()).getMinStartDate().getTime()) {
-                        /* Start date is defined prior to any activities on Parse - do not search
-                         * again - just update filtered results since we have the range covered */
-                        ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                        ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
-                    }
-                    else if (mFilterOptions.getEndDate() == null ||
-                            mFilterOptions.getEndDate().getTime() >=
-                                    ((ActivityAdapter) getListAdapter()).getMaxStartDate().getTime()) {
-                        /* Flag that we're returning from the filter so we can start the swipe
-                         * refreshing (does not work if we call the refreshing command directly) */
-                        mReturnFromFilter = true;
-
-                        // Search again
-                        getActivityList();
-                    }
-                    else {  // No need to update results from Parse
-                        // Do not query Parse - just update filtered results
-                        ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                        ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
-                    }
-                }
-                else {  // Less than 1000 total activities
-                    // Do not query Parse - just update filtered results
-                    ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                    ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
-                }
-            }
-            else {  // Start date was defined for the previous search
-                if (mFilterOptions.getStartDate().getTime() < mPreviousSearchStartDate.getTime()) {
-                    /* Flag that we're returning from the filter so we can start the swipe refreshing
-                     * (does not work if we call the refreshing command directly) */
-                    mReturnFromFilter = true;
-
-                    // Search again since the start date has been opened up
-                    getActivityList();
-                }
-                else if (mFilterOptions.getStartDate().getTime() == mPreviousSearchStartDate.getTime()) {
-                    // Do not query Parse - just update filtered results
-                    ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                    ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
-                }
-                else {  // Current start date is greater than the previous search's start date
-                    // Check for the number of activities
-                    if (((ActivityAdapter) getListAdapter()).getMasterActivityListCount() == 1000) {
-                        // More than 1000 results (Parse will only return 1000 results at a time
-                        if (mFilterOptions.getEndDate() == null ||
-                                mFilterOptions.getEndDate().getTime() >=
-                                        ((ActivityAdapter) getListAdapter()).getMaxStartDate().getTime()) {
-                            /* Flag that we're returning from the filter so we can start the swipe
-                             * refreshing (does not work if we call the refreshing command directly) */
-                            mReturnFromFilter = true;
-
-                            // Search again
-                            getActivityList();
-                        }
-                        else {  // No need to update results from Parse
-                            // Do not query Parse - just update filtered results
-                            ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                            ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
-                        }
-                    }
-                    else {  // Less than 1000 total activities
-                        // Do not query Parse - just update filtered results
-                        ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                        ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
-                    }
-                }
-            }
-        }
+        FilterUpdates();  // Apply any filter updates to the list
     }
 
     @Override
@@ -591,11 +511,16 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             mActivityList.clear();
 
             if (e == null) {
+                // Load activities into the list view
                 mActivityList.addAll(ActivityLoader.load(resultList, mFavoritesList));
+
+                // TODO: Can this go at the beginning?  It's behaviour differs from Favorites fragment, for example
+                // Set the default empty textview corresponding to the listview
+                getListView().setEmptyView(getActivity().findViewById(R.id.textViewEmpty));
 
                 // See if the results encapsulate the end of our data range
                 if (mFilterOptions.getEndDate() == null) {  // No end date defined
-                    if (mActivityList.size() == 1000) {  // Max limit reached
+                    if (mActivityList.size() == ParseConstants.QUERY_LIMIT) {  // Max limit reached
                         toast = Toast.makeText(getActivity(), getActivity().getString
                                 (R.string.toast_max_activities), Toast.LENGTH_LONG);
                         ((TextView) ((LinearLayout) toast.getView()).getChildAt(0))
@@ -603,8 +528,8 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                         toast.show();
                     }
                 } else {  // End date defined
-                    if (mActivityList.size() == 1000) {  // Max limit reached
-                        // See if the end date is captured in the 1000 results
+                    if (mActivityList.size() == ParseConstants.QUERY_LIMIT) {  // Max limit reached
+                        // See if the end date is captured in the 500 results
                         if (mFilterOptions.getEndDate().getTime() >= mActivityList
                                 .get(mActivityList.size() - 1).getActivityEndDate().getTime()) {
                         /* The defined end date either falls outside or on the day of the last
@@ -637,6 +562,112 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
         }
     }
 
+    private void FilterUpdates() {
+        /* Either submit a new query or apply filters depending on how the start date selection has
+         * changed (if it has at all) */
+        if (mFilterOptions.getStartDate() == null) {  // No start date defined
+            if (mPreviousSearchStartDate == null) {  // No start date defined previously
+                // No start date change - apply both text and filter options to the activity list
+                ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
+                ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+            }
+            else {  // Previous query used a defined start date
+                /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                 * refreshing (does not work if we call the refreshing command directly here) */
+                mIsSubstantialUpdate = true;
+
+                // Search again since the start date has been opened up
+                getActivityList();
+            }
+        }
+        else {  // Defined start date
+            if (mPreviousSearchStartDate == null) {  // No start date defined previously
+                // Check for the number of activities
+                if (((ActivityAdapter) getListAdapter()).getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
+                    // More than 500 results (query will only return 500 results at a time)
+                    if (mFilterOptions.getStartDate().getTime() <
+                            ((ActivityAdapter) getListAdapter()).getMinStartDate().getTime()) {
+                        /* Start date is defined prior to any activities on Parse - do not search
+                         * again - just update filtered results since we have the range covered */
+                        ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
+                        ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+                    }
+                    else if (mFilterOptions.getEndDate() == null ||
+                            mFilterOptions.getEndDate().getTime() >=
+                                    ((ActivityAdapter) getListAdapter()).getMaxStartDate().getTime()) {
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+                    }
+                    else {  // No need to update results from Parse
+                        // Do not query Parse - just update filtered results
+                        ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
+                        ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+                    }
+                }
+                else {  // Less than 500 total activities
+                    // Do not query Parse - just update filtered results
+                    ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
+                    ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+                }
+            }
+            else {  // Start date was defined for the previous search
+                if (mFilterOptions.getStartDate().getTime() < mPreviousSearchStartDate.getTime()) {
+                    /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                     * refreshing (does not work if we call the refreshing command directly here) */
+                    mIsSubstantialUpdate = true;
+
+                    // Search again since the start date has been opened up
+                    getActivityList();
+                }
+                else if (mFilterOptions.getStartDate().getTime() == mPreviousSearchStartDate.getTime()) {
+                    // Do not query Parse - just update filtered results
+                    ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
+                    ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+                }
+                else {  // Current start date is greater than the previous search's start date
+                    // Check for the number of activities
+                    if (((ActivityAdapter) getListAdapter()).getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
+                        // More than 500 results (Query will only return 500 results at a time)
+                        if (mFilterOptions.getEndDate() == null ||
+                                mFilterOptions.getEndDate().getTime() >=
+                                        ((ActivityAdapter) getListAdapter()).getMaxStartDate().getTime()) {
+                            /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                             * refreshing (does not work if we call the refreshing command directly here) */
+                            mIsSubstantialUpdate = true;
+
+                            // Search again
+                            getActivityList();
+                        }
+                        else {  // No need to update results from Parse
+                            // Do not query Parse - just update filtered results
+                            ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
+                            ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+                        }
+                    }
+                    else {  // Less than 500 total activities
+                        // Do not query Parse - just update filtered results
+                        ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
+                        ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+                    }
+                }
+            }
+        }
+
+        /* If filter updates are being applied, refresh the favorites as well (it is
+         * possible that there were favorite changes in the previous saved search) */
+        if (mIsUpdatingSavedSearch) {
+            mIsUpdatingSavedSearch = false;  // Saved search updating logic is done
+
+            if (!mIsSubstantialUpdate) {
+                refreshFavorites();
+            }
+        }
+    }
+
     private void getActivityList() {
         // This method is called to retrieve activities from the backend
         ParseQuery<ParseObject> query;
@@ -644,7 +675,8 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
         // Ensure all processes have not been canceled
         if (!mIsCanceled) {
             // Get list of favorite activities
-            mFavoritesList = ParseUser.getCurrentUser().getList(ParseConstants.KEY_FAVORITES);
+            List<String> tempFavorites = ParseUser.getCurrentUser().getList(ParseConstants.KEY_FAVORITES);
+            mFavoritesList = ListUtil.copy(tempFavorites);
 
             query = ParseQuery.getQuery(ParseConstants.CLASS_ACTIVITY);
 
@@ -657,14 +689,14 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                         DateUtil.convertToUNC(mFilterOptions.getStartDate()));
             }
 
-        /* A query constraint is not set on the end date.  Instead, up to 1000 activities will be
-         * returned (max of Parse query items) and if the end date is captured, then limit the
-         * results shown.  However, if the end date is not reached within the 1000 result limit, the
+        /* A query constraint is not set on the end date.  Instead, up to 500 activities will be
+         * returned (max for Parse is 1000) and if the end date is captured, then limit the
+         * results shown.  However, if the end date is not reached within the 500 result limit, the
          * user will be shown an error message to reduce the date range. */
 
             query.orderByAscending(ParseConstants.KEY_ACTIVITY_START_DATE);
             query.addAscendingOrder(ParseConstants.KEY_ACTIVITY_TITLE);
-            query.setLimit(1000); // limit to 1000 results max
+            query.setLimit(ParseConstants.QUERY_LIMIT); // limit to 500 results max
 
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> resultList, ParseException e) {
@@ -716,25 +748,25 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                     // Intermediate check to ensure all processes have not been canceled
                     if (!mIsCanceled) {
                         // Get list of favorite activities
-                        mFavoritesList = ParseUser.getCurrentUser().getList(ParseConstants.KEY_FAVORITES);
+                        List<String> tempFavorites = ParseUser.getCurrentUser().getList(ParseConstants.KEY_FAVORITES);
+                        mFavoritesList = ListUtil.copy(tempFavorites);
 
                         for (MountaineerActivity activity : mActivityList) {
-                            if (mFavoritesList != null) {  // Favorite activities defined
+                            if (mFavoritesList != null) {  // Favorite activities in the list
                                 favoriteObjectIdPosition = mFavoritesList.indexOf(activity.getObjectID());
 
                                 if (favoriteObjectIdPosition >= 0) {  // This activity is a favorite
                                     activity.setFavorite(true);  // Set favorite flag to true
+
                                     // Remove the favorite ObjectId from the list (for efficiency)
                                     mFavoritesList.remove(favoriteObjectIdPosition);
                                 } else {  // Activity object ID not found in favorites list
                                     activity.setFavorite(false);
                                 }
-                            } else {  // No favorite activities defined
+                            } else {  // No favorite activities in the list
                                 activity.setFavorite(false);
                             }
                         }
-
-                        getListView().setEmptyView(getActivity().findViewById(R.id.textViewEmpty));
 
                         // Flag as finished updating activities
                         ((MainActivity) getActivity()).setLoadingActivities(false);

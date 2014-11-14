@@ -631,7 +631,8 @@ public final class Mountaineer implements Serializable {
             query = ParseQuery.getQuery(ParseConstants.CLASS_SAVED_SEARCH);
             query.whereEqualTo(ParseConstants.KEY_USER_ID, ParseUser.getCurrentUser().getObjectId());
             query.orderByAscending(ParseConstants.KEY_SAVE_NAME);
-            query.setLimit(1000); // limit to 1000 results max
+            // Limit to 500 results max (hopefully user will not have more saved searches than this)
+            query.setLimit(ParseConstants.QUERY_LIMIT);
 
             try {
                 // Get results from Parse (no need to find in background as this is running in AsyncTask)

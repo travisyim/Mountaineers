@@ -119,6 +119,7 @@ public class FilterFragment extends Fragment {
     private static final String ARG_FILTER_OPTIONS = "filterOptions";
     private boolean mLogOut = false;
     private boolean mIsAlreadyLoaded = false;
+    private boolean mIsFavoritesSaved = false;
 
     // Returns a new instance of this fragment for the given section number
     public static FilterFragment newInstance(final float sectionNumber,
@@ -157,7 +158,6 @@ public class FilterFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
-        mLogOut = false;
     }
 
     @Override
@@ -197,38 +197,64 @@ public class FilterFragment extends Fragment {
         mIsAlreadyLoaded = false;
 
         if (!mLogOut) {
-            // Google Analytics tracking code - User Profile
+            // Google Analytics tracking code
             Tracker t = ((MountaineersApp) getActivity().getApplication()).getTracker
                     (MountaineersApp.TrackerName.APP_TRACKER);
 
-            // Check which fragment this filter was launched from
-            if (mParentFragmentTitle.equals(getString(R.string.title_section2))) {  // Activity Search
+            // Check which fragment this filter was launched from and assign the screen name
+            // Activity Search
+            if (mParentFragmentTitle.equals(getString(R.string.title_section2))) {
                 t.setScreenName("Activity Search");
-                ((ActivitySearchFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
-                        .onFiltersSelected(mFilterOptions);
             }
-            else if (mParentFragmentTitle.equals(getString(R.string.title_section3))) {  // Completed Activity
+            // Completed Activity
+            else if (mParentFragmentTitle.equals(getString(R.string.title_section3))) {
                 t.setScreenName("Completed Activities");
-                ((CompletedActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
-                        .onFiltersSelected(mFilterOptions);
             }
-            else if (mParentFragmentTitle.equals(getString(R.string.title_section4))) {  // Signed Up Activity
+            // Signed Up Activity
+            else if (mParentFragmentTitle.equals(getString(R.string.title_section4))) {
                 t.setScreenName("Signed Up Activities");
-                ((SignedUpActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
-                        .onFiltersSelected(mFilterOptions);
             }
-            else if (mParentFragmentTitle.equals(getString(R.string.title_section5))) {  // Favorite Activity
+            // Favorite Activity
+            else if (mParentFragmentTitle.equals(getString(R.string.title_section5))) {
                 t.setScreenName("Favorite Activities");
-                ((FavoriteActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
-                        .onFiltersSelected(mFilterOptions);
             }
             else {  // Saved search activity search
                 t.setScreenName("Activity Search (Saved Search)");
-                ((ActivitySearchFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
-                        .onFiltersSelected(mFilterOptions);
             }
 
             t.send(new HitBuilders.AppViewBuilder().build());
+
+            // Check if filters were applied (the user did not just hit back / up)
+            if (mIsFavoritesSaved) {  // Filter applied
+                /* Check which fragment this filter was launched from and launch the corresponding
+                 * onFiltersSelected method */
+                // Activity Search
+                if (mParentFragmentTitle.equals(getString(R.string.title_section2))) {
+                    ((ActivitySearchFragment) getFragmentManager().findFragmentByTag
+                            (mParentFragmentTitle)).onFiltersSelected(mFilterOptions);
+                }
+                // Completed Activity
+                else if (mParentFragmentTitle.equals(getString(R.string.title_section3))) {
+                    ((CompletedActivityFragment) getFragmentManager().findFragmentByTag
+                            (mParentFragmentTitle)).onFiltersSelected(mFilterOptions);
+                }
+                // Signed Up Activity
+                else if (mParentFragmentTitle.equals(getString(R.string.title_section4))) {
+                    ((SignedUpActivityFragment) getFragmentManager().findFragmentByTag
+                            (mParentFragmentTitle)).onFiltersSelected(mFilterOptions);
+                }
+                // Favorite Activity
+                else if (mParentFragmentTitle.equals(getString(R.string.title_section5))) {
+                    ((FavoriteActivityFragment) getFragmentManager().findFragmentByTag
+                            (mParentFragmentTitle)).onFiltersSelected(mFilterOptions);
+                }
+                else {  // Saved search activity search
+                    ((ActivitySearchFragment) getFragmentManager().findFragmentByTag
+                            (mParentFragmentTitle)).onFiltersSelected(mFilterOptions);
+                }
+
+                mIsFavoritesSaved = false;  // Reset flag since the filter object will be reused
+            }
 
             // Reset the title back to that of the parent fragment
             getActivity().getActionBar().setTitle(mParentFragmentTitle);
@@ -320,6 +346,7 @@ public class FilterFragment extends Fragment {
                 return true;
             case R.id.action_apply:  // Apply filter settings
                 // Save current object and send back to previous fragment
+                mIsFavoritesSaved = true;  // Flag as filter was applied (the user did not just hit back)
                 saveFilterOptions();
                 getFragmentManager().popBackStackImmediate();  // Go back to previous fragment
                 return true;
@@ -728,6 +755,7 @@ public class FilterFragment extends Fragment {
             mActivityTypeContent.setVisibility(View.VISIBLE);
             mTypeAll.setVisibility(View.VISIBLE);
             mTypeNone.setVisibility(View.VISIBLE);
+            mActivityTypeHeader.setText(getString(R.string.filter_header_activity_type_collapse));
 
             // Apply previous checks
             mTypeAdventureClub.setChecked(mFilterOptions.isTypeAdventureClub());
@@ -758,6 +786,7 @@ public class FilterFragment extends Fragment {
             mRatingContent.setVisibility(View.VISIBLE);
             mRatingAll.setVisibility(View.VISIBLE);
             mRatingNone.setVisibility(View.VISIBLE);
+            mRatingHeader.setText(getString(R.string.filter_header_activity_difficulty_collapse));
 
             // Apply previous checks
             mRatingBeginners.setChecked(mFilterOptions.isRatingForBeginners());
@@ -774,6 +803,7 @@ public class FilterFragment extends Fragment {
             mAudienceContent.setVisibility(View.VISIBLE);
             mAudienceAll.setVisibility(View.VISIBLE);
             mAudienceNone.setVisibility(View.VISIBLE);
+            mAudienceHeader.setText(getString(R.string.filter_header_for_collapse));
 
             // Apply previous checks
             mAudienceAdults.setChecked(mFilterOptions.isAudienceAdults());
@@ -794,6 +824,7 @@ public class FilterFragment extends Fragment {
             mBranchContent.setVisibility(View.VISIBLE);
             mBranchAll.setVisibility(View.VISIBLE);
             mBranchNone.setVisibility(View.VISIBLE);
+            mBranchHeader.setText(getString(R.string.filter_header_branch_collapse));
 
             // Apply previous checks
             mBranchTheMountaineers.setChecked(mFilterOptions.isBranchTheMountaineers());
@@ -814,6 +845,7 @@ public class FilterFragment extends Fragment {
             mClimbingContent.setVisibility(View.VISIBLE);
             mClimbingAll.setVisibility(View.VISIBLE);
             mClimbingNone.setVisibility(View.VISIBLE);
+            mClimbingHeader.setText(getString(R.string.filter_header_climbing_collapse));
 
             // Apply previous checks
             mClimbingBasicAlpine.setChecked(mFilterOptions.isClimbingBasicAlpine());
@@ -829,6 +861,7 @@ public class FilterFragment extends Fragment {
             mSkiingContent.setVisibility(View.VISIBLE);
             mSkiingAll.setVisibility(View.VISIBLE);
             mSkiingNone.setVisibility(View.VISIBLE);
+            mSkiingHeader.setText(getString(R.string.filter_header_skiing_collapse));
 
             // Apply previous checks
             mSkiingCrossCountry.setChecked(mFilterOptions.isSkiingCrossCountry());
@@ -843,6 +876,7 @@ public class FilterFragment extends Fragment {
             mSnowshoeingContent.setVisibility(View.VISIBLE);
             mSnowshoeingAll.setVisibility(View.VISIBLE);
             mSnowshoeingNone.setVisibility(View.VISIBLE);
+            mSnowshoeingHeader.setText(getString(R.string.filter_header_snowshoeing_collapse));
 
             // Apply previous checks
             mSnowshoeingBeginner.setChecked(mFilterOptions.isSnowshoeingBeginner());

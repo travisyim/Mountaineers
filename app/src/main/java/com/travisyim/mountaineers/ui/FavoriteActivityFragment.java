@@ -21,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -194,18 +193,16 @@ public class FavoriteActivityFragment extends ListFragment implements OnParseTas
                 /* Check to see if this change is due to the user clicking on the Navigation Drawer
                  * icon.  If so, do not reset the query text. */
                 if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {  // User is trying to search
-                    if (newSearch && newText.equals("")) {  // New search by user
+                    if (newSearch && newText.isEmpty()) {  // New search by user
                         newSearch = false;
-                    }
-                    else if (mIsCollapsed) { // Triggered by collapsing Searchview
+                    } else if (mIsCollapsed) { // Triggered by collapsing Searchview
                         mIsCollapsed = false;
-                    }
-                    else if (mHasSearchLostFocus) { // Triggered by clicking an activity or filter
+                    } else if (mHasSearchLostFocus) { // Triggered by clicking an activity or filter
                         mHasSearchLostFocus = false;
                     }
                     // Check to see if the Activity Search fragment is still updating results
                     else if (!mSwipeRefreshLayout.isRefreshing() ||
-                            (newSearch && !newText.equals(""))) {
+                            (newSearch && !newText.isEmpty())) {
                         newSearch = false;
                         mQueryText = newText;  // Update previously searched query text
 
@@ -263,13 +260,11 @@ public class FavoriteActivityFragment extends ListFragment implements OnParseTas
                     mActivityList.get(position).getStartLongitude() != -999) {
                 args.putString(ARG_LOCATION, mActivityList.get(position).getStartLatitude() + ", " +
                         mActivityList.get(position).getStartLongitude());
-            }
-            else if (mActivityList.get(position).getEndLatitude() != -999 &&
+            } else if (mActivityList.get(position).getEndLatitude() != -999 &&
                     mActivityList.get(position).getEndLongitude() != -999) {
                 args.putString(ARG_LOCATION, mActivityList.get(position).getEndLatitude() + ", " +
                         mActivityList.get(position).getEndLongitude());
-            }
-            else {
+            } else {
                 args.putString(ARG_LOCATION, "");
             }
 
@@ -279,8 +274,7 @@ public class FavoriteActivityFragment extends ListFragment implements OnParseTas
             // Load activity details fragment
             getFragmentManager().beginTransaction().replace(R.id.container, mActivityDetailsFragment)
                     .addToBackStack(null).commit();
-        }
-        else {  // Still updating so prevent user from moving to the activity details page
+        } else {  // Still updating so prevent user from moving to the activity details page
             Toast.makeText(getActivity(), getActivity().getString(R.string.toast_filter_wait),
                     Toast.LENGTH_SHORT).show();
         }
@@ -307,7 +301,7 @@ public class FavoriteActivityFragment extends ListFragment implements OnParseTas
                             // TODO: Fix up section numbering scheme
                             mFilterFragment = FilterFragment.newInstance
                                     ((float) (this.getArguments().getFloat(ARG_SECTION_NUMBER) + 0.1),
-                                    mFilterOptions, getActivity().getActionBar().getTitle().toString());
+                                            mFilterOptions, getActivity().getActionBar().getTitle().toString());
                         }
 
                         // Update ActionBar title to show name
@@ -339,8 +333,7 @@ public class FavoriteActivityFragment extends ListFragment implements OnParseTas
             if (isFavorite) {  // Add entry to user's favorites array list
                 ParseUser.getCurrentUser().add(ParseConstants.KEY_FAVORITES,
                         mActivityList.get(activityPosition).getObjectID());
-            }
-            else {  // Delete entry to user's favorites array list
+            } else {  // Delete entry to user's favorites array list
                 List<String> objectId = new ArrayList<String>();
                 objectId.add(mActivityList.get(activityPosition).getObjectID());
                 ParseUser.getCurrentUser().removeAll(ParseConstants.KEY_FAVORITES, objectId);
@@ -348,8 +341,7 @@ public class FavoriteActivityFragment extends ListFragment implements OnParseTas
 
             try {
                 ParseUser.getCurrentUser().saveInBackground();
-            }
-            catch (Exception e) { /* Intentionally left blank */ }
+            } catch (Exception e) { /* Intentionally left blank */ }
         }
     }
 
@@ -387,62 +379,48 @@ public class FavoriteActivityFragment extends ListFragment implements OnParseTas
                 // Flag as finished updating activities
                 ((MainActivity) getActivity()).setLoadingActivities(false);
             }
-        }
-        else {
+        } else {
             mIsCanceled = false;
         }
     }
 
     private void getFavoriteActivityList() {
         // This method is called to retrieve all of the favorite activities from the backend
-        // Ensure all processes have not been canceled
+        ParseQuery<ParseObject> query;
+
+        // Intermediate check to ensure all processes have not been canceled
         if (!mIsCanceled) {
-            // Re-fetch current user data - ensures favorites list is up-to-date
-            ParseUser.getCurrentUser().fetchInBackground(new GetCallback<ParseObject>() {
-                @Override
-                public void done(ParseObject parseObject, ParseException e) {
-                    ParseQuery<ParseObject> query;
+            // Get list of favorite activities
+            List<String> favoritesList = ParseUser.getCurrentUser()
+                    .getList(ParseConstants.KEY_FAVORITES);
 
-                    // Intermediate check to ensure all processes have not been canceled
-                    if (!mIsCanceled) {
-                        // Get list of favorite activities
-                        List<String> favoritesList = ParseUser.getCurrentUser()
-                                .getList(ParseConstants.KEY_FAVORITES);
+            if (favoritesList != null) {
+                query = ParseQuery.getQuery(ParseConstants.CLASS_ACTIVITY);
+                query.whereContainedIn(ParseConstants.KEY_OBJECT_ID, favoritesList);
+                query.orderByAscending(ParseConstants.KEY_ACTIVITY_START_DATE);
+                query.addAscendingOrder(ParseConstants.KEY_ACTIVITY_TITLE);
+                query.setLimit(ParseConstants.QUERY_LIMIT); // Limit to 500 results max
 
-                        if (favoritesList != null) {
-                            query = ParseQuery.getQuery(ParseConstants.CLASS_ACTIVITY);
-                            query.whereContainedIn(ParseConstants.KEY_OBJECT_ID, favoritesList);
-                            query.orderByAscending(ParseConstants.KEY_ACTIVITY_START_DATE);
-                            query.addAscendingOrder(ParseConstants.KEY_ACTIVITY_TITLE);
-                            query.setLimit(1000); // limit to 1000 results max
-
-                            query.findInBackground(new FindCallback<ParseObject>() {
-                                public void done(List<ParseObject> resultList, ParseException e) {
-                                    // Forward the results and error variable to the custom OnParseTaskCompleted method
-                                    onParseTaskCompleted(resultList, e);
-                                }
-                            });
-                        } else {
-                            Toast toast = Toast.makeText(getActivity(), getActivity().getString
-                                    (R.string.toast_empty_favorites), Toast.LENGTH_LONG);
-                            ((TextView) ((LinearLayout) toast.getView()).getChildAt(0))
-                                    .setGravity(Gravity.CENTER_HORIZONTAL);
-                            toast.show();
-
-                            getListView().setEmptyView(getActivity().findViewById(R.id.textViewEmpty));
-
-                            // Flag as updating activities
-                            ((MainActivity) getActivity()).setLoadingActivities(false);
-                            mSwipeRefreshLayout.setRefreshing(false);  // Turn off update indicator
-                        }
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    public void done(List<ParseObject> resultList, ParseException e) {
+                        // Forward the results and error variable to the custom OnParseTaskCompleted method
+                        onParseTaskCompleted(resultList, e);
                     }
-                    else {
-                        mIsCanceled = false;
-                    }
-                }
-            });
-        }
-        else {
+                });
+            } else {
+                Toast toast = Toast.makeText(getActivity(), getActivity().getString
+                        (R.string.toast_empty_favorites), Toast.LENGTH_LONG);
+                ((TextView) ((LinearLayout) toast.getView()).getChildAt(0))
+                        .setGravity(Gravity.CENTER_HORIZONTAL);
+                toast.show();
+
+                getListView().setEmptyView(getActivity().findViewById(R.id.textViewEmpty));
+
+                // Flag as updating activities
+                ((MainActivity) getActivity()).setLoadingActivities(false);
+                mSwipeRefreshLayout.setRefreshing(false);  // Turn off update indicator
+            }
+        } else {
             mIsCanceled = false;
         }
     }

@@ -14,8 +14,17 @@
         android:layout_marginRight="@dimen/listview_padding"
         android:background="@android:color/white">
 
-        <!-- android:adjustViewBounds="true" not working it 4.2 (i.e. buggy).
+        <!-- android:adjustViewBounds="true" not working in 4.2 (i.e. buggy).
             It prevents panoramic shots from showing up -->
+
+        <ImageView
+            android:id="@+id/imageViewDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_action_cancel"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/textViewName"
@@ -23,6 +32,7 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:paddingTop="8dp"
+            android:layout_toRightOf="@+id/imageViewDelete"
             android:text="Saved Search Name"
             android:paddingLeft="@dimen/activity_horizontal_margin"/>
 
@@ -33,6 +43,7 @@
             android:textSize="12sp"
             android:paddingBottom="8dp"
             android:text="Last Access Date"
+            android:layout_toRightOf="@+id/imageViewDelete"
             android:layout_below="@id/textViewName"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:textColor="@android:color/darker_gray"/>
@@ -47,9 +58,17 @@
             android:text="0"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@+id/imageViewNext"
             android:background="@drawable/notification_square_blue"
             android:textColor="@color/swipe_refresh3"/>
+
+        <ImageView
+            android:id="@+id/imageViewNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_action_next_item"/>
 
     </RelativeLayout>
 

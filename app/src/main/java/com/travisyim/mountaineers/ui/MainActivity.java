@@ -74,7 +74,7 @@ public class MainActivity extends Activity
         else {  // User is already logged in so grab latest user data
             setProgressBarIndeterminateVisibility(true);
 
-            // Re-fetch current user data - ensures favorites list is up-to-date
+            // Re-fetch current user data - ensures all data is uptodate
             ParseUser.getCurrentUser().fetchInBackground(new GetCallback<ParseObject>() {
                 @Override
                 public void done(ParseObject parseObject, ParseException e) {

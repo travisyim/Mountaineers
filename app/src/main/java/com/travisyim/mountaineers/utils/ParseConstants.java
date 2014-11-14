@@ -2,6 +2,9 @@ package com.travisyim.mountaineers.utils;
 
 // Constant declaration for all things Parse related
 public class ParseConstants {
+    // Max query limit
+    public static final int QUERY_LIMIT = 500;
+
     // Class names
     public static final String CLASS_ACTIVITY = "Test";
     public static final String CLASS_SAVED_SEARCH = "Searches";
@@ -42,7 +45,6 @@ public class ParseConstants {
     public static final String KEY_QUALIFIED_YOUTH_LEAD = "isQYL";
     public static final String KEY_REGISTRATION_OPEN_TIME = "registrationOpenDate";
     public static final String KEY_REGISTRATION_CLOSE_TIME = "registrationCloseDate";
-    public static final String KEY_REGISTRATION_CANCELED = "isCanceled";
     public static final String KEY_SAVE_NAME = "searchName";
     public static final String KEY_START_LATITUDE = "startLat";
     public static final String KEY_START_LONGITUDE = "startLong";

@@ -2,6 +2,7 @@ package com.travisyim.mountaineers.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -143,9 +144,12 @@ public class UserProfileFragment extends Fragment {
                     // Update ActionBar title to show name
                     getActivity().getActionBar().setTitle(getString(R.string.title_profile_edit));
 
-                    // Load activity details fragment
-                    getFragmentManager().beginTransaction().replace
-                            (R.id.container, mProfileEditFragment).addToBackStack(null).commit();
+                    // Load profile edit fragment with fade and slide animations
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out,
+                            R.animator.slide_in_right, R.animator.slide_out_right);
+
+                    transaction.replace(R.id.container, mProfileEditFragment).addToBackStack(null).commit();
                 }
 
                 return true;

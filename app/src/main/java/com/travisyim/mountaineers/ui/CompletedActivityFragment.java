@@ -209,7 +209,7 @@ public class CompletedActivityFragment extends ListFragment implements OnTaskCom
                 /* Check to see if this change is due to the user clicking on the Navigation Drawer
                  * icon.  If so, do not reset the query text. */
                 if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {  // User is trying to search
-                    if (newSearch && newText.equals("")) {  // New search by user
+                    if (newSearch && newText.isEmpty()) {  // New search by user
                         newSearch = false;
                     }
                     else if (mIsCollapsed) { // Triggered by collapsing Searchview
@@ -220,7 +220,7 @@ public class CompletedActivityFragment extends ListFragment implements OnTaskCom
                     }
                     // Check to see if the Activity Search fragment is still updating results
                     else if (!mSwipeRefreshLayout.isRefreshing() ||
-                            (newSearch && !newText.equals(""))) {
+                            (newSearch && !newText.isEmpty())) {
                         newSearch = false;
                         mQueryText = newText;  // Update previously searched query text
 
@@ -454,7 +454,7 @@ public class CompletedActivityFragment extends ListFragment implements OnTaskCom
                                 query.whereContainedIn(ParseConstants.KEY_ACTIVITY_URL, mActivityURLs);
                                 query.orderByAscending(ParseConstants.KEY_ACTIVITY_START_DATE);
                                 query.addAscendingOrder(ParseConstants.KEY_ACTIVITY_TITLE);
-                                query.setLimit(1000); // limit to 1000 results max
+                                query.setLimit(ParseConstants.QUERY_LIMIT); // Limit to 500 results max
 
                                 query.findInBackground(new FindCallback<ParseObject>() {
                                     public void done(List<ParseObject> resultList, ParseException e) {

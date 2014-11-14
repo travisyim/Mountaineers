@@ -47,7 +47,7 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
         ViewHolder holder;
         MountaineerActivity activity;
         String availability;
-        String regInfo = "";
+        String regInfo;
         int availabilityParticipant;
         int availabilityLeader;
 
@@ -164,7 +164,7 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
 
         // Registration information
         if (!activity.isUserActivity()) {  // Not a user activity
-            if (activity.getStatus().toLowerCase().equals("canceled")) {  // Activity has been canceled
+            if (activity.isCanceled()) {  // Activity has been canceled
                 regInfo = mContext.getString(R.string.activity_canceled);
             }
             // Check if activity is in the past

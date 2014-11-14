@@ -1,5 +1,7 @@
 package com.travisyim.mountaineers.utils;
 
+import android.text.TextUtils;
+
 import com.parse.ParseObject;
 import com.travisyim.mountaineers.objects.SavedSearch;
 
@@ -22,9 +24,9 @@ public class SavedSearchLoader {
             savedSearch.setUpdateCounter(result.getInt(ParseConstants.KEY_UPDATE_COUNT));
 
             try {
-                savedSearch.setQueryText(result.getJSONArray(ParseConstants.KEY_KEYWORDS).join(" ").replaceAll("\"", ""));
+                savedSearch.setQueryText(TextUtils.join(" ", result.getList(ParseConstants.KEY_KEYWORDS)));
             }
-            catch (Exception e) { /* Intentionally left blank */ }
+            catch (NullPointerException e) { /* Ignore error - ok for query text will be null */ }
 
             savedSearch.setActivityStartDate(DateUtil.convertFromUNC(result.getDate(ParseConstants.KEY_ACTIVITY_START_DATE)));
             savedSearch.setActivityEndDate(DateUtil.convertFromUNC(result.getDate(ParseConstants.KEY_ACTIVITY_END_DATE)));

@@ -13,19 +13,14 @@ public class MountaineerActivity implements Serializable {
     private int mAvailabilityParticipant = -999;
     private String mBranch;
     private boolean mCanceled = false;
-    private JSONArray mDifficulty;
     private double mEndLatitude = -999;
     private double mEndLongitude = -999;
     private boolean mFavorite = false;
     private String mImageUrl;
     private JSONArray mLeaderName;
-    private JSONArray mLeaderRole;
     private String mTitle;
     private JSONArray mType;
     private String mObjectID;
-    private JSONArray mPrerequisites;
-    private JSONArray mQYL;
-    private String mRegistrationInfo;
     private Date mRegistrationCloseTime;
     private Date mRegistrationOpenTime;
     private String mRole;
@@ -150,14 +145,6 @@ public class MountaineerActivity implements Serializable {
         mCanceled = isCanceled;
     }
 
-    public final JSONArray getDifficulty() {
-        return mDifficulty;
-    }
-
-    public final void setDifficulty(final JSONArray difficulty) {
-        mDifficulty = difficulty;
-    }
-
     public final double getEndLatitude() {
         return mEndLatitude;
     }
@@ -198,14 +185,6 @@ public class MountaineerActivity implements Serializable {
         mLeaderName = leaderName;
     }
 
-    public final JSONArray getLeaderRole() {
-        return mLeaderRole;
-    }
-
-    public final void setLeaderRole(final JSONArray leaderRole) {
-        mLeaderRole = leaderRole;
-    }
-
     public final String getTitle() {
         return mTitle;
     }
@@ -220,30 +199,6 @@ public class MountaineerActivity implements Serializable {
 
     public void setObjectID(String objectID) {
         mObjectID = objectID;
-    }
-
-    public final JSONArray getPrerequisites() {
-        return mPrerequisites;
-    }
-
-    public final void setPrerequisites(final JSONArray prerequisites) {
-        mPrerequisites = prerequisites;
-    }
-
-    public final JSONArray getQYL() {
-        return mQYL;
-    }
-
-    public final void setQYL(final JSONArray QYL) {
-        mQYL = QYL;
-    }
-
-    public final String getRegistrationInfo() {
-        return mRegistrationInfo;
-    }
-
-    public final void setRegistrationInfo(final String registrationInfo) {
-        mRegistrationInfo = registrationInfo;
     }
 
     public final Date getRegistrationCloseTime() {

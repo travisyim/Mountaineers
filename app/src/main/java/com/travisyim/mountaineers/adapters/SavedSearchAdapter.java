@@ -5,17 +5,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
+import com.parse.ParseException;
 import com.travisyim.mountaineers.R;
 import com.travisyim.mountaineers.objects.SavedSearch;
+import com.travisyim.mountaineers.utils.ParseConstants;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class SavedSearchAdapter extends ArrayAdapter<SavedSearch> {
     private Context mContext;
     private List<SavedSearch> mSavedSearches;  // Contains saved searches attached to the adapter
+    private boolean mIsDeleteState = false;
+
+    private final String TAG = SavedSearchAdapter.class.getSimpleName() + ":";
 
     public SavedSearchAdapter(Context context, List<SavedSearch> savedSearches) {
         super(context, R.layout.saved_search_item, savedSearches);
@@ -36,6 +46,37 @@ public class SavedSearchAdapter extends ArrayAdapter<SavedSearch> {
             holder.textViewName = (TextView) convertView.findViewById(R.id.textViewName);
             holder.textViewAccessDate = (TextView) convertView.findViewById(R.id.textViewAccessDate);
             holder.textViewUpdateCounter = (TextView) convertView.findViewById(R.id.textViewUpdateCounter);
+            holder.imageViewNext = (ImageView) convertView.findViewById(R.id.imageViewNext);
+            holder.imageViewDelete = (ImageView) convertView.findViewById(R.id.imageViewDelete);
+
+            holder.imageViewDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final int position = (Integer) v.getTag();
+
+                    /* Tell Parse backend that user is now viewing this saved search so go ahead and update
+                     * the last viewed timestamp and reset the update counter to 0 */
+                    HashMap<String, String> params = new HashMap<String, String>();
+                    params.put(ParseConstants.KEY_OBJECT_ID, mSavedSearches.get(position).getObjectID());
+
+                    // Run cloud code to delete selected saved search
+                    ParseCloud.callFunctionInBackground("deleteSavedSearch", params,
+                            new FunctionCallback<Object>() {
+                                @Override
+                                public void done(Object o, ParseException e) {
+                                    if (e != null) {  // An error occured running the cloud function
+                                        Toast.makeText(mContext, mContext.getString(R.string.toast_error_delete),
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+
+                    // Delete item and update listView
+                    mSavedSearches.remove(position);
+                    notifyDataSetChanged();
+                }
+            });
+
             convertView.setTag(holder);
         }
         else { // Yes
@@ -43,6 +84,7 @@ public class SavedSearchAdapter extends ArrayAdapter<SavedSearch> {
         }
 
         savedSearch = mSavedSearches.get(position);
+        holder.imageViewDelete.setTag(position);
 
         // Assign the properties to this holder item
         holder.textViewName.setText(savedSearch.getSearchName());  // Saved search title
@@ -66,6 +108,16 @@ public class SavedSearchAdapter extends ArrayAdapter<SavedSearch> {
             holder.textViewUpdateCounter.setVisibility(View.VISIBLE);  // Hide counter visibility
         }
 
+        // Show / hide Delete and Next imageViews based on Edit state of Saved Search Fragment
+        if (mIsDeleteState) {  // In delete state
+            holder.imageViewDelete.setVisibility(View.VISIBLE);
+            holder.imageViewNext.setVisibility(View.INVISIBLE);
+        }
+        else {
+            holder.imageViewDelete.setVisibility(View.GONE);
+            holder.imageViewNext.setVisibility(View.VISIBLE);
+        }
+
         return convertView;
     }
 
@@ -73,6 +125,13 @@ public class SavedSearchAdapter extends ArrayAdapter<SavedSearch> {
         TextView textViewName;
         TextView textViewAccessDate;
         TextView textViewUpdateCounter;
+        ImageView imageViewNext;
+        ImageView imageViewDelete;
+    }
+
+    public void changeState(boolean isDeleteState) {
+        mIsDeleteState = isDeleteState;
+        notifyDataSetChanged();
     }
 
     private String timeSinceLastView(Date lastView) {
