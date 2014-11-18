@@ -28,6 +28,8 @@ import com.travisyim.mountaineers.utils.ParseConstants;
 import com.travisyim.mountaineers.utils.SimpleCrypto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, OnTaskCompleted {
@@ -506,6 +508,18 @@ public class MainActivity extends Activity
     // Alerts fragments to the state of the drawer
     public boolean isDrawerOpen() {
         return mIsDrawerOpen;
+    }
+
+    // The following method is only used in Activity Search where there is currently no access to the member variable
+    public List<String> getSavedSearchList() {
+        List<String> savedSearchList = new ArrayList<String>();
+
+        // Go through all saved search objects and save the names
+        for (SavedSearch ss : mMember.getSavedSearchList()) {
+            savedSearchList.add(ss.getSearchName());
+        }
+
+        return savedSearchList;
     }
 
     // Sets the state of the drawer

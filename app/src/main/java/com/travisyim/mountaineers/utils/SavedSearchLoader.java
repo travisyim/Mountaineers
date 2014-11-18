@@ -73,7 +73,6 @@ public class SavedSearchLoader {
             savedSearch.setTypeExplorers(result.getBoolean(ParseConstants.KEY_TYPE_EXPLORERS));
             savedSearch.setTypeExploringNature(result.getBoolean(ParseConstants.KEY_TYPE_EXPLORING_NATURE));
             savedSearch.setTypeGlobalAdventures(result.getBoolean(ParseConstants.KEY_TYPE_GLOBAL_ADVENTURES));
-            savedSearch.setTypeMountainWorkshop(result.getBoolean(ParseConstants.KEY_TYPE_MOUNTAIN_WORKSHOP));
             savedSearch.setTypeNavigation(result.getBoolean(ParseConstants.KEY_TYPE_NAVIGATION));
             savedSearch.setTypePhotography(result.getBoolean(ParseConstants.KEY_TYPE_PHOTOGRAPHY));
             savedSearch.setTypeSailing(result.getBoolean(ParseConstants.KEY_TYPE_SAILING));

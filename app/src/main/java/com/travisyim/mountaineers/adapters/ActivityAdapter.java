@@ -333,7 +333,7 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
             if (!areAllEqual(filterOptions.isTypeAdventureClub(), filterOptions.isTypeBackpacking(),
                     filterOptions.isTypeClimbing(), filterOptions.isTypeDayHiking(),
                     filterOptions.isTypeExplorers(), filterOptions.isTypeExploringNature(),
-                    filterOptions.isTypeGlobalAdventures(), filterOptions.isTypeMountainWorkshop(),
+                    filterOptions.isTypeGlobalAdventures(),
                     filterOptions.isTypeNavigation(), filterOptions.isTypePhotography(),
                     filterOptions.isTypeSailing(), filterOptions.isTypeScrambling(),
                     filterOptions.isTypeSeaKayaking(), filterOptions.isTypeSkiingSnowboarding(),
@@ -349,7 +349,6 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
                         (filterOptions.isTypeExplorers() && activity.isTypeExplorers()) ||
                         (filterOptions.isTypeExploringNature() && activity.isTypeExploringNature()) ||
                         (filterOptions.isTypeGlobalAdventures() && activity.isTypeGlobalAdventures()) ||
-                        (filterOptions.isTypeMountainWorkshop() && activity.isTypeMountainWorkshop()) ||
                         (filterOptions.isTypeNavigation() && activity.isTypeNavigation()) ||
                         (filterOptions.isTypePhotography() && activity.isTypePhotography()) ||
                         (filterOptions.isTypeSailing() && activity.isTypeSailing()) ||

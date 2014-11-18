@@ -73,7 +73,6 @@ public class MountaineerActivity implements Serializable {
     private boolean mTypeExplorers = false;
     private boolean mTypeExploringNature = false;
     private boolean mTypeGlobalAdventures = false;
-    private boolean mTypeMountainWorkshop = false;
     private boolean mTypeNavigation = false;
     private boolean mTypePhotography = false;
     private boolean mTypeSailing = false;
@@ -319,14 +318,6 @@ public class MountaineerActivity implements Serializable {
 
     public void setTypeGlobalAdventures(boolean isTypeGlobalAdventures) {
         mTypeGlobalAdventures = isTypeGlobalAdventures;
-    }
-
-    public boolean isTypeMountainWorkshop() {
-        return mTypeMountainWorkshop;
-    }
-
-    public void setTypeMountainWorkshop(boolean isTypeMountainWorkshop) {
-        mTypeMountainWorkshop = isTypeMountainWorkshop;
     }
 
     public boolean isTypeNavigation() {

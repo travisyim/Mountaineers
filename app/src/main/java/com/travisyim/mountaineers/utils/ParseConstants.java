@@ -6,7 +6,7 @@ public class ParseConstants {
     public static final int QUERY_LIMIT = 500;
 
     // Class names
-    public static final String CLASS_ACTIVITY = "Test";
+    public static final String CLASS_ACTIVITY = "Activities";
     public static final String CLASS_SAVED_SEARCH = "Searches";
 
     // Field names
@@ -97,7 +97,6 @@ public class ParseConstants {
     public static final String KEY_TYPE_EXPLORERS = "isTypeExplorers";
     public static final String KEY_TYPE_EXPLORING_NATURE = "isTypeExploringNature";
     public static final String KEY_TYPE_GLOBAL_ADVENTURES = "isTypeGlobalAdventures";
-    public static final String KEY_TYPE_MOUNTAIN_WORKSHOP = "isTypeMountainWorkshop";
     public static final String KEY_TYPE_NAVIGATION = "isTypeNavigation";
     public static final String KEY_TYPE_PHOTOGRAPHY = "isTypePhotography";
     public static final String KEY_TYPE_SAILING = "isTypeSailing";

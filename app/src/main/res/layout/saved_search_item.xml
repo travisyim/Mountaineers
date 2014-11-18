@@ -26,13 +26,23 @@
             android:src="@drawable/ic_action_cancel"
             android:visibility="gone"/>
 
+        <ImageView
+            android:id="@+id/imageViewRename"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/imageViewDelete"
+            android:paddingLeft="8dp"
+            android:src="@drawable/ic_action_edit_dark"
+            android:visibility="gone"/>
+
         <TextView
             android:id="@+id/textViewName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:paddingTop="8dp"
-            android:layout_toRightOf="@+id/imageViewDelete"
+            android:layout_toRightOf="@+id/imageViewRename"
             android:text="Saved Search Name"
             android:paddingLeft="@dimen/activity_horizontal_margin"/>
 
@@ -40,10 +50,10 @@
             android:id="@+id/textViewAccessDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:paddingBottom="8dp"
             android:text="Last Access Date"
-            android:layout_toRightOf="@+id/imageViewDelete"
+            android:layout_toRightOf="@+id/imageViewRename"
             android:layout_below="@id/textViewName"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:textColor="@android:color/darker_gray"/>

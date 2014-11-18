@@ -1,10 +1,14 @@
 package com.travisyim.mountaineers.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,32 +52,23 @@ public class SavedSearchAdapter extends ArrayAdapter<SavedSearch> {
             holder.textViewUpdateCounter = (TextView) convertView.findViewById(R.id.textViewUpdateCounter);
             holder.imageViewNext = (ImageView) convertView.findViewById(R.id.imageViewNext);
             holder.imageViewDelete = (ImageView) convertView.findViewById(R.id.imageViewDelete);
+            holder.imageViewRename = (ImageView) convertView.findViewById(R.id.imageViewRename);
 
             holder.imageViewDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final int position = (Integer) v.getTag();
 
-                    /* Tell Parse backend that user is now viewing this saved search so go ahead and update
-                     * the last viewed timestamp and reset the update counter to 0 */
-                    HashMap<String, String> params = new HashMap<String, String>();
-                    params.put(ParseConstants.KEY_OBJECT_ID, mSavedSearches.get(position).getObjectID());
+                    deleteSavedSearch(position);
+                }
+            });
 
-                    // Run cloud code to delete selected saved search
-                    ParseCloud.callFunctionInBackground("deleteSavedSearch", params,
-                            new FunctionCallback<Object>() {
-                                @Override
-                                public void done(Object o, ParseException e) {
-                                    if (e != null) {  // An error occured running the cloud function
-                                        Toast.makeText(mContext, mContext.getString(R.string.toast_error_delete),
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
+            holder.imageViewRename.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final int position = (Integer) v.getTag();
 
-                    // Delete item and update listView
-                    mSavedSearches.remove(position);
-                    notifyDataSetChanged();
+                    showRenameDialog(position);
                 }
             });
 
@@ -84,7 +79,10 @@ public class SavedSearchAdapter extends ArrayAdapter<SavedSearch> {
         }
 
         savedSearch = mSavedSearches.get(position);
+
+        // Save position in icon's tag for use in setOnClickListeners
         holder.imageViewDelete.setTag(position);
+        holder.imageViewRename.setTag(position);
 
         // Assign the properties to this holder item
         holder.textViewName.setText(savedSearch.getSearchName());  // Saved search title
@@ -111,10 +109,12 @@ public class SavedSearchAdapter extends ArrayAdapter<SavedSearch> {
         // Show / hide Delete and Next imageViews based on Edit state of Saved Search Fragment
         if (mIsDeleteState) {  // In delete state
             holder.imageViewDelete.setVisibility(View.VISIBLE);
+            holder.imageViewRename.setVisibility(View.VISIBLE);
             holder.imageViewNext.setVisibility(View.INVISIBLE);
         }
         else {
             holder.imageViewDelete.setVisibility(View.GONE);
+            holder.imageViewRename.setVisibility(View.GONE);
             holder.imageViewNext.setVisibility(View.VISIBLE);
         }
 
@@ -127,14 +127,142 @@ public class SavedSearchAdapter extends ArrayAdapter<SavedSearch> {
         TextView textViewUpdateCounter;
         ImageView imageViewNext;
         ImageView imageViewDelete;
+        ImageView imageViewRename;
     }
 
-    public void changeState(boolean isDeleteState) {
+    public void changeState(final boolean isDeleteState) {
         mIsDeleteState = isDeleteState;
         notifyDataSetChanged();
     }
 
-    private String timeSinceLastView(Date lastView) {
+    private void deleteSavedSearch(final int position) {
+        // Dialog that is shown to user to confirm delete
+        AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
+        alert.setTitle(mContext.getString(R.string.dialog_delete_title));
+        alert.setMessage(mContext.getString(R.string.dialog_delete_message) + " \""
+                + mSavedSearches.get(position).getSearchName() + "\"?");
+
+        alert.setPositiveButton(mContext.getString(R.string.yes), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Create params to be provided to the cloud function
+                HashMap<String, String> params = new HashMap<String, String>();
+                params.put(ParseConstants.KEY_OBJECT_ID, mSavedSearches.get(position).getObjectID());
+
+                // Run cloud code to delete selected saved search
+                ParseCloud.callFunctionInBackground("deleteSavedSearch", params,
+                        new FunctionCallback<Object>() {
+                            @Override
+                            public void done(Object o, ParseException e) {
+                                if (e != null) {  // An error occured running the cloud function
+                                    Toast.makeText(mContext, mContext.getString(R.string.toast_error_delete),
+                                            Toast.LENGTH_LONG).show();
+                                } else {
+                                    // Delete item and update listView
+                                    mSavedSearches.remove(position);
+                                    notifyDataSetChanged();
+                                    Toast.makeText(mContext, mContext.getString(R.string.toast_success_delete),
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+            }
+        });
+
+        alert.setNegativeButton(mContext.getString(R.string.no), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled - intentionally left blank
+            }
+        });
+
+        alert.show();
+    }
+
+    private void renameSavedSearch(final String newName, final int position) {
+        // Create params to be provided to the cloud function
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put(ParseConstants.KEY_OBJECT_ID, mSavedSearches.get(position).getObjectID());
+        params.put(ParseConstants.KEY_SAVE_NAME, newName);
+
+        // Run cloud code to delete selected saved search
+        ParseCloud.callFunctionInBackground("renameSavedSearch", params,
+                new FunctionCallback<Object>() {
+                    @Override
+                    public void done(Object o, ParseException e) {
+                        if (e != null) {  // An error occured running the cloud function
+                            Toast.makeText(mContext, mContext.getString(R.string.toast_error_rename),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            // Rename item and update listView
+                            mSavedSearches.get(position).setSearchName(newName);
+                            notifyDataSetChanged();
+                            Toast.makeText(mContext, mContext.getString(R.string.toast_success_rename),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
+
+    private void showRenameDialog(final int position) {
+        // Dialog that is shown to user during the rename process
+        AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
+        alert.setTitle(mContext.getString(R.string.dialog_rename_title));
+        alert.setMessage(mContext.getString(R.string.dialog_rename_message));
+
+        // Set an EditText view to get user input
+        final EditText input = new EditText(mContext);
+        // Populate with existing saved search name
+        input.setText(mSavedSearches.get(position).getSearchName());
+        input.setSelectAllOnFocus(true);  // Select the entire saved search name
+        input.setSingleLine();
+        alert.setView(input);
+
+        alert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                Toast toast;
+                boolean match = false;
+                String newName = input.getText().toString().trim();
+
+                if (!newName.isEmpty()) {
+                    // Check to see if the name has been changed
+                    if (!newName.equals(mSavedSearches.get(position).getSearchName())) {
+                        // Check for existing Saved Search name from this user
+                        for (SavedSearch ss : mSavedSearches) {
+                            // New name matches existing saved search name
+                            if (newName.equals(ss.getSearchName())) {
+                                match = true;
+
+                                // Show toast about having an identically named saved search
+                                toast = Toast.makeText(mContext, mContext.getString
+                                        (R.string.toast_error_duplicate), Toast.LENGTH_LONG);
+                                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                                toast.show();
+
+                                showRenameDialog(position);  // Show dialog again
+                            }
+                        }
+
+                        if (!match) {
+                            // Rename the search with the provided name
+                            renameSavedSearch(newName, position);
+                        }
+                    }
+                } else {  // Invalid name
+                    showRenameDialog(position);  // Show dialog again
+                }
+            }
+        });
+
+        alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled - intentionally left blank
+            }
+        });
+
+        alert.show();
+    }
+
+    private String timeSinceLastView(final Date lastView) {
         // This method calculates the time since the saved search was last viewed
         StringBuffer str = new StringBuffer();
         long delta;

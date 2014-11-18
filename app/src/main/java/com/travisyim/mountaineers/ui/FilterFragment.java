@@ -60,7 +60,6 @@ public class FilterFragment extends Fragment {
     private CheckBox mTypeExplorers;
     private CheckBox mTypeExploringNature;
     private CheckBox mTypeGlobalAdventures;
-    private CheckBox mTypeMountainWorkshop;
     private CheckBox mTypeNavigation;
     private CheckBox mTypePhotography;
     private CheckBox mTypeSailing;
@@ -368,10 +367,12 @@ public class FilterFragment extends Fragment {
         // Clicking All or None will either check or uncheck all of the category's boxes
         public void onClick(View v) {
             if (v == mTypeAll || v == mTypeNone) {  // Activity type options
-                updateCheckedState(new CheckBox[] {mTypeAdventureClub, mTypeBackpacking, mTypeClimbing,
-                                mTypeDayHiking, mTypeExplorers, mTypeExploringNature, mTypeGlobalAdventures, mTypeMountainWorkshop,
-                        mTypeNavigation, mTypePhotography, mTypeSailing, mTypeScrambling, mTypeSeaKayaking,
-                                mTypeSkiingSnowboarding, mTypeSnowshoeing, mTypeStewardship, mTypeTrailRunning, mTypeUrbanAdventure, mTypeYouth},
+                updateCheckedState(new CheckBox[] {mTypeAdventureClub, mTypeBackpacking,
+                                mTypeClimbing, mTypeDayHiking, mTypeExplorers, mTypeExploringNature,
+                                mTypeGlobalAdventures, mTypeNavigation, mTypePhotography,
+                                mTypeSailing, mTypeScrambling, mTypeSeaKayaking,
+                                mTypeSkiingSnowboarding, mTypeSnowshoeing, mTypeStewardship,
+                                mTypeTrailRunning, mTypeUrbanAdventure, mTypeYouth},
                         v == mTypeAll);
             }
             else if (v == mRatingAll || v == mRatingNone) {  // Activity difficulty options
@@ -597,7 +598,6 @@ public class FilterFragment extends Fragment {
         mTypeExplorers = (CheckBox) rootView.findViewById(R.id.checkBoxTypeExplorers);
         mTypeExploringNature = (CheckBox) rootView.findViewById(R.id.checkBoxTypeExploringNature);
         mTypeGlobalAdventures = (CheckBox) rootView.findViewById(R.id.checkBoxTypeGlobalAdventures);
-        mTypeMountainWorkshop = (CheckBox) rootView.findViewById(R.id.checkBoxTypeMountainWorkshop);
         mTypeNavigation = (CheckBox) rootView.findViewById(R.id.checkBoxTypeNavigation);
         mTypePhotography = (CheckBox) rootView.findViewById(R.id.checkBoxTypePhotography);
         mTypeSailing = (CheckBox) rootView.findViewById(R.id.checkBoxTypeSailing);
@@ -744,7 +744,7 @@ public class FilterFragment extends Fragment {
         if (mFilterOptions.isTypeAdventureClub() ||mFilterOptions.isTypeBackpacking() ||
                 mFilterOptions.isTypeClimbing() || mFilterOptions.isTypeDayHiking() ||
                 mFilterOptions.isTypeExplorers() || mFilterOptions.isTypeExploringNature() ||
-                mFilterOptions.isTypeGlobalAdventures() || mFilterOptions.isTypeMountainWorkshop() ||
+                mFilterOptions.isTypeGlobalAdventures() ||
                 mFilterOptions.isTypeNavigation() || mFilterOptions.isTypePhotography() ||
                 mFilterOptions.isTypeSailing() || mFilterOptions.isTypeScrambling() ||
                 mFilterOptions.isTypeSeaKayaking() || mFilterOptions.isTypeSkiingSnowboarding() ||
@@ -765,7 +765,6 @@ public class FilterFragment extends Fragment {
             mTypeExplorers.setChecked(mFilterOptions.isTypeExplorers());
             mTypeExploringNature.setChecked(mFilterOptions.isTypeExploringNature());
             mTypeGlobalAdventures.setChecked(mFilterOptions.isTypeGlobalAdventures());
-            mTypeMountainWorkshop.setChecked(mFilterOptions.isTypeMountainWorkshop());
             mTypeNavigation.setChecked(mFilterOptions.isTypeNavigation());
             mTypePhotography.setChecked(mFilterOptions.isTypePhotography());
             mTypeSailing.setChecked(mFilterOptions.isTypeSailing());
@@ -902,7 +901,6 @@ public class FilterFragment extends Fragment {
         mFilterOptions.setTypeExplorers(mTypeExplorers.isChecked());
         mFilterOptions.setTypeExploringNature(mTypeExploringNature.isChecked());
         mFilterOptions.setTypeGlobalAdventures(mTypeGlobalAdventures.isChecked());
-        mFilterOptions.setTypeMountainWorkshop(mTypeMountainWorkshop.isChecked());
         mFilterOptions.setTypeNavigation(mTypeNavigation.isChecked());
         mFilterOptions.setTypePhotography(mTypePhotography.isChecked());
         mFilterOptions.setTypeSailing(mTypeSailing.isChecked());

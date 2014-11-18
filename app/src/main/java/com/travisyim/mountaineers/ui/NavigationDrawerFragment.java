@@ -235,8 +235,16 @@ public class NavigationDrawerFragment extends Fragment {
         if (mDrawerToggle.isDrawerIndicatorEnabled() && mDrawerToggle.onOptionsItemSelected(item)) {
             return false;
         }
-        else if (item.getItemId() == android.R.id.home &&
-                getFragmentManager().popBackStackImmediate()) {
+        else if (item.getItemId() == android.R.id.home) {
+            // The activities are still being updated
+            if (((MainActivity) getActivity()).isLoadingActivities()) {
+                Toast.makeText(getActivity(), getActivity().getString(R.string.toast_filter_wait),
+                        Toast.LENGTH_SHORT).show();
+            }
+            else {
+                getFragmentManager().popBackStackImmediate();
+            }
+
             return false;
         }
         else {

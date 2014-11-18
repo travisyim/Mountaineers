@@ -59,6 +59,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     private SearchView mSearchView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<String> mFavoritesList;
+    private List<String> mTempSavedSearchList = new ArrayList<String>();
     private Date mPreviousSearchStartDate;
     private String mParentFragmentTitle;
     private String mSavedSearchName;
@@ -860,7 +861,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             savedSearch.put(ParseConstants.KEY_TYPE_EXPLORERS, mFilterOptions.isTypeExplorers());
             savedSearch.put(ParseConstants.KEY_TYPE_EXPLORING_NATURE, mFilterOptions.isTypeExploringNature());
             savedSearch.put(ParseConstants.KEY_TYPE_GLOBAL_ADVENTURES, mFilterOptions.isTypeGlobalAdventures());
-            savedSearch.put(ParseConstants.KEY_TYPE_MOUNTAIN_WORKSHOP, mFilterOptions.isTypeMountainWorkshop());
             savedSearch.put(ParseConstants.KEY_TYPE_NAVIGATION, mFilterOptions.isTypeNavigation());
             savedSearch.put(ParseConstants.KEY_TYPE_PHOTOGRAPHY, mFilterOptions.isTypePhotography());
             savedSearch.put(ParseConstants.KEY_TYPE_SAILING, mFilterOptions.isTypeSailing());
@@ -950,15 +950,41 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
             alert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    if (!input.getText().toString().trim().isEmpty()) {
+                    String name = input.getText().toString().trim();
+
+                    if (!name.isEmpty()) {
                         // Check for existing Saved Search name from this user
-
-
-                        // Save the search with the provided name
-                        saveSearch(input.getText().toString().trim());
+                        if (!compareSavedSearchNames(name,
+                                ((MainActivity) getActivity()).getSavedSearchList()) &&
+                                !compareSavedSearchNames(name, mTempSavedSearchList)) {
+                            // Save the search with the provided name
+                            saveSearch(name);
+                            mTempSavedSearchList.add(name);  // Add save search name to temp list
+                        }
+                        else {
+                            showSaveDialog();  // Show dialog again
+                        }
                     } else {  // Invalid name
                         showSaveDialog();  // Show dialog again
                     }
+                }
+
+                private boolean compareSavedSearchNames(final String name, final List<String> nameList) {
+                    Toast toast;
+
+                    for (String str : nameList) {
+                        if (name.equals(str)) {
+                            // Show toast about having an identically named saved search
+                            toast = Toast.makeText(getActivity(), getActivity().getString
+                                    (R.string.toast_error_duplicate), Toast.LENGTH_LONG);
+                            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                            toast.show();
+
+                            return true;
+                        }
+                    }
+
+                    return false;
                 }
             });
 

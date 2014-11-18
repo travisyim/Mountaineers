@@ -169,7 +169,6 @@ public class ActivityLoader {
             activity.setTypeExplorers(result.getBoolean(ParseConstants.KEY_TYPE_EXPLORERS));
             activity.setTypeExploringNature(result.getBoolean(ParseConstants.KEY_TYPE_EXPLORING_NATURE));
             activity.setTypeGlobalAdventures(result.getBoolean(ParseConstants.KEY_TYPE_GLOBAL_ADVENTURES));
-            activity.setTypeMountainWorkshop(result.getBoolean(ParseConstants.KEY_TYPE_MOUNTAIN_WORKSHOP));
             activity.setTypeNavigation(result.getBoolean(ParseConstants.KEY_TYPE_NAVIGATION));
             activity.setTypePhotography(result.getBoolean(ParseConstants.KEY_TYPE_PHOTOGRAPHY));
             activity.setTypeSailing(result.getBoolean(ParseConstants.KEY_TYPE_SAILING));

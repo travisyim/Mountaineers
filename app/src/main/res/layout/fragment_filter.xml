@@ -168,19 +168,11 @@
                 android:text="Global Adventures"/>
 
             <CheckBox
-                android:id="@+id/checkBoxTypeMountainWorkshop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/checkBoxTypeGlobalAdventures"
-                android:text="Mountain Workshop"/>
-
-            <CheckBox
                 android:id="@+id/checkBoxTypeNavigation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@+id/checkBoxTypeMountainWorkshop"
+                android:layout_below="@+id/checkBoxTypeGlobalAdventures"
                 android:text="Navigation"/>
 
             <CheckBox

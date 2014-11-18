@@ -299,7 +299,6 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
         mIsEditMode = true;
 
         ((SavedSearchAdapter) getListAdapter()).changeState(true);  // Enter edit mode
-
     }
 
     private void reorganizeList(List<SavedSearch> list) {
@@ -325,6 +324,10 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
 
                 // Do this again for all remaining 0-counter results (helps reorg by ignoring case)
                 Collections.sort(list.subList(endSubList, list.size()), new SavedSearchComparator());
+            }
+            else {  // None of the saved searches has updates
+                // Reorganize based on case-insensitive alphabetic order
+                Collections.sort(list, new SavedSearchComparator());
             }
         }
     }
@@ -403,7 +406,6 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
         mFilterOptions.setTypeExplorers(savedSearch.isTypeExplorers());
         mFilterOptions.setTypeExploringNature(savedSearch.isTypeExploringNature());
         mFilterOptions.setTypeGlobalAdventures(savedSearch.isTypeGlobalAdventures());
-        mFilterOptions.setTypeMountainWorkshop(savedSearch.isTypeMountainWorkshop());
         mFilterOptions.setTypeNavigation(savedSearch.isTypeNavigation());
         mFilterOptions.setTypePhotography(savedSearch.isTypePhotography());
         mFilterOptions.setTypeSailing(savedSearch.isTypeSailing());
