@@ -46,6 +46,7 @@ import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -64,6 +65,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     private String mParentFragmentTitle;
     private String mSavedSearchName;
     private String mQueryText;
+    private long mLastViewed;
     private int mActivityPosition;
     private boolean mAlreadyLoaded;
     private boolean mReturnFromFilter = false;
@@ -79,6 +81,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     private static final String ARG_SAVED_SEARCH_NAME = "savedSearchName";
     private static final String ARG_FILTER_OPTIONS = "filterOptions";
     private static final String ARG_QUERY_TEXT = "queryText";
+    private static final String ARG_LAST_VIEWED = "lastViewed";
     private static final String ARG_ACTIVITY_NAME = "activityName";
     private static final String ARG_ACTIVITY_URL = "activityURL";
     private static final String ARG_LOCATION = "location";
@@ -128,6 +131,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             mSavedSearchName = getArguments().getString(ARG_SAVED_SEARCH_NAME);
             mFilterOptions = (FilterOptions) getArguments().getSerializable(ARG_FILTER_OPTIONS);
             mQueryText = getArguments().getString(ARG_QUERY_TEXT);  // Query text
+            mLastViewed = getArguments().getLong(ARG_LAST_VIEWED);
 
             // Update ActionBar title to show saved search name
             getActivity().getActionBar().setTitle(mSavedSearchName);
@@ -158,10 +162,10 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                     (MountaineersApp.TrackerName.APP_TRACKER);
 
             if (mIsSavedSearch) {
-                t.setScreenName("Activity Search (Saved Search)");
+                t.setScreenName(getString(R.string.title_browse) + " (" + getString(R.string.title_saved_searches) +")");
             }
             else {
-                t.setScreenName("Activity Search");
+                t.setScreenName(getString(R.string.title_browse));
             }
 
             t.send(new HitBuilders.AppViewBuilder().build());
@@ -260,7 +264,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             // Google Analytics tracking code - User Profile
             Tracker t = ((MountaineersApp) getActivity().getApplication()).getTracker
                     (MountaineersApp.TrackerName.APP_TRACKER);
-            t.setScreenName("Saved Search");
+            t.setScreenName(getString(R.string.title_saved_searches));
             t.send(new HitBuilders.AppViewBuilder().build());
         }
     }
@@ -512,6 +516,9 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             mActivityList.clear();
 
             if (e == null) {
+                // Reverse the list to get oldest start date activities first
+                Collections.reverse(resultList);
+
                 // Load activities into the list view
                 mActivityList.addAll(ActivityLoader.load(resultList, mFavoritesList));
 
@@ -564,6 +571,11 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     }
 
     private void FilterUpdates() {
+        // If this is a saved search then update the search's last view date before updating list
+        if (mIsSavedSearch) {
+            ((ActivityAdapter) getListAdapter()).updateLastViewed(mLastViewed);
+        }
+
         /* Either submit a new query or apply filters depending on how the start date selection has
          * changed (if it has at all) */
         if (mFilterOptions.getStartDate() == null) {  // No start date defined
@@ -695,8 +707,9 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
          * results shown.  However, if the end date is not reached within the 500 result limit, the
          * user will be shown an error message to reduce the date range. */
 
-            query.orderByAscending(ParseConstants.KEY_ACTIVITY_START_DATE);
-            query.addAscendingOrder(ParseConstants.KEY_ACTIVITY_TITLE);
+            // Sort in reverse order to ensure we get the latest start date activities
+            query.orderByDescending(ParseConstants.KEY_ACTIVITY_START_DATE);
+            query.addDescendingOrder(ParseConstants.KEY_ACTIVITY_TITLE);
             query.setLimit(ParseConstants.QUERY_LIMIT); // limit to 500 results max
 
             query.findInBackground(new FindCallback<ParseObject>() {
@@ -716,9 +729,22 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
         if (!mIsCanceled) {
             // Pass the list to the adapter
             if (getListView().getAdapter() == null) {  // First time using the list adapter
-                ActivityAdapter adapter = new ActivityAdapter(getListView().getContext(), mActivityList);
+                ActivityAdapter adapter;
+
+                if (!mIsSavedSearch) {
+                    adapter = new ActivityAdapter(getListView().getContext(), mActivityList, null);
+                }
+                else {
+                    adapter = new ActivityAdapter(getListView().getContext(), mActivityList,
+                            new Date(mLastViewed));
+                }
+
                 setListAdapter(adapter);
-            } else {  // Results already shown so update the list
+            }
+            /* Results already shown so update the list (assume no changes and user is still looking
+             * at a saved search).  lastViewed time is kept the same (this can e updated in the
+             * future). */
+            else {
                 ((ActivityAdapter) getListAdapter()).setMasterActivityList(mActivityList);
             }
 
@@ -837,8 +863,8 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             if (mQueryText != null && mQueryText.length() > 0) {
                 // Keywords array
                 savedSearch.put(ParseConstants.KEY_KEYWORDS, new JSONArray());  // Clear previous keywords
-                savedSearch.addAllUnique(ParseConstants.KEY_KEYWORDS,
-                        Arrays.asList(mQueryText.trim().toLowerCase().split("\\s+")));
+
+                savedSearch.addAllUnique(ParseConstants.KEY_KEYWORDS, getKeywords(mQueryText));
             }
 
             // Start Date
@@ -931,6 +957,26 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             alert.setMessage(getActivity().getString(R.string.error_message_saved_search));
             alert.show();
         }
+    }
+
+    private List<String> getKeywords(final String mQueryText) {
+        List<String> keywords = new ArrayList<String>();
+
+//        var ignoreWords = ["the", "in", "and", "to", "of", "at", "for", "from", "a", "an", "s"];  // Words to ignore
+
+        // Split query text by spaces and word boundaries
+        keywords.addAll(Arrays.asList(mQueryText.trim().toLowerCase().split("\\s+")));
+        keywords.addAll(Arrays.asList(mQueryText.trim().toLowerCase().split("\\b")));
+
+        for (int i = 0; i < keywords.size(); i++) {
+            String str = keywords.get(i);
+
+            if (str.isEmpty()) {  // Check for empty String
+                keywords.remove(i);
+            }
+        }
+
+        return keywords;
     }
 
     private void showSaveDialog() {

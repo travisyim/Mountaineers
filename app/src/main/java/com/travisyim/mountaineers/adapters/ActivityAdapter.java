@@ -1,6 +1,7 @@
 package com.travisyim.mountaineers.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.squareup.picasso.Picasso;
 import com.travisyim.mountaineers.R;
 import com.travisyim.mountaineers.objects.FilterOptions;
 import com.travisyim.mountaineers.objects.MountaineerActivity;
+import com.travisyim.mountaineers.utils.ActivityComparator;
 import com.travisyim.mountaineers.utils.DateUtil;
 import com.travisyim.mountaineers.utils.PicassoCustom;
 
@@ -20,6 +22,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -31,12 +34,20 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
     // A master copy of the full list of the activities
     private List<MountaineerActivity> mMasterActivities = new ArrayList<MountaineerActivity>();
     private Toast toast;
+    private long mLastViewed;
+    private boolean mIsSavedSearch = false;
 
-    public ActivityAdapter(Context context, List<MountaineerActivity> activities) {
+    public ActivityAdapter(Context context, List<MountaineerActivity> activities, Date lastViewed) {
         super(context, R.layout.activity_item, activities);
 
         mContext = context;
         mActivities = activities;
+
+        // Saved last viewed date if this was launched from a saved search
+        if (lastViewed != null) {
+            mIsSavedSearch = true;
+            mLastViewed = lastViewed.getTime();
+        }
 
         // Master copy of all activities so that they will not get erased
         mMasterActivities.addAll(activities);
@@ -48,6 +59,7 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
         MountaineerActivity activity;
         String availability;
         String regInfo;
+        long updatedDate;
         int availabilityParticipant;
         int availabilityLeader;
 
@@ -85,6 +97,18 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
                     .placeholder(R.drawable.default_activity).error(R.drawable.default_activity)
                     .transform(new PicassoCustom.ScaleByWidthTransformation(190))
                     .into(holder.imageViewActivity);
+        }
+
+        // Determine if this is an unseen activity - if so, bold the title
+        if (mIsSavedSearch) {  // This was launched from a saved search
+            if (activity.isUnread()) {  // Unseen by user
+                // Bold the activity title
+                holder.textViewName.setTypeface(null, Typeface.BOLD);
+            }
+            else {
+                // Bold the activity title
+                holder.textViewName.setTypeface(null, Typeface.NORMAL);
+            }
         }
 
         holder.textViewName.setText(activity.getTitle());  // Activity title
@@ -245,8 +269,9 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
     }
 
     public void applyTextFilter(final String queryText) {
-        boolean found;
         Set<String> keywords = new HashSet<String>();
+        int newIndex = 0;
+        boolean found;
 
         this.clear();  // Clear all activities from the adapter
 
@@ -281,12 +306,36 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
                 }
 
                 if (found) {  // All keywords found so add them to the listview adapter
-                    this.add(activity);
+                    // Check if this is an activity search launched by a saved search
+                    if (!mIsSavedSearch) {  // Not a saved search
+                        this.add(activity);
+                    }
+                    else {  // Saved search
+                        if (addToListAsUnseen(activity, newIndex)) {
+                            newIndex++;
+                        }
+                    }
                 }
             }
         }
         else {  // No search string defined
-            this.addAll(mMasterActivities);  // Show all activities
+            // Check if this is an activity search launched by a saved search
+            if (!mIsSavedSearch) {  // Not a saved search
+                this.addAll(mMasterActivities);  // Add all activities
+            }
+            else {  // Saved search
+                // Loop through master list of activities to bring unseen activities to the top
+                for (MountaineerActivity activity : mMasterActivities) {
+                    if (addToListAsUnseen(activity, newIndex)) {
+                        newIndex++;
+                    }
+                }
+            }
+        }
+
+        // Reorganize list if it contains new activities and this was launched from saved search (track unseen activities)
+        if (mIsSavedSearch) {
+            reorganizeNewList(newIndex);
         }
 
         notifyDataSetChanged();
@@ -485,5 +534,75 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
         }
 
         return true;
+    }
+
+    public void updateLastViewed(final long lastViewed){
+        mLastViewed = lastViewed;
+    }
+
+    private boolean addToListAsUnseen(final MountaineerActivity activity, int newIndex) {
+        long updatedDate;
+
+        // Compare the addedAt or updatedAt date (if it exists) to see if it postdates the lastViewed date
+        if (activity.getActivityUpdatedAt() != null) {  // Updated date defined so use this
+            updatedDate = activity.getActivityUpdatedAt().getTime();
+        }
+        else {  // Use the added date
+            updatedDate = activity.getActivityAddedAt().getTime();
+        }
+
+        // Check if the activity is newer than the last time the user viewed the saved search
+        if (mLastViewed < updatedDate) {  // Yes
+            activity.setUnread(true);  // Mark this activity as unseen by the user
+
+            if (mActivities.size() > 0) {  // Not the first activity being added to the list
+                // Add activity to the front of the list (at the end of the unseen section)
+                mActivities.add(newIndex, activity);
+            }
+            else {  // First activity
+                mActivities.add(activity);
+            }
+
+            return true;
+        }
+        else {  // No
+            mActivities.add(activity);  // Add activity to list
+            return false;
+        }
+    }
+
+    private void reorganizeNewList(final int newCount) {
+        /* This method takes in the list of activities to be shown in activity search launched by
+         * saved search.  This list is already sorted such that all of the unseen activities are at
+         * the top of the list.  This method goes through the new activity section of this list and
+         * sorts the activities based on the activity title if there are multiple activities
+         * occurring on the same date. */
+        int startSubList = 0;
+        int endSubList = 0;
+
+        if (newCount > 1) {  // Make sure there are at least two new activities
+            for (int i = 0; i < newCount - 1; i++) {
+                // Check if the next activity has the same start date
+                if (mActivities.get(i).getActivityStartDate().equals(mActivities.get(i + 1).getActivityStartDate())) {
+                    // Yes, it has the same start date
+                    endSubList = i + 1;
+                }
+                else {  // Reached a set of activities where their date differ
+                    // Check to ensure there is more than one activity with the same start date
+                    if (startSubList != endSubList) {
+                        // Create a sub-list of the activities with the same start dates and sort it based on activity title
+                        Collections.sort(mActivities.subList(startSubList, endSubList + 1), new ActivityComparator());
+                    }
+
+                    startSubList = ++endSubList;  // Increment the counters
+                }
+            }
+
+            // Check to ensure there is more than one activity with the same start date
+            if (startSubList != endSubList) {
+                // Create a sub-list of the activities with the same start dates and sort it based on activity title
+                Collections.sort(mActivities.subList(startSubList, endSubList + 1), new ActivityComparator());
+            }
+        }
     }
 }

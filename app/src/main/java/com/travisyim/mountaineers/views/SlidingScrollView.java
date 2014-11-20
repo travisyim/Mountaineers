@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.ViewTreeObserver;
 import android.widget.ScrollView;
 
+// Layouts that were created to animate fragment transitions
 public class SlidingScrollView extends ScrollView {
     private float xFraction = 0;
 

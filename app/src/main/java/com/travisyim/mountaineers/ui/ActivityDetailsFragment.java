@@ -158,23 +158,23 @@ public class ActivityDetailsFragment extends Fragment {
 
             // Check which fragment this filter was launched from
             // Activity Search
-            if (mParentFragmentTitle.equals(getString(R.string.title_section2))) {
-                t.setScreenName("Activity Search");
+            if (mParentFragmentTitle.equals(getString(R.string.title_browse))) {
+                t.setScreenName(getString(R.string.title_browse));
             }
             // Completed Activity
-            else if (mParentFragmentTitle.equals(getString(R.string.title_section3))) {
-                t.setScreenName("Completed Activities");
+            else if (mParentFragmentTitle.equals(getString(R.string.title_completed))) {
+                t.setScreenName(getString(R.string.title_completed));
             }
             // Signed Up Activity
-            else if (mParentFragmentTitle.equals(getString(R.string.title_section4))) {
-                t.setScreenName("Signed Up Activities");
+            else if (mParentFragmentTitle.equals(getString(R.string.title_signed_up))) {
+                t.setScreenName(getString(R.string.title_signed_up));
             }
             // Favorite Activity
-            else if (mParentFragmentTitle.equals(getString(R.string.title_section5))) {
-                t.setScreenName("Favorite Activities");
+            else if (mParentFragmentTitle.equals(getString(R.string.title_favorites))) {
+                t.setScreenName(getString(R.string.title_favorites));
             }
             else {  // Saved search activity search
-                t.setScreenName("Activity Search (Saved Search)");
+                t.setScreenName(getString(R.string.title_browse) + " (" + getString(R.string.title_saved_searches) +")");
             }
 
             t.send(new HitBuilders.AppViewBuilder().build());
@@ -184,22 +184,22 @@ public class ActivityDetailsFragment extends Fragment {
                 // Send the favorite status back to the previous fragment for implementation
                 // Check which fragment this filter was launched from
                 // Activity Search
-                if (mParentFragmentTitle.equals(getString(R.string.title_section2))) {
+                if (mParentFragmentTitle.equals(getString(R.string.title_browse))) {
                     ((ActivitySearchFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
                             .onFavoriteSelected(mIsFavorite);
                 }
                 // Completed Activity
-                else if (mParentFragmentTitle.equals(getString(R.string.title_section3))) {
+                else if (mParentFragmentTitle.equals(getString(R.string.title_completed))) {
                     ((CompletedActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
                             .onFavoriteSelected(mIsFavorite);
                 }
                 // Signed Up Activity
-                else if (mParentFragmentTitle.equals(getString(R.string.title_section4))) {
+                else if (mParentFragmentTitle.equals(getString(R.string.title_signed_up))) {
                     ((SignedUpActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
                             .onFavoriteSelected(mIsFavorite);
                 }
                 // Favorite Activity
-                else if (mParentFragmentTitle.equals(getString(R.string.title_section5))) {
+                else if (mParentFragmentTitle.equals(getString(R.string.title_favorites))) {
                     ((FavoriteActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
                             .onFavoriteSelected(mIsFavorite);
                 }

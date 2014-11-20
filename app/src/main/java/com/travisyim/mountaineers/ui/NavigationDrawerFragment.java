@@ -25,9 +25,7 @@ import android.widget.Toast;
 
 import com.travisyim.mountaineers.R;
 import com.travisyim.mountaineers.adapters.DrawerAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.travisyim.mountaineers.objects.FragmentListItem;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -60,10 +58,10 @@ public class NavigationDrawerFragment extends Fragment {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
-    private List<String[]> mDrawerItems = new ArrayList<String[]>();
+    private Object[] mDrawerItems;
     private String mTitle;
 
-    private int mCurrentSelectedPosition = 1;  // Initial start index of drawer (shows Activities)
+    private int mCurrentSelectedPosition = 2;  // Initial start index of drawer (shows Activities)
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
@@ -144,44 +142,16 @@ public class NavigationDrawerFragment extends Fragment {
         });
 
         // Load drawer items to list
-        for (int i = 0; i < 6; i++) {
-            String drawerItem[] = new String[3];
-
-            switch (i) {
-                case 0:
-                    drawerItem[0] = getString(R.string.title_section1);
-                    drawerItem[1] = Integer.toString(R.drawable.ic_action_person);
-                    drawerItem[2] = null;
-                    break;
-                case 1:
-                    drawerItem[0] = getString(R.string.title_section2);
-                    drawerItem[1] = Integer.toString(R.drawable.ic_action_search);
-                    drawerItem[2] = null;
-                    break;
-                case 2:
-                    drawerItem[0] = getString(R.string.title_section3);
-                    drawerItem[1] = Integer.toString(R.drawable.ic_action_accept);
-                    drawerItem[2] = null;
-                    break;
-                case 3:
-                    drawerItem[0] = getString(R.string.title_section4);
-                    drawerItem[1] = Integer.toString(R.drawable.ic_action_view_as_list);
-                    drawerItem[2] = null;
-                    break;
-                case 4:
-                    drawerItem[0] = getString(R.string.title_section5);
-                    drawerItem[1] = Integer.toString(R.drawable.ic_action_important);
-                    drawerItem[2] = null;
-                    break;
-                case 5:
-                    drawerItem[0] = getString(R.string.title_section6);
-                    drawerItem[1] = Integer.toString(R.drawable.ic_action_save);
-                    drawerItem[2] = "0";
-                    break;
-            }
-
-            mDrawerItems.add(drawerItem);
-        }
+        mDrawerItems = new Object[]{
+                new FragmentListItem(getString(R.string.title_profile), R.drawable.ic_action_person, 0),
+                "Activity Search",
+                new FragmentListItem(getString(R.string.title_browse), R.drawable.ic_action_search, 0),
+                new FragmentListItem(getString(R.string.title_saved_searches), R.drawable.ic_action_save, 0),
+                "My Activities",
+                new FragmentListItem(getString(R.string.title_completed), R.drawable.ic_action_accept, 0),
+                new FragmentListItem(getString(R.string.title_signed_up), R.drawable.ic_action_view_as_list, 0),
+                new FragmentListItem(getString(R.string.title_favorites), R.drawable.ic_action_important, 0),
+        };
 
         // New navigation drawer adapter in work
         DrawerAdapter drawerAdapter = new DrawerAdapter
@@ -421,7 +391,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     public void updateSavedSearchCounter(int counter) {
         // This method updates the saved search counter in the navigation drawer
-        mDrawerItems.get(mDrawerItems.size() - 1)[2] = String.valueOf(counter);
+        ((FragmentListItem) mDrawerItems[3]).setCounter(counter);
         ((DrawerAdapter) mDrawerListView.getAdapter()).notifyDataSetChanged();
     }
 }

@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 
+// Layouts that were created to animate fragment transitions
 public class SlidingRelativeLayout extends RelativeLayout {
     private float xFraction = 0;
 

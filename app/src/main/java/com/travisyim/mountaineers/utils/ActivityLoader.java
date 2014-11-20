@@ -14,19 +14,19 @@ public class ActivityLoader {
         SIGNED_UP
     }
 
-    // Method called by ActivitySearchFragment
+    // Method called by ActivitySearchFragment (basic Activity Search)
     public static List<MountaineerActivity> load(List<ParseObject> resultList,
                                                  List<String> favoritesList){
         return backgroundLoad(resultList, favoritesList, false, null, null);
     }
 
     // Method called by FavoriteActivityFragment
-    public static List<MountaineerActivity> load (List<ParseObject> resultList, boolean isFavorites){
+    public static List<MountaineerActivity> load(List<ParseObject> resultList, boolean isFavorites){
         return backgroundLoad(resultList, null, isFavorites, null, null);
     }
 
     // Method called by CompletedActivityFragment & SignedUpActivityFragment
-    public static List<MountaineerActivity> load (List<ParseObject> resultList,
+    public static List<MountaineerActivity> load(List<ParseObject> resultList,
                                                   List<String> favoritesList, Mountaineer member,
                                                   ActivityType type){
         return backgroundLoad(resultList, favoritesList, false, member, type);
@@ -47,7 +47,12 @@ public class ActivityLoader {
                     (ParseConstants.KEY_ACTIVITY_START_DATE)));
             activity.setActivityEndDate(DateUtil.convertFromUNC(result.getDate
                     (ParseConstants.KEY_ACTIVITY_END_DATE)));
-            // Activity URL
+            // Activity Creation Date
+            activity.setActivityCreationDate(DateUtil.convertFromUNC(result.getDate
+                    (ParseConstants.KEY_ACTIVITY_CREATION_DATE)));
+            // Activity Added and Updated Dates (are in UNC in Parse, so no conversion to local time needed as this is done automatically)
+            activity.setActivityAddedAt(result.getDate(ParseConstants.KEY_ACTIVITY_ADDED_AT));
+            activity.setActivityUpdatedAt(result.getDate(ParseConstants.KEY_ACTIVITY_UPDATED_AT));
             activity.setActivityUrl(result.getString(ParseConstants.KEY_ACTIVITY_URL));
             // Leader availability
             if (result.get(ParseConstants.KEY_AVAILABILITY_LEADER) != null) {

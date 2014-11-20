@@ -4,70 +4,97 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.travisyim.mountaineers.R;
+import com.travisyim.mountaineers.objects.FragmentListItem;
 
-import java.util.List;
-
-public class DrawerAdapter extends ArrayAdapter<String[]> {
+public class DrawerAdapter extends BaseAdapter {
     private Context mContext;
-    private List<String[]> mDrawerItems;  // Contains drawer items attached to the adapter
+    private Object[] mDrawerItems;  // Contains drawer items attached to the adapter
 
-    public DrawerAdapter(Context context, List<String[]> drawerItems) {
-        super(context, R.layout.activity_item, drawerItems);
+    private static final int ITEM_VIEW_TYPE_FRAGMENT = 0;
+    private static final int ITEM_VIEW_TYPE_SEPARATOR = 1;
+    private static final int ITEM_VIEW_TYPE_COUNT = 2;
 
+    public DrawerAdapter(Context context, Object[] drawerItems) {
         mContext = context;
         mDrawerItems = drawerItems;
     }
 
     @Override
+    public int getCount() {
+        return mDrawerItems.length;
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return mDrawerItems[position];
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return ITEM_VIEW_TYPE_COUNT;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return (mDrawerItems[position] instanceof String) ? ITEM_VIEW_TYPE_SEPARATOR : ITEM_VIEW_TYPE_FRAGMENT;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        // A separator cannot be clicked !
+        return getItemViewType(position) != ITEM_VIEW_TYPE_SEPARATOR;
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        String[] drawerItem;
+        TextView textViewUpdateCounter;
+        final int type = getItemViewType(position);
 
-        // Check to see if view for item exists
-        if (convertView == null) { // No
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.drawer_item, null);
-            holder = new ViewHolder();
-            holder.imageView = (ImageView) convertView.findViewById(R.id.imageView);
-            holder.textViewName = (TextView) convertView.findViewById(R.id.textView);
-            holder.textViewUpdateCounter = (TextView) convertView.findViewById(R.id.textViewUpdateCounter);
-            convertView.setTag(holder);
-        }
-        else { // Yes
-            holder = (ViewHolder) convertView.getTag();
+        if (convertView == null) {
+            convertView = LayoutInflater.from(mContext).inflate(
+                    type == ITEM_VIEW_TYPE_SEPARATOR ? R.layout.drawer_separator : R.layout.drawer_item, null);
         }
 
-        drawerItem = mDrawerItems.get(position);
+        // Fill the list item view with the appropriate data
+        if (type == ITEM_VIEW_TYPE_SEPARATOR) {
+            ((TextView) convertView.findViewById(R.id.textViewHeader)).setText((String) getItem(position));
+        } else {
+            final FragmentListItem drawerItem = (FragmentListItem) getItem(position);
+            textViewUpdateCounter = (TextView) convertView.findViewById(R.id.textViewUpdateCounter);
 
-        holder.textViewName.setText(drawerItem[0]);  // Drawer item title
-        holder.imageView.setImageResource(Integer.parseInt(drawerItem[1]));  // Image
+            // Drawer item title
+            ((TextView) convertView.findViewById(R.id.textViewTitle)).setText(drawerItem.mTitle);
+            // Image
+            ((ImageView) convertView.findViewById(R.id.imageViewIcon)).setImageResource(drawerItem.mIcon);
 
-        // Update counter
-        if (drawerItem[2] == null || Integer.parseInt(drawerItem[2]) == 0) {
-            // Hide the counter if not representing saved search or if the count is 0
-            holder.textViewUpdateCounter.setVisibility(View.GONE);
-        }
-        else {
-            holder.textViewUpdateCounter.setVisibility(View.VISIBLE);  // Show counter
+            // Update counter (only applies to Saved Searches and potentially Favorites)
+            if (drawerItem.mUpdateCount > 0) {  // Only show if there are some updates
+                textViewUpdateCounter.setVisibility(View.VISIBLE);
 
-            if (Integer.parseInt(drawerItem[2]) <= 9) {
-                holder.textViewUpdateCounter.setText(String.valueOf(Integer.parseInt(drawerItem[2])));
+                // Check how many updates there are
+                if (drawerItem.mUpdateCount <= 9) {  // Max is 9 (no double digits)
+                    textViewUpdateCounter.setText(Integer.toString(drawerItem.mUpdateCount));
+                }
+                else {  // More than 9 updates so shorten the text
+                    textViewUpdateCounter.setText("9+");
+                }
             }
-            else {  // More than 9 updates so shorten the text
-                holder.textViewUpdateCounter.setText("9+");
+            else {
+                // Hide the counter if not representing saved search or if the count is 0
+                textViewUpdateCounter.setVisibility(View.GONE);
             }
         }
 
         return convertView;
-    }
-
-    private class ViewHolder {
-        ImageView imageView;
-        TextView textViewName;
-        TextView textViewUpdateCounter;
     }
 }

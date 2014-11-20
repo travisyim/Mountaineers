@@ -8,6 +8,9 @@ import java.util.Date;
 public class MountaineerActivity implements Serializable {
     private Date mActivityStartDate;
     private Date mActivityEndDate;
+    private Date mActivityCreationDate;
+    private Date mActivityAddedAt;
+    private Date mActivityUpdatedAt = null;
     private String mActivityUrl;
     private int mAvailabilityLeader = -999;
     private int mAvailabilityParticipant = -999;
@@ -85,6 +88,9 @@ public class MountaineerActivity implements Serializable {
     private boolean mTypeUrbanAdventure = false;
     private boolean mTypeYouth = false;
 
+    // Flag for user read/unread state
+    private boolean mIsUnread = false;
+
     public MountaineerActivity() {
     }
 
@@ -102,6 +108,30 @@ public class MountaineerActivity implements Serializable {
 
     public final void setActivityEndDate(final Date activityEndDate) {
         mActivityEndDate = activityEndDate;
+    }
+
+    public final Date getActivityCreationDate() {
+        return mActivityCreationDate;
+    }
+
+    public final void setActivityCreationDate(final Date activityCreationDate) {
+        mActivityCreationDate = activityCreationDate;
+    }
+
+    public final Date getActivityAddedAt() {
+        return mActivityAddedAt;
+    }
+
+    public final void setActivityAddedAt(final Date activityAddedAt) {
+        mActivityAddedAt = activityAddedAt;
+    }
+
+    public final Date getActivityUpdatedAt() {
+        return mActivityUpdatedAt;
+    }
+
+    public final void setActivityUpdatedAt(final Date activityUpdatedAt) {
+        mActivityUpdatedAt = activityUpdatedAt;
     }
 
     public final String getActivityUrl() {
@@ -638,5 +668,13 @@ public class MountaineerActivity implements Serializable {
 
     public void setSnowshoeingIntermediate(boolean isSnowshoeingIntermediate) {
         mSnowshoeingIntermediate = isSnowshoeingIntermediate;
+    }
+
+    public boolean isUnread() {
+        return mIsUnread;
+    }
+
+    public void setUnread(final boolean isUnread) {
+        mIsUnread = isUnread;
     }
 }

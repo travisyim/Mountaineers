@@ -430,7 +430,7 @@ public class FavoriteActivityFragment extends ListFragment implements OnParseTas
         if (!mIsCanceled) {
             // Pass the list to the adapter
             if (getListView().getAdapter() == null) {  // First time using the list adapter
-                ActivityAdapter adapter = new ActivityAdapter(getListView().getContext(), mActivityList);
+                ActivityAdapter adapter = new ActivityAdapter(getListView().getContext(), mActivityList, null);
                 setListAdapter(adapter);
             } else {  // Results already shown so update the list
                 ((ActivityAdapter) getListAdapter()).setMasterActivityList(mActivityList);

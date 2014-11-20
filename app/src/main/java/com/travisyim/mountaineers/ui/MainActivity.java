@@ -127,10 +127,10 @@ public class MainActivity extends Activity
                 // Google Analytics tracking code - User Profile
                 t = ((MountaineersApp) getApplication()).getTracker
                         (MountaineersApp.TrackerName.APP_TRACKER);
-                t.setScreenName("User Profile");
+                t.setScreenName(getString(R.string.title_profile));
                 t.send(new HitBuilders.AppViewBuilder().build());
 
-                mTitle = getString(R.string.title_section1);
+                mTitle = getString(R.string.title_profile);
 
                 if (mUserProfileFragment == null) {
                     fragment = UserProfileFragment.newInstance(position + 1);
@@ -149,14 +149,14 @@ public class MainActivity extends Activity
                 }
 
                 break;
-            case 1:  // Activity Search
+            case 2:  // Activity Search
                 // Google Analytics tracking code - Activity Search
                 t = ((MountaineersApp) getApplication()).getTracker
                         (MountaineersApp.TrackerName.APP_TRACKER);
-                t.setScreenName("Activity Search");
+                t.setScreenName(getString(R.string.title_browse));
                 t.send(new HitBuilders.AppViewBuilder().build());
 
-                mTitle = getString(R.string.title_section2);
+                mTitle = getString(R.string.title_browse);
 
                 if (mActivitySearchFragment == null) {
                     fragment = ActivitySearchFragment.newInstance(position + 1, null);
@@ -172,14 +172,40 @@ public class MainActivity extends Activity
                 }
 
                 break;
-            case 2:  // Completed Activities
+            case 3:  // Saved Searches
+                // Google Analytics tracking code - Favorite Activities
+                t = ((MountaineersApp) getApplication()).getTracker
+                        (MountaineersApp.TrackerName.APP_TRACKER);
+                t.setScreenName(getString(R.string.title_saved_searches));
+                t.send(new HitBuilders.AppViewBuilder().build());
+
+                mTitle = getString(R.string.title_saved_searches);
+
+                if (mSavedSearchFragment == null) {
+                    fragment = SavedSearchFragment.newInstance(position + 1);
+
+                    args = fragment.getArguments();
+                    args.putSerializable(ARG_MEMBER, (Serializable) mMember);
+                    mSavedSearchFragment = fragment;
+                }
+                else {
+                    fragment = mSavedSearchFragment;
+
+                    // Restore ActionBar title if user clicks on same item in Navigation Drawer
+                    if (mSavedSearchFragment.isVisible()) {
+                        restoreActionBar();
+                    }
+                }
+
+                break;
+            case 5:  // Completed Activities
                 // Google Analytics tracking code - Completed Activities
                 t = ((MountaineersApp) getApplication()).getTracker
                         (MountaineersApp.TrackerName.APP_TRACKER);
-                t.setScreenName("Completed Activities");
+                t.setScreenName(getString(R.string.title_completed));
                 t.send(new HitBuilders.AppViewBuilder().build());
 
-                mTitle = getString(R.string.title_section3);
+                mTitle = getString(R.string.title_completed);
 
                 if (mCompletedActivityFragment == null) {
                     fragment = CompletedActivityFragment.newInstance(position + 1);
@@ -198,14 +224,14 @@ public class MainActivity extends Activity
                 }
 
                 break;
-            case 3:  // Signed Up Activities
+            case 6:  // Signed Up Activities
                 // Google Analytics tracking code - Signed Up Activities
                 t = ((MountaineersApp) getApplication()).getTracker
                         (MountaineersApp.TrackerName.APP_TRACKER);
-                t.setScreenName("Signed Up Activities");
+                t.setScreenName(getString(R.string.title_signed_up));
                 t.send(new HitBuilders.AppViewBuilder().build());
 
-                mTitle = getString(R.string.title_section4);
+                mTitle = getString(R.string.title_signed_up);
 
                 if (mSignedUpActivityFragment == null) {
                     fragment = SignedUpActivityFragment.newInstance(position + 1);
@@ -224,14 +250,14 @@ public class MainActivity extends Activity
                 }
 
                 break;
-            case 4:  // Favorite Activities
+            case 7:  // Favorite Activities
                 // Google Analytics tracking code - Favorite Activities
                 t = ((MountaineersApp) getApplication()).getTracker
                         (MountaineersApp.TrackerName.APP_TRACKER);
-                t.setScreenName("Favorite Activities");
+                t.setScreenName(getString(R.string.title_favorites));
                 t.send(new HitBuilders.AppViewBuilder().build());
 
-                mTitle = getString(R.string.title_section5);
+                mTitle = getString(R.string.title_favorites);
 
                 if (mFavoriteActivityFragment == null) {
                     fragment = FavoriteActivityFragment.newInstance(position + 1);
@@ -242,32 +268,6 @@ public class MainActivity extends Activity
 
                     // Restore ActionBar title if user clicks on same item in Navigation Drawer
                     if (mFavoriteActivityFragment.isVisible()) {
-                        restoreActionBar();
-                    }
-                }
-
-                break;
-            case 5:  // Saved Searches
-                // Google Analytics tracking code - Favorite Activities
-                t = ((MountaineersApp) getApplication()).getTracker
-                        (MountaineersApp.TrackerName.APP_TRACKER);
-                t.setScreenName("Saved Searches");
-                t.send(new HitBuilders.AppViewBuilder().build());
-
-                mTitle = getString(R.string.title_section6);
-
-                if (mSavedSearchFragment == null) {
-                    fragment = SavedSearchFragment.newInstance(position + 1);
-
-                    args = fragment.getArguments();
-                    args.putSerializable(ARG_MEMBER, (Serializable) mMember);
-                    mSavedSearchFragment = fragment;
-                }
-                else {
-                    fragment = mSavedSearchFragment;
-
-                    // Restore ActionBar title if user clicks on same item in Navigation Drawer
-                    if (mSavedSearchFragment.isVisible()) {
                         restoreActionBar();
                     }
                 }
@@ -443,22 +443,22 @@ public class MainActivity extends Activity
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_section2);
+                mTitle = getString(R.string.title_profile);
                 break;
             case 3:
-                mTitle = getString(R.string.title_section3);
+                mTitle = getString(R.string.title_browse);
                 break;
             case 4:
-                mTitle = getString(R.string.title_section4);
-                break;
-            case 5:
-                mTitle = getString(R.string.title_section5);
+                mTitle = getString(R.string.title_saved_searches);
                 break;
             case 6:
-                mTitle = getString(R.string.title_section6);
+                mTitle = getString(R.string.title_completed);
+                break;
+            case 7:
+                mTitle = getString(R.string.title_signed_up);
+                break;
+            case 8:
+                mTitle = getString(R.string.title_favorites);
                 break;
         }
 

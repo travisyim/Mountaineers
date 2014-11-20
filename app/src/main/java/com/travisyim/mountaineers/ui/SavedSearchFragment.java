@@ -59,6 +59,7 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
     private static final String ARG_SAVED_SEARCH_NAME = "savedSearchName";
     private static final String ARG_FILTER_OPTIONS = "filterOptions";
     private static final String ARG_QUERY_TEXT = "queryText";
+    private static final String ARG_LAST_VIEWED = "lastViewed";
     private static final String ARG_MEMBER = "member";
 
     // Returns a new instance of this fragment for the given section number
@@ -143,7 +144,7 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
                 // Google Analytics tracking code - Edit user profile
                 Tracker t = ((MountaineersApp) getActivity().getApplication()).getTracker
                         (MountaineersApp.TrackerName.APP_TRACKER);
-                t.setScreenName("Activity Search (Saved Search)");
+                t.setScreenName(getString(R.string.title_browse) + " (" + getString(R.string.title_saved_searches) +")");
                 t.send(new HitBuilders.AppViewBuilder().build());
 
             /* Tell Parse backend that user is now viewing this saved search so go ahead and update
@@ -189,6 +190,9 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
 
                 // Search query text
                 args.putString(ARG_QUERY_TEXT, mSavedSearchList.get(position).getQueryText());
+
+                // Last Viewed Date (in long format)
+                args.putLong(ARG_LAST_VIEWED, mSavedSearchList.get(position).getLastAccessDateDate().getTime());
 
                 // Load activity search fragment with slide animations
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -308,9 +312,9 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
         bottom) */
         int endSubList = 0;
 
-        if (list.size() != 0) {  // Make sure there is at least one entry (i.e. saved search)
+        if (list.size() > 1) {  // Make sure there is at least two entries (i.e. saved searches)
             // Make sure the first entry has updates or the list does not need to be reorganized
-            if (list.get(0).getUpdateCounter() != 0) {  // First entry has updates
+            if (list.get(0).getUpdateCounter() > 0) {  // First entry has updates
                 for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).getUpdateCounter() == 0) {
                         // Get the index for the end of the saved searches with updates

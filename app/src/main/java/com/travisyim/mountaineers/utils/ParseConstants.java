@@ -52,6 +52,9 @@ public class ParseConstants {
     public static final String KEY_TYPE = "type";
     public static final String KEY_USER_ID = "userId";
     public static final String KEY_UPDATE_COUNT = "updateCount";
+    public static final String KEY_ACTIVITY_CREATION_DATE = "activityCreatedAt";  // Provided in Mountaineers' JSON feed
+    public static final String KEY_ACTIVITY_ADDED_AT = "activityAddedAt";  // Used for evaluating save searches
+    public static final String KEY_ACTIVITY_UPDATED_AT = "activityUpdatedAt";  // Used for evaluating save searches
 
     // Filter Categories
     // Audience

@@ -125,7 +125,7 @@ public class ProfileEditFragment extends Fragment {
             // Google Analytics tracking code - User Profile
             Tracker t = ((MountaineersApp) getActivity().getApplication()).getTracker
                     (MountaineersApp.TrackerName.APP_TRACKER);
-            t.setScreenName("User Profile");
+            t.setScreenName(getString(R.string.title_profile));
             t.send(new HitBuilders.AppViewBuilder().build());
 
             // Reset the title back to that of the parent fragment

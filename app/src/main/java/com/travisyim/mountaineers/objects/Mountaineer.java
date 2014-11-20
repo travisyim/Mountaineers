@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -29,6 +30,7 @@ import java.net.CookieManager;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -542,36 +544,45 @@ public final class Mountaineer implements Serializable {
 
         @Override
         protected final AsyncTaskResult<Boolean> doInBackground(Object[] objects) {
-            // Save to Parse if this user is logging in (from Login Activity).
+            /* Save to Parse if this user is logging in (from Login Activity).  The user has been
+             * confirmed through the Mountaineer's website, so go ahead and get the user's objectId. */
             ParseUser user = null;
+            String objectId;
             boolean userExists = false;
             final String username = mMember.getUsername();
             final String password = mMember.getPassword();
             final String memberUrl = mMember.getMemberUrl();
 
-            // Search for existing user in the Parse User class
-            ParseQuery<ParseUser> query = ParseUser.getQuery();
-            query.whereEqualTo(ParseConstants.KEY_USERNAME, username);
+            // Create params to be provided to the cloud function
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put(ParseConstants.KEY_USERNAME, username);
+            // Assumes that the URL NEVER CHANGES!!!
+            params.put(ParseConstants.KEY_MEMBER_URL, memberUrl);
 
             try {
-                List<ParseUser> results = query.find();
+                objectId = ParseCloud.callFunction("verifyUser", params);
 
-                // Check to see if user exists
-                if (results.size() > 0) {  // Exists
-                    userExists = true;
-                    user = results.get(0);
-                } else {  // Does not exist
+                if (objectId.equals("new")) {  // New app user
                     userExists = false;
+
                     user = new ParseUser();
                     user.setUsername(username);
                     user.setPassword(password);
                     user.put(ParseConstants.KEY_MEMBER_URL, memberUrl);
                     user.put(ParseConstants.KEY_PASSWORD,
                             SimpleCrypto.encrypt(mContext.getString(R.string.key), password));
+                } else {  // User already exists
+                    userExists = true;
+
+                    // Search for existing user in the Parse User class
+                    ParseQuery<ParseUser> query = ParseUser.getQuery();
+                    query.whereEqualTo(ParseConstants.KEY_OBJECT_ID, objectId);
+
+                    user = query.getFirst();
                 }
 
                 // Sign up user if he/she did not exist previously
-                if (!userExists && user != null) {  // New Parse user sign up
+                if (!userExists) {  // New Parse user sign up
                     user.signUp();
                 }
                 else {  // Existing Parse user login
@@ -593,12 +604,13 @@ public final class Mountaineer implements Serializable {
                     user.save();
                 }
 
-                // Saving of crendtials successful
+                // Saving of credentials successful
                 mResult = new AsyncTaskResult<Boolean>(true);
-            } catch (ParseException e) {
-                // Something went wrong
-                mResult = new AsyncTaskResult<Boolean>
-                        (new Exception("Error saving login information"));
+            }
+            catch (ParseException e) {
+                // Could not verify user - return to UI thread
+                return new AsyncTaskResult<Boolean>(new Exception
+                        ("Error saving login information"));
             }
 
             return mResult;
