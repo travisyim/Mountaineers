@@ -445,7 +445,7 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
             getListView().setEmptyView(getActivity().findViewById(R.id.textViewEmpty));
 
             // Update the navigation drawer to show saved search updates
-            ((MainActivity) getActivity()).updateNavigationDrawerContents();
+            ((MainActivity) getActivity()).updateNavigationDrawerCounters();
 
             // Flag as updating activities
             ((MainActivity) getActivity()).setLoadingActivities(false);

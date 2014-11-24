@@ -393,7 +393,7 @@ public class MainActivity extends Activity
                          mCookie = mMember.getCookies().get(0);
 
                          // Update the navigation drawer to show saved search updates
-                         updateNavigationDrawerContents();
+                         updateNavigationDrawerCounters();
 
                          // Scrape member profile data from website
                          mMember.getMemberData(this);
@@ -430,6 +430,9 @@ public class MainActivity extends Activity
                          setProgressBarIndeterminateVisibility(false);  // Hide progress circle
                          showLoginScreen();  // Send user to login screen
                      }
+
+                     // Update the navigation drawer to show user profile image
+                     mNavigationDrawerFragment.updateProfileImage(mMember.getProfileImageUrl());
 
                      setProgressBarIndeterminateVisibility(false);  // Hide progress circle
                      mFinishedUserData = true;  // Flag as finished getting user profile date
@@ -527,7 +530,7 @@ public class MainActivity extends Activity
         mIsDrawerOpen = isDrawerOpen;
     }
 
-    public void updateNavigationDrawerContents() {
+    public void updateNavigationDrawerCounters() {
         int navDrawerCounter = 0;
 
         // Count saved searches with updates and update the counter in the notification drawer

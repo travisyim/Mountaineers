@@ -1,10 +1,13 @@
 package com.travisyim.mountaineers.adapters;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.Typeface;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,7 +19,6 @@ import com.travisyim.mountaineers.objects.FilterOptions;
 import com.travisyim.mountaineers.objects.MountaineerActivity;
 import com.travisyim.mountaineers.utils.ActivityComparator;
 import com.travisyim.mountaineers.utils.DateUtil;
-import com.travisyim.mountaineers.utils.PicassoCustom;
 
 import org.json.JSONException;
 
@@ -35,10 +37,15 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
     private List<MountaineerActivity> mMasterActivities = new ArrayList<MountaineerActivity>();
     private Toast toast;
     private long mLastViewed;
+    private int mScreenWidth;
     private boolean mIsSavedSearch = false;
 
     public ActivityAdapter(Context context, List<MountaineerActivity> activities, Date lastViewed) {
         super(context, R.layout.activity_item, activities);
+
+        WindowManager wm;
+        Display display;
+        Point size;
 
         mContext = context;
         mActivities = activities;
@@ -48,6 +55,13 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
             mIsSavedSearch = true;
             mLastViewed = lastViewed.getTime();
         }
+
+        // Get screen width in pixels
+        wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        display = wm.getDefaultDisplay();
+        size = new Point();
+        display.getSize(size);
+        mScreenWidth = size.x;
 
         // Master copy of all activities so that they will not get erased
         mMasterActivities.addAll(activities);
@@ -88,25 +102,21 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
         // Picture
         if (activity.getImageUrl() != null) {  // Image defined
             Picasso.with(getContext()).load(activity.getImageUrl())
-                    .placeholder(R.drawable.default_activity).error(R.drawable.default_activity)
-                    .transform(new PicassoCustom.ScaleByWidthTransformation(190))
-                    .into(holder.imageViewActivity);
-        }
-        else {  // Use default image
-            Picasso.with(getContext()).load(R.drawable.default_activity)
-                    .placeholder(R.drawable.default_activity).error(R.drawable.default_activity)
-                    .transform(new PicassoCustom.ScaleByWidthTransformation(190))
+//                    .placeholder(R.drawable.default_activity).error(R.drawable.default_activity)
+                    .resize(mScreenWidth / 4, 0)
                     .into(holder.imageViewActivity);
         }
 
         // Determine if this is an unseen activity - if so, bold the title
         if (mIsSavedSearch) {  // This was launched from a saved search
-            if (activity.isUnread()) {  // Unseen by user
+            if (activity.isUnread() &&
+                    (activity.getActivityStartDate().getTime() + 24 * 60 * 60 * 1000) >
+                            new Date().getTime()) {  // Unseen by user and activity occurs in the future
                 // Bold the activity title
                 holder.textViewName.setTypeface(null, Typeface.BOLD);
             }
             else {
-                // Bold the activity title
+                // Unbold the activity title
                 holder.textViewName.setTypeface(null, Typeface.NORMAL);
             }
         }
@@ -540,6 +550,8 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
         mLastViewed = lastViewed;
     }
 
+    /* This method determines whether an applicable activity is unseen and if so, should it be
+     * placed at the top or in the seen section (e.g. do not show past activities with new updates) */
     private boolean addToListAsUnseen(final MountaineerActivity activity, int newIndex) {
         long updatedDate;
 
@@ -551,22 +563,25 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
             updatedDate = activity.getActivityAddedAt().getTime();
         }
 
-        // Check if the activity is newer than the last time the user viewed the saved search
-        if (mLastViewed < updatedDate) {  // Yes
+        /* Check if the activity is newer than the last time the user viewed the saved search and is
+         * occurring in the future */
+        if (mLastViewed < updatedDate &&
+                (activity.getActivityStartDate().getTime() + 24 * 60 * 60 * 1000) >
+                        new Date().getTime()) {  // Yes
             activity.setUnread(true);  // Mark this activity as unseen by the user
 
             if (mActivities.size() > 0) {  // Not the first activity being added to the list
-                // Add activity to the front of the list (at the end of the unseen section)
+                // Add activity to the top of the list (at the bottom of the unseen section)
                 mActivities.add(newIndex, activity);
             }
-            else {  // First activity
+            else {  // First activity - add to list
                 mActivities.add(activity);
             }
 
             return true;
         }
         else {  // No
-            mActivities.add(activity);  // Add activity to list
+            mActivities.add(activity);  // Add activity to bottom of list
             return false;
         }
     }

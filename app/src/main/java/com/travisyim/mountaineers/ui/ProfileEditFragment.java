@@ -2,6 +2,7 @@ package com.travisyim.mountaineers.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +27,7 @@ public class ProfileEditFragment extends Fragment {
     private String mProfileEditURL;
     private String mCookie;
     private boolean mLogOut = false;
+    private boolean mIsWebPageLoad;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String ARG_PARENT_TITLE = "parentFragmentTitle";
@@ -79,6 +81,8 @@ public class ProfileEditFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile_edit, container, false);
 
+        mIsWebPageLoad = true;  // Mark this as loading the activity web page
+
         // Sync cookie from initial login phase with the WebView so that the user is logged in
         CookieSyncManager.createInstance(getActivity());
         CookieManager cookieManager = CookieManager.getInstance();
@@ -96,9 +100,64 @@ public class ProfileEditFragment extends Fragment {
 
         // Setup WevViewClient to handle webpage events
         mWebView.setWebViewClient(new WebViewClient() {
+            /**
+             * Notify the host application that a page has started loading. This method
+             * is called once for each main frame load so a page with iframes or
+             * framesets will call onPageStarted one time for the main frame. This also
+             * means that onPageStarted will not be called when the contents of an
+             * embedded frame changes, i.e. clicking a link whose target is an iframe.
+             *
+             * @param view    The WebView that is initiating the callback.
+             * @param url     The url to be loaded.
+             * @param favicon The favicon for this page if it already exists in the
+             */
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+
+                // Show the progress circle
+                getActivity().setProgressBarIndeterminateVisibility(true);
+            }
+
             public void onPageFinished(WebView view, String url) {
                 // Stop the progress circle
                 try {
+                    if (mIsWebPageLoad) {  // First profile web page load
+                        // Hide unnecessary areas of the webpage (i.e. headers, etc)
+                        view.loadUrl("javascript:" +
+                                "(function() {" +
+                                "document.getElementById('abs').style.display='none';" +
+                                "document.getElementById('nabs').style.display='none';" +
+                                "document.getElementById('header').style.display='none';" +
+                                "document.getElementById('navigation').style.display='none';" +
+                                "document.getElementById('edit-bar').style.display='none';" +
+                                "document.getElementById('breadcrumbs').style.display='none';" +
+                                "document.getElementById('footer').style.display='none';" +
+                                "document.getElementById('main').getElementsByClassName('wrapper')[0].getElementsByClassName('column grid-3 leftportlets')[0].style.display='none';" +
+                                "document.getElementById('viewlet-below-content').style.display='none';" +
+                                "document.getElementsByClassName('uv-icon uv-bottom-right')[0].style.display='none';" +
+                                "})()");
+
+                        // Any web page navigated will not be the profile web page
+                        mIsWebPageLoad = false;
+                    }
+                    else {  // Not the first profile web page load
+                        // Hide unnecessary areas of the webpage (i.e. headers, etc)
+                        view.loadUrl("javascript:" +
+                                "(function() {" +
+                                "document.getElementById('abs').style.display='none';" +
+                                "document.getElementById('nabs').style.display='none';" +
+                                "document.getElementById('header').style.display='none';" +
+                                "document.getElementById('navigation').style.display='none';" +
+                                "document.getElementById('breadcrumbs').style.display='none';" +
+                                "document.getElementById('footer').style.display='none';" +
+                                "document.getElementById('main').getElementsByClassName('wrapper')[0].getElementsByClassName('column grid-3 leftportlets')[0].style.display='none';" +
+                                "document.getElementsByClassName('uv-icon uv-bottom-right')[0].style.display='none';" +
+                                "document.getElementById('edit-bar').style.display='none';" +
+                                "document.getElementById('viewlet-below-content').style.display='none';" +
+                                "})()");
+                    }
+
                     getActivity().setProgressBarIndeterminateVisibility(false);
                 }
                 catch (NullPointerException e) {
@@ -108,8 +167,7 @@ public class ProfileEditFragment extends Fragment {
             }
         });
 
-        // Start loading webpage and show the progress circle
-        getActivity().setProgressBarIndeterminateVisibility(true);
+        // Start loading profile web page
         mWebView.loadUrl(mProfileEditURL);
 
         return rootView;

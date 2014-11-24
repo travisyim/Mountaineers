@@ -1,8 +1,11 @@
 package com.travisyim.mountaineers.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.view.LayoutInflater;
@@ -35,13 +38,16 @@ public class ActivityDetailsFragment extends Fragment {
     private String mParentFragmentTitle;
     private String mActivityName;
     private String mActivityURL;
+    private String mLeaderNames;
     private String mLocation;
     private boolean mIsFavorite;
     private boolean mLogOut;
+    private boolean mIsActivityPageLoad;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String ARG_PARENT_TITLE = "parentFragmentTitle";
     private static final String ARG_ACTIVITY_NAME = "activityName";
+    private static final String ARG_LEADER_NAMES = "leaderNames";
     private static final String ARG_ACTIVITY_URL = "activityURL";
     private static final String ARG_LOCATION = "location";
     private static final String ARG_FAVORITE = "isFavorite";
@@ -80,6 +86,7 @@ public class ActivityDetailsFragment extends Fragment {
         mIsFavorite = getArguments().getBoolean(ARG_FAVORITE);  // Get favorite status
         mActivityName = getArguments().getString(ARG_ACTIVITY_NAME);  // Activity name
         mActivityURL = getArguments().getString(ARG_ACTIVITY_URL);  // Activity URL
+        mLeaderNames = getArguments().getString(ARG_LEADER_NAMES);  // Leader name(s)
         mLocation = getArguments().getString(ARG_LOCATION);  // GPS Location
         // Activity start date
         mActivityStartDate = new Date(getArguments().getLong(ARG_ACTIVITY_START_DATE));
@@ -106,24 +113,79 @@ public class ActivityDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_activity_details, container, false);
 
+        mIsActivityPageLoad = true;  // Mark this as loading the activity web page
+
         // Sync cookie from initial login phase with the WebView so that the user is logged in
         CookieSyncManager.createInstance(getActivity());
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setCookie("www.mountaineers.org", mCookie);
         CookieSyncManager.getInstance().sync();
 
-        // Load activity webpage
+        // Load activity web page
         mWebView = (WebView) rootView.findViewById(R.id.webView);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setUseWideViewPort(true);
         mWebView.getSettings().setLoadWithOverviewMode(true);
         mWebView.getSettings().setBuiltInZoomControls(true);
 
-        // Setup WevViewClient to handle webpage events
+        // Setup WevViewClient to handle web page events
         mWebView.setWebViewClient(new WebViewClient() {
+            /**
+             * Notify the host application that a page has started loading. This method
+             * is called once for each main frame load so a page with iframes or
+             * framesets will call onPageStarted one time for the main frame. This also
+             * means that onPageStarted will not be called when the contents of an
+             * embedded frame changes, i.e. clicking a link whose target is an iframe.
+             *
+             * @param view    The WebView that is initiating the callback.
+             * @param url     The url to be loaded.
+             * @param favicon The favicon for this page if it already exists in the
+             */
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+
+                // Show the progress circle
+                getActivity().setProgressBarIndeterminateVisibility(true);
+            }
+
             public void onPageFinished(WebView view, String url) {
                 // Stop the progress circle
                 try {
+                    if (mIsActivityPageLoad) {  // First activity web page load
+                        // Hide unnecessary areas of the web page (i.e. headers, etc)
+                        view.loadUrl("javascript:" +
+                                "(function() {" +
+                                "document.getElementById('abs').style.display='none';" +
+                                "document.getElementById('nabs').style.display='none';" +
+                                "document.getElementById('header').style.display='none';" +
+                                "document.getElementById('navigation').style.display='none';" +
+                                "document.getElementById('breadcrumbs').style.display='none';" +
+                                "document.getElementById('footer').style.display='none';" +
+                                "document.getElementById('main').getElementsByClassName('wrapper')[0].getElementsByClassName('column grid-1 backcolumn')[0].style.display='none';" +
+                                "document.getElementById('viewlet-below-content').style.display='none';" +
+                                "document.getElementsByClassName('uv-icon uv-bottom-right')[0].style.display='none';" +
+                                "})()");
+
+                        // Any web page navigated will not be the activity web page
+                        mIsActivityPageLoad = false;
+                    }
+                    else {  // Not the first activity web page load
+                        // Hide unnecessary areas of the web page (i.e. headers, etc)
+                        view.loadUrl("javascript:" +
+                                "(function() {" +
+                                "document.getElementById('abs').style.display='none';" +
+                                "document.getElementById('nabs').style.display='none';" +
+                                "document.getElementById('header').style.display='none';" +
+                                "document.getElementById('navigation').style.display='none';" +
+                                "document.getElementById('breadcrumbs').style.display='none';" +
+                                "document.getElementById('footer').style.display='none';" +
+                                "document.getElementsByClassName('uv-icon uv-bottom-right')[0].style.display='none';" +
+                                "document.getElementById('main').getElementsByClassName('wrapper')[0].getElementsByClassName('column grid-1 backcolumn')[0].style.display='none';" +
+                                "document.getElementById('viewlet-below-content').style.display='none';" +
+                                "})()");
+                    }
+
                     getActivity().setProgressBarIndeterminateVisibility(false);
                 }
                 catch (NullPointerException e) {
@@ -133,8 +195,7 @@ public class ActivityDetailsFragment extends Fragment {
             }
         });
 
-        // Start loading webpage and show the progress circle
-        getActivity().setProgressBarIndeterminateVisibility(true);
+        // Start loading activity web page
         mWebView.loadUrl(mActivityURL);
 
         return rootView;
@@ -236,7 +297,6 @@ public class ActivityDetailsFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
         Tracker t;
 
         switch (item.getItemId()) {
@@ -253,7 +313,7 @@ public class ActivityDetailsFragment extends Fragment {
                 t.setScreenName("ACTION: Share activity");
                 t.send(new HitBuilders.AppViewBuilder().build());
 
-                intent = new Intent(Intent.ACTION_SEND)
+                Intent intent = new Intent(Intent.ACTION_SEND)
                         .setType("text/plain")
                         .putExtra(Intent.EXTRA_TEXT, "Check out this trip:\n" + mActivityURL)
                         .putExtra(android.content.Intent.EXTRA_SUBJECT, mActivityName);
@@ -268,19 +328,60 @@ public class ActivityDetailsFragment extends Fragment {
                 t.setScreenName("ACTION: Add activity reminder");
                 t.send(new HitBuilders.AppViewBuilder().build());
 
-                intent = new Intent(Intent.ACTION_INSERT)
-                        .setData(CalendarContract.Events.CONTENT_URI)
-                        .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, mActivityStartDate
-                                .getTime())
-                        .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, mActivityEndDate.getTime()
-                                + (24 * 60 * 60 * 1000) - 1)
-                        .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true)
-                        .putExtra(CalendarContract.Events.TITLE, mActivityName)
-                        .putExtra(CalendarContract.Events.EVENT_LOCATION, mLocation)
-                        .putExtra(CalendarContract.Events.AVAILABILITY,
-                                CalendarContract.Events.AVAILABILITY_BUSY);
+                // Show the Event Reminder alert dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                startActivity(Intent.createChooser(intent, getActivity().getString(R.string.chooser_reminder)));
+                // Set the title and list options
+                builder.setTitle(R.string.dialog_title_reminder)
+                        .setItems(R.array.reminder, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(Intent.ACTION_INSERT)
+                                        .setData(CalendarContract.Events.CONTENT_URI)
+                                        .putExtra(CalendarContract.Events.DESCRIPTION, mActivityURL)
+                                        .putExtra(CalendarContract.Events.ORGANIZER, mLeaderNames);
+
+                                switch (which) {
+                                    case 0:  // Activity start date
+                                        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, mActivityStartDate.getTime())
+                                                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, mActivityEndDate.getTime() + (24 * 60 * 60 * 1000) - 1)
+                                                .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true)
+                                                .putExtra(CalendarContract.Events.TITLE, mActivityName)
+                                                .putExtra(CalendarContract.Events.EVENT_LOCATION, mLocation)
+                                                .putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
+
+                                        break;
+                                    case 1:  // Registration start date
+                                        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, mRegOpenDate.getTime())
+                                                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, mRegCloseDate.getTime())
+                                                .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false)
+                                                .putExtra(CalendarContract.Events.TITLE, getActivity().getString(R.string.registration_start) + mActivityName)
+                                                .putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_FREE);
+
+                                        break;
+                                    case 2:  // Registration end date
+                                        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, mRegCloseDate.getTime())
+                                                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, mRegCloseDate.getTime())
+                                                .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false)
+                                                .putExtra(CalendarContract.Events.TITLE, getActivity().getString(R.string.registration_end) + mActivityName)
+                                                .putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_FREE);
+
+                                        break;
+                                }
+
+                                startActivity(Intent.createChooser(intent, getActivity().getString(R.string.chooser_reminder)));
+                            }
+                    });
+
+                // Add the cancel buttons
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+
+                // Create the AlertDialog and show
+                AlertDialog dialog = builder.create();
+                dialog.show();
 
                 return true;
             case R.id.action_favorite:  // Add to / Remove from Favorites

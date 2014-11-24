@@ -389,9 +389,15 @@ public class NavigationDrawerFragment extends Fragment {
         }
     }
 
-    public void updateSavedSearchCounter(int counter) {
+    public void updateSavedSearchCounter(final int counter) {
         // This method updates the saved search counter in the navigation drawer
         ((FragmentListItem) mDrawerItems[3]).setCounter(counter);
+        ((DrawerAdapter) mDrawerListView.getAdapter()).notifyDataSetChanged();
+    }
+
+    public void updateProfileImage(final String imageUrl) {
+        // This method updates the saved search counter in the navigation drawer
+        ((FragmentListItem) mDrawerItems[0]).setProfileImage(imageUrl);
         ((DrawerAdapter) mDrawerListView.getAdapter()).notifyDataSetChanged();
     }
 }

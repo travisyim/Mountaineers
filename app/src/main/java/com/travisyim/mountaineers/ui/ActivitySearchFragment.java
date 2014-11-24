@@ -43,6 +43,7 @@ import com.travisyim.mountaineers.utils.OnParseTaskCompleted;
 import com.travisyim.mountaineers.utils.ParseConstants;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,6 +84,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     private static final String ARG_QUERY_TEXT = "queryText";
     private static final String ARG_LAST_VIEWED = "lastViewed";
     private static final String ARG_ACTIVITY_NAME = "activityName";
+    private static final String ARG_LEADER_NAMES = "leaderNames";
     private static final String ARG_ACTIVITY_URL = "activityURL";
     private static final String ARG_LOCATION = "location";
     private static final String ARG_FAVORITE = "isFavorite";
@@ -397,6 +399,16 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             }
             else {
                 args.putString(ARG_LOCATION, "");
+            }
+
+            // Pass in Leader Name(s)
+            try {  // Join leader names together and remove quotes (due to being stored in JSON array)
+                args.putString(ARG_LEADER_NAMES, mActivityList.get(position).getLeaderName()
+                        .join(", ").replace("\"", ""));
+            }
+            catch (JSONException e) {
+                // Error with leader names so pass in empty String
+                args.putString(ARG_LEADER_NAMES, "");
             }
 
             // Update ActionBar title to show name

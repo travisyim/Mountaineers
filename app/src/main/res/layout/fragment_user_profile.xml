@@ -17,34 +17,45 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
-    <TextView
-        android:id="@+id/textViewName"
+   <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="First Last"
-        android:layout_alignParentTop="true"
-        android:paddingLeft="@dimen/profile_horizontal_padding"
+        android:layout_alignTop="@+id/imageViewProfile"
+        android:gravity="center_vertical"
+        android:layout_alignParentRight="true"
         android:layout_toRightOf="@+id/imageViewProfile"
-        android:layout_alignLeft="@+id/textViewBranch"/>
+        android:layout_alignBottom="@+id/imageViewProfile"
+        android:layout_centerVertical="true">
 
-    <TextView
-        android:id="@+id/textViewRegistrationDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/imageViewProfile"
-        android:layout_below="@+id/textViewName"
-        android:paddingLeft="@dimen/profile_horizontal_padding"
-        android:text="Member since: January 1, 1970"/>
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="First Last"
+            android:layout_alignParentTop="true"
+            android:paddingLeft="@dimen/profile_horizontal_padding"
+            android:layout_alignParentLeft="true"
+            android:layout_alignLeft="@+id/textViewBranch"/>
 
-    <TextView
-        android:id="@+id/textViewBranch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/imageViewProfile"
-        android:layout_below="@+id/textViewRegistrationDate"
-        android:paddingLeft="@dimen/profile_horizontal_padding"
-        android:text="Branch: City"/>
+        <TextView
+            android:id="@+id/textViewRegistrationDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/textViewName"
+            android:paddingLeft="@dimen/profile_horizontal_padding"
+            android:text="Member since: January 1, 1970"/>
+
+        <TextView
+            android:id="@+id/textViewBranch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/textViewRegistrationDate"
+            android:paddingLeft="@dimen/profile_horizontal_padding"
+            android:text="Branch: City"/>
+    </RelativeLayout>
 
     <GridView
         android:id="@+id/badgeGrid"

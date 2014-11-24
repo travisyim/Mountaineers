@@ -18,7 +18,6 @@
             android:id="@+id/imageViewActivity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="70dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:paddingLeft="@dimen/activity_horizontal_margin"
