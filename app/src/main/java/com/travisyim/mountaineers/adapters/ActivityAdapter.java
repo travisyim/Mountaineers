@@ -102,7 +102,6 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
         // Picture
         if (activity.getImageUrl() != null) {  // Image defined
             Picasso.with(getContext()).load(activity.getImageUrl())
-//                    .placeholder(R.drawable.default_activity).error(R.drawable.default_activity)
                     .resize(mScreenWidth / 4, 0)
                     .into(holder.imageViewActivity);
         }

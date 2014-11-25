@@ -223,7 +223,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
                 getActivityList();  // Get the activity list for the defined filter and query options
             }
-            // User returning from filter options
+            // User returning from filter options or if it is a saved search then it could be entering activity search
             else if (mReturnFromFilter) {
                 mReturnFromFilter = false;  // Reset this flag
 
@@ -242,6 +242,9 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                 /* Refresh favorites (e.g. user has deselected a favorite Completed activity and
                  * that favorite status needs to the same activity in this list */
                 mSwipeRefreshLayout.setRefreshing(true);  // Turn on update indicator
+
+                // Clear temporary saved search name array
+                mTempSavedSearchList.clear();
 
                 /* Update activity list to reflect latest set of Favorite activities.  This is
                  * typically completed in the ActivityLoader but we are loading any activities -

@@ -231,8 +231,8 @@ public class ActivityDetailsFragment extends Fragment {
                 t.setScreenName(getString(R.string.title_signed_up));
             }
             // Favorite Activity
-            else if (mParentFragmentTitle.equals(getString(R.string.title_favorites))) {
-                t.setScreenName(getString(R.string.title_favorites));
+            else if (mParentFragmentTitle.equals(getString(R.string.title_bookmarked))) {
+                t.setScreenName(getString(R.string.title_bookmarked));
             }
             else {  // Saved search activity search
                 t.setScreenName(getString(R.string.title_browse) + " (" + getString(R.string.title_saved_searches) +")");
@@ -260,7 +260,7 @@ public class ActivityDetailsFragment extends Fragment {
                             .onFavoriteSelected(mIsFavorite);
                 }
                 // Favorite Activity
-                else if (mParentFragmentTitle.equals(getString(R.string.title_favorites))) {
+                else if (mParentFragmentTitle.equals(getString(R.string.title_bookmarked))) {
                     ((FavoriteActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
                             .onFavoriteSelected(mIsFavorite);
                 }
@@ -282,16 +282,16 @@ public class ActivityDetailsFragment extends Fragment {
 
         inflater.inflate(R.menu.activity_details, menu);
 
-        mFavorite = menu.findItem(R.id.action_favorite);
+        mFavorite = menu.findItem(R.id.action_bookmark);
 
         // Set the status of the favorites icon
         if (mIsFavorite) {  // This is a favorite activity
-            mFavorite.setIcon(R.drawable.ic_action_important);
-            mFavorite.setTitle(R.string.favorites_remove);
+            mFavorite.setIcon(R.drawable.ic_bookmark_white_36dp);
+            mFavorite.setTitle(R.string.bookmark_remove);
         }
         else {  // Not a favorite activity
-            mFavorite.setIcon(R.drawable.ic_action_not_important);
-            mFavorite.setTitle(R.string.favorites_add);
+            mFavorite.setIcon(R.drawable.ic_bookmark_outline_white_36dp);
+            mFavorite.setTitle(R.string.bookmark_add);
         }
     }
 
@@ -384,7 +384,7 @@ public class ActivityDetailsFragment extends Fragment {
                 dialog.show();
 
                 return true;
-            case R.id.action_favorite:  // Add to / Remove from Favorites
+            case R.id.action_bookmark:  // Add to / Remove from Favorites
                 // Google Analytics tracking code - Add to / Remove from Favorites
                 t = ((MountaineersApp) getActivity().getApplication()).getTracker
                         (MountaineersApp.TrackerName.APP_TRACKER);
@@ -392,13 +392,13 @@ public class ActivityDetailsFragment extends Fragment {
                 t.send(new HitBuilders.AppViewBuilder().build());
 
                 // Swap icons and text
-                if (mFavorite.getTitle().equals(getString(R.string.favorites_add))) {
-                    mFavorite.setIcon(R.drawable.ic_action_important);
-                    mFavorite.setTitle(R.string.favorites_remove);
+                if (mFavorite.getTitle().equals(getString(R.string.bookmark_add))) {
+                    mFavorite.setIcon(R.drawable.ic_bookmark_white_36dp);
+                    mFavorite.setTitle(R.string.bookmark_remove);
                 }
                 else {
-                    mFavorite.setIcon(R.drawable.ic_action_not_important);
-                    mFavorite.setTitle(R.string.favorites_add);
+                    mFavorite.setIcon(R.drawable.ic_bookmark_outline_white_36dp);
+                    mFavorite.setTitle(R.string.bookmark_add);
                 }
 
                 mIsFavorite = !mIsFavorite;  // Change the value

@@ -6,7 +6,7 @@
         android:showAsAction="withText|ifRoom" />
     <item android:id="@+id/action_apply"
           android:title="@string/action_apply"
-          android:icon="@drawable/ic_action_play"
+          android:icon="@drawable/ic_play_arrow_white_36dp"
           android:showAsAction="collapseActionView|ifRoom" />
     <!--<item android:id="@+id/action_settings"-->
           <!--android:title="@string/action_settings"-->

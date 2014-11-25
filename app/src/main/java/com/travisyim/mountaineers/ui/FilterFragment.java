@@ -214,8 +214,8 @@ public class FilterFragment extends Fragment {
                 t.setScreenName(getString(R.string.title_signed_up));
             }
             // Favorite Activity
-            else if (mParentFragmentTitle.equals(getString(R.string.title_favorites))) {
-                t.setScreenName(getString(R.string.title_favorites));
+            else if (mParentFragmentTitle.equals(getString(R.string.title_bookmarked))) {
+                t.setScreenName(getString(R.string.title_bookmarked));
             }
             else {  // Saved search activity search
                 t.setScreenName(getString(R.string.title_browse) + " (" + getString(R.string.title_saved_searches) +")");
@@ -243,7 +243,7 @@ public class FilterFragment extends Fragment {
                             (mParentFragmentTitle)).onFiltersSelected(mFilterOptions);
                 }
                 // Favorite Activity
-                else if (mParentFragmentTitle.equals(getString(R.string.title_favorites))) {
+                else if (mParentFragmentTitle.equals(getString(R.string.title_bookmarked))) {
                     ((FavoriteActivityFragment) getFragmentManager().findFragmentByTag
                             (mParentFragmentTitle)).onFiltersSelected(mFilterOptions);
                 }

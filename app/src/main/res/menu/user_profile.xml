@@ -3,7 +3,7 @@
     tools:context=".ui.MainActivity" >
     <item android:id="@+id/action_editProfile"
           android:title="@string/action_edit_profile"
-          android:icon="@drawable/ic_action_edit"
+          android:icon="@drawable/ic_mode_edit_white_36dp"
           android:showAsAction="ifRoom" />
     <!--<item android:id="@+id/action_settings"-->
           <!--android:title="@string/action_settings"-->

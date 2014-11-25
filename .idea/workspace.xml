@@ -70,21 +70,104 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd7f673e-e29f-4370-b465-9aa81d19c1e1" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/utils/EventDialogFragment.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/values-v17/styles.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_event_available_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_event_available_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_event_available_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_event_available_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_filter_list_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_filter_list_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_filter_list_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_filter_list_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_photo_album_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_photo_album_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_photo_album_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_photo_album_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_save_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_speaker_notes_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_speaker_notes_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_speaker_notes_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_speaker_notes_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_star_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_star_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_star_white_36dp.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_star_white_36dp.png" />
+      <change type="DELETED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\java\com\travisyim\mountaineers\utils\EventDialogFragment.java" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi\ic_action_accept.png" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi\ic_action_accept.png" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi\ic_action_save.png" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi\ic_action_accept.png" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi\ic_action_accept.png" afterPath="" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi\ic_action_alarms.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_alarm_add_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi\ic_action_cancel.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_delete_grey600_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi\ic_action_edit.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_mode_edit_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi\ic_action_edit_dark.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_mode_edit_grey600_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi\ic_action_important.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_bookmark_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi\ic_action_next_item.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_chevron_right_grey600_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi\ic_action_not_important.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_bookmark_outline_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi\ic_action_person.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_account_circle_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi\ic_action_play.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_play_arrow_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi\ic_action_save.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_save_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi\ic_action_search.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_search_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi\ic_action_share.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_share_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi\ic_action_view_as_list.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_event_note_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi\ic_action_alarms.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_alarm_add_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi\ic_action_cancel.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_delete_grey600_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi\ic_action_edit.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_mode_edit_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi\ic_action_edit_dark.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_mode_edit_grey600_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi\ic_action_important.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_bookmark_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi\ic_action_next_item.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_chevron_right_grey600_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi\ic_action_not_important.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_bookmark_outline_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi\ic_action_person.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_account_circle_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi\ic_action_play.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_play_arrow_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi\ic_action_search.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_search_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi\ic_action_share.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_share_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi\ic_action_view_as_list.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_event_note_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi\ic_action_alarms.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_alarm_add_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi\ic_action_cancel.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_delete_grey600_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi\ic_action_edit.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_mode_edit_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi\ic_action_edit_dark.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_mode_edit_grey600_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi\ic_action_important.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_bookmark_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi\ic_action_next_item.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_chevron_right_grey600_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi\ic_action_not_important.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_bookmark_outline_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi\ic_action_person.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_account_circle_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi\ic_action_play.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_play_arrow_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi\ic_action_save.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_save_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi\ic_action_search.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_search_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi\ic_action_share.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_share_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi\ic_action_view_as_list.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_event_note_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi\ic_action_alarms.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_alarm_add_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi\ic_action_cancel.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_delete_grey600_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi\ic_action_edit.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_mode_edit_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi\ic_action_edit_dark.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_mode_edit_grey600_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi\ic_action_important.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_bookmark_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi\ic_action_next_item.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_chevron_right_grey600_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi\ic_action_not_important.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_bookmark_outline_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi\ic_action_person.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_account_circle_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi\ic_action_play.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_play_arrow_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi\ic_action_save.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_save_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi\ic_action_search.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_search_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi\ic_action_share.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_share_white_36dp.png" />
+      <change type="MOVED" beforePath="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi\ic_action_view_as_list.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_event_note_white_36dp.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivityDetailsFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivityDetailsFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/DrawerAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/DrawerAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/objects/FragmentListItem.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/objects/FragmentListItem.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/FilterFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/FilterFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/MainActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/NavigationDrawerFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/NavigationDrawerFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ProfileEditFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ProfileEditFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/SavedSearchAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/SavedSearchAdapter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/SavedSearchFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/SavedSearchFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_item.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_item.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu/activity_details.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu/activity_details.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu/activity_search.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu/activity_search.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/assets/crashlytics-build.properties" afterPath="$PROJECT_DIR$/app/src/main/assets/crashlytics-build.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_user_profile.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_user_profile.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/drawer_item.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/drawer_item.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/drawer_separator.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/drawer_separator.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/saved_search_item.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/saved_search_item.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu/search_filter.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu/search_filter.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values-v17/styles.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values-v17/styles.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu/user_activity.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu/user_activity.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu/user_profile.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu/user_profile.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Mountaineers.iws" />
@@ -113,108 +196,48 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ActivitySearchFragment.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="ActivitySearchFragment.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-7.5" vertical-offset="5876" max-vertical-offset="17204">
-              <caret line="409" column="59" selection-start-line="409" selection-start-column="59" selection-end-line="409" selection-end-column="59" />
-              <folding>
-                <element signature="e#2169#2190#0" expanded="true" />
-                <element signature="e#2422#2430#0" expanded="true" />
-                <element signature="e#7252#7284#0" expanded="true" />
-                <element signature="e#7294#7334#0" expanded="true" />
-                <element signature="e#7407#7439#0" expanded="true" />
-                <element signature="e#8712#9040#0" expanded="true" />
-                <element signature="e#9029#9030#0" expanded="true" />
-                <element signature="e#11933#11973#0" expanded="true" />
-                <element signature="e#12451#12500#0" expanded="true" />
-                <element signature="e#12890#13471#0" expanded="true" />
-                <element signature="e#13460#13461#0" expanded="true" />
-                <element signature="e#14649#14999#0" expanded="true" />
-                <element signature="e#14980#14981#0" expanded="true" />
-                <element signature="e#18616#18658#0" expanded="true" />
-                <element signature="e#19252#19303#0" expanded="true" />
-                <element signature="e#21347#21389#0" expanded="true" />
-                <element signature="e#22030#22081#0" expanded="true" />
-                <element signature="e#23173#23181#0" expanded="true" />
-                <element signature="e#25140#25227#0" expanded="true" />
-                <element signature="e#26081#26172#0" expanded="true" />
-                <element signature="e#26620#26696#0" expanded="true" />
-                <element signature="e#35612#35921#0" expanded="true" />
-                <element signature="e#35906#35907#0" expanded="true" />
-                <element signature="e#37917#39919#0" expanded="true" />
-                <element signature="e#39904#39905#0" expanded="true" />
-                <element signature="e#47999#49139#0" expanded="true" />
-                <element signature="e#48291#48336#0" expanded="true" />
-                <element signature="e#48689#48779#0" expanded="true" />
-                <element signature="e#48945#49030#0" expanded="true" />
-                <element signature="e#49124#49125#0" expanded="true" />
-                <element signature="e#49350#49395#0" expanded="true" />
-                <element signature="e#49427#49487#0" expanded="true" />
-                <element signature="e#49642#49650#0" expanded="true" />
-                <element signature="e#50634#50685#0" expanded="true" />
-                <element signature="e#50717#50770#0" expanded="true" />
-                <element signature="e#52474#52566#0" expanded="true" />
-                <element signature="e#52928#53137#0" expanded="true" />
-                <element signature="e#53122#53123#0" expanded="true" />
-              </folding>
+            <state vertical-scroll-proportion="0.48379052" vertical-offset="3053" max-vertical-offset="16830">
+              <caret line="243" column="16" selection-start-line="243" selection-start-column="16" selection-end-line="243" selection-end-column="16" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ActivityAdapter.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="ActivityAdapter.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.19699499" vertical-offset="4438" max-vertical-offset="10064">
-              <caret line="301" column="25" selection-start-line="301" selection-start-column="25" selection-end-line="301" selection-end-column="25" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="727" max-vertical-offset="10047">
+              <caret line="80" column="0" selection-start-line="80" selection-start-column="0" selection-end-line="80" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EventDialogFragment.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/utils/EventDialogFragment.java">
+      <file leaf-file-name="ActivityDetailsFragment.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivityDetailsFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="612">
-              <caret line="25" column="21" selection-start-line="11" selection-start-column="20" selection-end-line="25" selection-end-column="21" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="5219" max-vertical-offset="6579">
+              <caret line="325" column="58" selection-start-line="325" selection-start-column="58" selection-end-line="325" selection-end-column="58" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SavedSearchFragment.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/SavedSearchFragment.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="6371" max-vertical-offset="7310">
+              <caret line="430" column="0" selection-start-line="430" selection-start-column="0" selection-end-line="430" selection-end-column="0" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#6429#6888#0" expanded="true" />
+                <element signature="e#6869#6870#0" expanded="true" />
+                <element signature="e#15546#15855#0" expanded="true" />
+                <element signature="e#15840#15841#0" expanded="true" />
+                <element signature="e#20828#20913#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MountaineerActivity.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/objects/MountaineerActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-4.928571" vertical-offset="2497" max-vertical-offset="7888">
-              <caret line="208" column="40" selection-start-line="208" selection-start-column="27" selection-end-line="208" selection-end-column="40" />
-              <folding>
-                <element signature="method#setActivityEndDate#0;class#MountaineerActivity#0" expanded="false" />
-                <element signature="method#setActivityCreationDate#0;class#MountaineerActivity#0" expanded="false" />
-                <element signature="method#setActivityAddedAt#0;class#MountaineerActivity#0" expanded="false" />
-                <element signature="method#setActivityUpdatedAt#0;class#MountaineerActivity#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="NavigationDrawerFragment.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/NavigationDrawerFragment.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="6834" max-vertical-offset="6936">
-              <caret line="402" column="1" selection-start-line="402" selection-start-column="1" selection-end-line="402" selection-end-column="1" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MainActivity.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/MainActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="7361" max-vertical-offset="9367">
-              <caret line="433" column="58" selection-start-line="433" selection-start-column="58" selection-end-line="433" selection-end-column="58" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -1364,8 +1387,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/src/main/res/animator/slide_out_right.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/view/SlidingRelativeLayout.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_activity_search.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_saved_search.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_activity_details.xml" />
@@ -1386,35 +1407,37 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/FavoriteActivityFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/SignedUpActivityFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/utils/ActivityLoader.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/saved_search_item.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/SavedSearchAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/views/SlidingRelativeLayout.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/views/SlidingScrollView.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/objects/FragmentItem.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/drawer_item.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/FilterFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/LoginActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/drawer_separator.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/objects/MountaineerActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/utils/MyWebClient.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/menu/activity_details.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/values-v17/values.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/styles.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values-v17/styles.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/NavigationDrawerFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/objects/FragmentListItem.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/SavedSearchFragment.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/UserProfileFragment.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/DrawerAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_item.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ProfileEditFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_user_profile.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/utils/EventDialogFragment.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivityDetailsFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/drawer_item.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/drawer_separator.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/menu/user_activity.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/menu/activity_details.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values-v17/styles.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/styles.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/saved_search_item.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/menu/activity_search.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/NavigationDrawerFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/DrawerAdapter.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/SavedSearchAdapter.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/SavedSearchFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java" />
       </list>
     </option>
   </component>
@@ -1467,6 +1490,18 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Mountaineers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -1664,66 +1699,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="layout" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Mountaineers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Mountaineer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="drawable-hdpi" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Mountaineers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Mountaineer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="animator" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1947,18 +1922,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="AndroidView" />
-      <pane id="PackagesPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Mountaineers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1973,7 +1936,7 @@
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="015d24bcc41c1c19" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="3a6b65cd" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Nexus_5" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
@@ -1986,18 +1949,18 @@
     <property name="android.project.structure.proportion" value="0.15" />
     <property name="DEBUGGABLE_DEVICE" value="samsung-sm_n910t-3a6b65cd" />
     <property name="DEBUGGABLE_PROCESS" value="com.travisyim.mountaineers" />
-    <property name="SHOW_ALL_PROCESSES" value="true" />
+    <property name="SHOW_ALL_PROCESSES" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="android.template.packageName">
       <recent name="com.example.travis.mountaineers" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\layout" />
       <recent name="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxhdpi" />
       <recent name="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xhdpi" />
-      <recent name="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi" />
       <recent name="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-mdpi" />
+      <recent name="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-hdpi" />
+      <recent name="C:\Users\Travis\workspace\Mountaineer\app\src\main\res\drawable-xxxhdpi" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Travis\workspace\Mountaineer\app\libs" />
@@ -2224,25 +2187,25 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4329184" sideWeight="0.3378016" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297587" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33090615" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28354082" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32846716" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32780084" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13278009" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.34993085" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4329184" sideWeight="0.3378016" order="5" side_tool="true" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24865952" sideWeight="0.49607843" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Memory Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3259587" sideWeight="0.5" order="15" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26002768" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24262735" sideWeight="0.49607843" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Memory Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34993085" sideWeight="0.5" order="15" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.57261413" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297587" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.49927008" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38312587" sideWeight="0.66219836" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.49927008" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3098202" sideWeight="0.5395442" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26206434" sideWeight="0.50165015" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33090615" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -2307,34 +2270,10 @@
           <option name="timeStamp" value="465" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
-          <line>874</line>
-          <properties />
-          <option name="timeStamp" value="763" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/objects/Mountaineer.java</url>
           <line>585</line>
           <properties />
           <option name="timeStamp" value="778" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
-          <line>982</line>
-          <properties />
-          <option name="timeStamp" value="782" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
-          <line>980</line>
-          <properties />
-          <option name="timeStamp" value="783" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
-          <line>974</line>
-          <properties />
-          <option name="timeStamp" value="784" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/NavigationDrawerFragment.java</url>
@@ -2343,176 +2282,286 @@
           <option name="timeStamp" value="790" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
-          <line>759</line>
-          <properties />
-          <option name="timeStamp" value="810" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
-          <line>135</line>
-          <properties />
-          <option name="timeStamp" value="821" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
-          <line>592</line>
-          <properties />
-          <option name="timeStamp" value="845" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivityDetailsFragment.java</url>
           <line>325</line>
           <properties />
           <option name="timeStamp" value="847" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>528</line>
+          <properties />
+          <option name="timeStamp" value="848" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>492</line>
+          <properties />
+          <option name="timeStamp" value="849" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>210</line>
+          <properties />
+          <option name="timeStamp" value="852" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>101</line>
+          <properties />
+          <option name="timeStamp" value="857" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>356</line>
+          <properties />
+          <option name="timeStamp" value="858" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>434</line>
+          <properties />
+          <option name="timeStamp" value="859" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>518</line>
+          <properties />
+          <option name="timeStamp" value="860" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>589</line>
+          <properties />
+          <option name="timeStamp" value="861" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>703</line>
+          <properties />
+          <option name="timeStamp" value="862" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>743</line>
+          <properties />
+          <option name="timeStamp" value="863" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>782</line>
+          <properties />
+          <option name="timeStamp" value="864" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>847</line>
+          <properties />
+          <option name="timeStamp" value="866" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>977</line>
+          <properties />
+          <option name="timeStamp" value="867" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>998</line>
+          <properties />
+          <option name="timeStamp" value="868" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java</url>
+          <line>596</line>
+          <properties />
+          <option name="timeStamp" value="869" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java</url>
+          <line>557</line>
+          <properties />
+          <option name="timeStamp" value="870" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java</url>
+          <line>358</line>
+          <properties />
+          <option name="timeStamp" value="871" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java</url>
+          <line>287</line>
+          <properties />
+          <option name="timeStamp" value="872" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java</url>
+          <line>275</line>
+          <properties />
+          <option name="timeStamp" value="873" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java</url>
+          <line>261</line>
+          <properties />
+          <option name="timeStamp" value="876" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java</url>
+          <line>49</line>
+          <properties />
+          <option name="timeStamp" value="878" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>790</line>
+          <properties />
+          <option name="timeStamp" value="879" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java</url>
+          <line>118</line>
+          <properties />
+          <option name="timeStamp" value="881" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java</url>
+          <line>114</line>
+          <properties />
+          <option name="timeStamp" value="882" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java</url>
+          <line>566</line>
+          <properties />
+          <option name="timeStamp" value="884" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java</url>
+          <line>322</line>
+          <properties />
+          <option name="timeStamp" value="885" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java</url>
+          <line>337</line>
+          <properties />
+          <option name="timeStamp" value="886" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/SavedSearchFragment.java</url>
+          <line>248</line>
+          <properties />
+          <option name="timeStamp" value="897" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/SavedSearchFragment.java</url>
+          <line>123</line>
+          <properties />
+          <option name="timeStamp" value="898" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/SavedSearchFragment.java</url>
+          <line>252</line>
+          <properties />
+          <option name="timeStamp" value="902" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/SavedSearchFragment.java</url>
+          <line>264</line>
+          <properties />
+          <option name="timeStamp" value="903" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/SavedSearchFragment.java</url>
+          <line>430</line>
+          <properties />
+          <option name="timeStamp" value="904" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>1015</line>
+          <properties />
+          <option name="timeStamp" value="905" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java</url>
+          <line>1035</line>
+          <properties />
+          <option name="timeStamp" value="906" />
+        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="848" />
+      <option name="time" value="907" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_navigation_drawer.xml">
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="255">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/utils/ParseConstants.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="459" max-vertical-offset="2023">
-          <caret line="54" column="80" selection-start-line="54" selection-start-column="80" selection-end-line="54" selection-end-column="80" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/utils/SavedSearchComparator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.12230216" vertical-offset="0" max-vertical-offset="695">
-          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/utils/ActivityComparator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.12230216" vertical-offset="0" max-vertical-offset="695">
-          <caret line="7" column="73" selection-start-line="7" selection-start-column="73" selection-end-line="7" selection-end-column="73" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/FavoriteActivityFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="6443" max-vertical-offset="7327">
-          <caret line="432" column="109" selection-start-line="432" selection-start-column="109" selection-end-line="432" selection-end-column="109" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/SignedUpActivityFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33188722" vertical-offset="7327" max-vertical-offset="9044">
-          <caret line="491" column="109" selection-start-line="491" selection-start-column="109" selection-end-line="491" selection-end-column="109" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Program Files/Android/sdk/sources/android-19/android/view/View.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5644531" vertical-offset="237847" max-vertical-offset="325006">
-          <caret line="14347" column="45" selection-start-line="14347" selection-start-column="45" selection-end-line="14347" selection-end-column="45" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="8993" max-vertical-offset="18071">
+          <caret line="529" column="28" selection-start-line="529" selection-start-column="28" selection-end-line="529" selection-end-column="28" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/utils/ActivityLoader.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/NavigationDrawerFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.21982759" vertical-offset="153" max-vertical-offset="3383">
-          <caret line="20" column="5" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/saved_search_item.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6224256" vertical-offset="918" max-vertical-offset="1530">
-          <caret line="70" column="56" selection-start-line="70" selection-start-column="56" selection-end-line="70" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/SavedSearchAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.50791365" vertical-offset="1007" max-vertical-offset="4437">
-          <caret line="108" column="39" selection-start-line="108" selection-start-column="39" selection-end-line="108" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/views/SlidingScrollView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.12927757" vertical-offset="0" max-vertical-offset="765">
-          <caret line="7" column="60" selection-start-line="7" selection-start-column="60" selection-end-line="7" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/views/SlidingRelativeLayout.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.12927757" vertical-offset="0" max-vertical-offset="765">
-          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/drawer_item.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.71257484" vertical-offset="0" max-vertical-offset="833">
-          <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="4692" max-vertical-offset="6732">
+          <caret line="303" column="58" selection-start-line="303" selection-start-column="58" selection-end-line="303" selection-end-column="58" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/dimens.xml">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/objects/FragmentListItem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.09090909" vertical-offset="0" max-vertical-offset="374">
-          <caret line="2" column="17" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/LoginActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="283" max-vertical-offset="3723">
-          <caret line="39" column="33" selection-start-line="39" selection-start-column="24" selection-end-line="39" selection-end-column="33" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="748">
+          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
           <folding>
-            <element signature="e#3635#3668#0" expanded="false" />
-            <element signature="e#8437#8479#0" expanded="false" />
-            <element signature="e#8678#8698#0" expanded="false" />
-            <element signature="e#9280#9319#0" expanded="false" />
-            <element signature="e#10405#10444#0" expanded="false" />
-            <element signature="e#11004#11048#0" expanded="false" />
+            <element signature="e#837#838#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/user_activity.xml">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.1467626" vertical-offset="0" max-vertical-offset="695">
-          <caret line="6" column="31" selection-start-line="6" selection-start-column="31" selection-end-line="6" selection-end-column="31" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="3851" max-vertical-offset="10132">
+          <caret line="234" column="0" selection-start-line="234" selection-start-column="0" selection-end-line="234" selection-end-column="0" />
+          <folding>
+            <element signature="e#3586#3628#0" expanded="true" />
+            <element signature="e#3757#3780#0" expanded="true" />
+            <element signature="e#5252#5289#0" expanded="true" />
+            <element signature="e#5906#5939#0" expanded="true" />
+            <element signature="e#6034#6067#0" expanded="true" />
+            <element signature="e#7180#7212#0" expanded="true" />
+            <element signature="e#7307#7339#0" expanded="true" />
+            <element signature="e#8345#8385#0" expanded="true" />
+            <element signature="e#8480#8520#0" expanded="true" />
+            <element signature="e#9643#9678#0" expanded="true" />
+            <element signature="e#9773#9808#0" expanded="true" />
+            <element signature="e#10961#10996#0" expanded="true" />
+            <element signature="e#11091#11126#0" expanded="true" />
+            <element signature="e#12272#12308#0" expanded="true" />
+            <element signature="e#12403#12439#0" expanded="true" />
+            <element signature="e#13449#13483#0" expanded="true" />
+            <element signature="e#14272#14302#0" expanded="true" />
+            <element signature="e#24003#24036#0" expanded="true" />
+            <element signature="e#24106#24138#0" expanded="true" />
+            <element signature="e#24208#24248#0" expanded="true" />
+            <element signature="e#24318#24353#0" expanded="true" />
+            <element signature="e#24423#24458#0" expanded="true" />
+            <element signature="e#24528#24564#0" expanded="true" />
+            <element signature="e#25480#25500#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/drawer_separator.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivityDetailsFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.38059703" vertical-offset="0" max-vertical-offset="578">
-          <caret line="6" column="38" selection-start-line="6" selection-start-column="38" selection-end-line="6" selection-end-column="38" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7072">
+          <caret line="317" column="31" selection-start-line="317" selection-start-column="31" selection-end-line="317" selection-end-column="31" />
           <folding />
         </state>
       </provider>
@@ -2539,14 +2588,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/objects/Mountaineer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="8743" max-vertical-offset="16303">
-          <caret line="679" column="0" selection-start-line="679" selection-start-column="0" selection-end-line="679" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/utils/OnParseTaskCompleted.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="204">
@@ -2565,7 +2606,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.47095436" vertical-offset="1541" max-vertical-offset="2550">
           <caret line="110" column="0" selection-start-line="110" selection-start-column="0" selection-end-line="110" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2573,44 +2613,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="4215" max-vertical-offset="16762">
           <caret line="254" column="0" selection-start-line="254" selection-start-column="0" selection-end-line="254" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/activity_search.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.43965518" vertical-offset="0" max-vertical-offset="561">
-          <caret line="12" column="38" selection-start-line="12" selection-start-column="38" selection-end-line="12" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/activity_details.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.073275864" vertical-offset="0" max-vertical-offset="544">
-          <caret line="2" column="38" selection-start-line="2" selection-start-column="38" selection-end-line="2" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values-v17/styles.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="357">
-          <caret line="10" column="43" selection-start-line="10" selection-start-column="43" selection-end-line="10" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/objects/FragmentListItem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.469428" vertical-offset="0" max-vertical-offset="544">
-          <caret line="14" column="25" selection-start-line="14" selection-start-column="25" selection-end-line="14" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/SavedSearchFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33333334" vertical-offset="6546" max-vertical-offset="7106">
-          <caret line="447" column="76" selection-start-line="447" selection-start-column="76" selection-end-line="447" selection-end-column="76" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2625,29 +2627,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.6360153" vertical-offset="671" max-vertical-offset="2448">
           <caret line="84" column="72" selection-start-line="84" selection-start-column="72" selection-end-line="84" selection-end-column="72" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/DrawerAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.40038314" vertical-offset="1100" max-vertical-offset="1785">
-          <caret line="96" column="13" selection-start-line="96" selection-start-column="13" selection-end-line="96" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/NavigationDrawerFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="5578" max-vertical-offset="6273">
-          <caret line="402" column="1" selection-start-line="402" selection-start-column="1" selection-end-line="402" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="6548" max-vertical-offset="8789">
-          <caret line="433" column="58" selection-start-line="433" selection-start-column="58" selection-end-line="433" selection-end-column="58" />
           <folding />
         </state>
       </provider>
@@ -2671,13 +2650,13 @@
         <state vertical-scroll-proportion="0.65384614" vertical-offset="51" max-vertical-offset="1411">
           <caret line="25" column="51" selection-start-line="25" selection-start-column="51" selection-end-line="25" selection-end-column="51" />
           <folding>
-            <element signature="e#275#310#0" expanded="true" />
-            <element signature="e#336#371#0" expanded="true" />
-            <element signature="e#395#428#0" expanded="true" />
-            <element signature="e#455#488#0" expanded="true" />
-            <element signature="e#1570#1605#0" expanded="true" />
-            <element signature="e#2023#2058#0" expanded="true" />
-            <element signature="e#2426#2461#0" expanded="true" />
+            <element signature="e#275#310#0" expanded="false" />
+            <element signature="e#336#371#0" expanded="false" />
+            <element signature="e#395#428#0" expanded="false" />
+            <element signature="e#455#488#0" expanded="false" />
+            <element signature="e#1570#1605#0" expanded="false" />
+            <element signature="e#2023#2058#0" expanded="false" />
+            <element signature="e#2426#2461#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2686,143 +2665,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1836" max-vertical-offset="3434">
           <caret line="156" column="0" selection-start-line="156" selection-start-column="0" selection-end-line="156" selection-end-column="0" />
-          <folding />
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/objects/MountaineerActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.928571" vertical-offset="2497" max-vertical-offset="7888">
-          <caret line="208" column="40" selection-start-line="208" selection-start-column="27" selection-end-line="208" selection-end-column="40" />
-          <folding>
-            <element signature="method#setActivityEndDate#0;class#MountaineerActivity#0" expanded="false" />
-            <element signature="method#setActivityCreationDate#0;class#MountaineerActivity#0" expanded="false" />
-            <element signature="method#setActivityAddedAt#0;class#MountaineerActivity#0" expanded="false" />
-            <element signature="method#setActivityUpdatedAt#0;class#MountaineerActivity#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/utils/EventDialogFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="612">
-          <caret line="25" column="21" selection-start-line="11" selection-start-column="20" selection-end-line="25" selection-end-column="21" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-7.5" vertical-offset="5876" max-vertical-offset="17204">
-          <caret line="409" column="59" selection-start-line="409" selection-start-column="59" selection-end-line="409" selection-end-column="59" />
-          <folding>
-            <element signature="e#2169#2190#0" expanded="true" />
-            <element signature="e#2422#2430#0" expanded="true" />
-            <element signature="e#7252#7284#0" expanded="true" />
-            <element signature="e#7294#7334#0" expanded="true" />
-            <element signature="e#7407#7439#0" expanded="true" />
-            <element signature="e#8712#9040#0" expanded="true" />
-            <element signature="e#9029#9030#0" expanded="true" />
-            <element signature="e#11933#11973#0" expanded="true" />
-            <element signature="e#12451#12500#0" expanded="true" />
-            <element signature="e#12890#13471#0" expanded="true" />
-            <element signature="e#13460#13461#0" expanded="true" />
-            <element signature="e#14649#14999#0" expanded="true" />
-            <element signature="e#14980#14981#0" expanded="true" />
-            <element signature="e#18616#18658#0" expanded="true" />
-            <element signature="e#19252#19303#0" expanded="true" />
-            <element signature="e#21347#21389#0" expanded="true" />
-            <element signature="e#22030#22081#0" expanded="true" />
-            <element signature="e#23173#23181#0" expanded="true" />
-            <element signature="e#25140#25227#0" expanded="true" />
-            <element signature="e#26081#26172#0" expanded="true" />
-            <element signature="e#26620#26696#0" expanded="true" />
-            <element signature="e#35612#35921#0" expanded="true" />
-            <element signature="e#35906#35907#0" expanded="true" />
-            <element signature="e#37917#39919#0" expanded="true" />
-            <element signature="e#39904#39905#0" expanded="true" />
-            <element signature="e#47999#49139#0" expanded="true" />
-            <element signature="e#48291#48336#0" expanded="true" />
-            <element signature="e#48689#48779#0" expanded="true" />
-            <element signature="e#48945#49030#0" expanded="true" />
-            <element signature="e#49124#49125#0" expanded="true" />
-            <element signature="e#49350#49395#0" expanded="true" />
-            <element signature="e#49427#49487#0" expanded="true" />
-            <element signature="e#49642#49650#0" expanded="true" />
-            <element signature="e#50634#50685#0" expanded="true" />
-            <element signature="e#50717#50770#0" expanded="true" />
-            <element signature="e#52474#52566#0" expanded="true" />
-            <element signature="e#52928#53137#0" expanded="true" />
-            <element signature="e#53122#53123#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/styles.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.40669855" vertical-offset="0" max-vertical-offset="418">
-          <caret line="10" column="42" selection-start-line="10" selection-start-column="42" selection-end-line="10" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.610687" vertical-offset="2310" max-vertical-offset="2703">
-          <caret line="150" column="19" selection-start-line="150" selection-start-column="19" selection-end-line="150" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivityDetailsFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.69624573" vertical-offset="5678" max-vertical-offset="6647">
-          <caret line="383" column="30" selection-start-line="383" selection-start-column="30" selection-end-line="383" selection-end-column="30" />
-          <folding>
-            <element signature="e#10588#10620#0" expanded="true" />
-            <element signature="e#10657#10689#0" expanded="true" />
-            <element signature="e#10789#10824#0" expanded="true" />
-            <element signature="e#10861#10896#0" expanded="true" />
-            <element signature="e#10996#11031#0" expanded="true" />
-            <element signature="e#11068#11103#0" expanded="true" />
-            <element signature="e#11202#11237#0" expanded="true" />
-            <element signature="e#11274#11309#0" expanded="true" />
-            <element signature="e#11410#11442#0" expanded="true" />
-            <element signature="e#11452#11492#0" expanded="true" />
-            <element signature="e#11975#12007#0" expanded="true" />
-            <element signature="e#12291#12326#0" expanded="true" />
-            <element signature="e#12613#12648#0" expanded="true" />
-            <element signature="e#12933#12968#0" expanded="true" />
-            <element signature="e#14009#14034#0" expanded="true" />
-            <element signature="e#14188#14210#0" expanded="true" />
-            <element signature="e#15429#15476#0" expanded="true" />
-            <element signature="e#16154#16184#0" expanded="true" />
-            <element signature="e#16238#19374#0" expanded="true" />
-            <element signature="e#18139#18191#0" expanded="true" />
-            <element signature="e#18903#18953#0" expanded="true" />
-            <element signature="e#19269#19319#0" expanded="true" />
-            <element signature="e#19351#19352#0" expanded="true" />
-            <element signature="e#19487#19693#0" expanded="true" />
-            <element signature="e#19674#19675#0" expanded="true" />
-            <element signature="e#20399#20432#0" expanded="true" />
-            <element signature="e#20547#20572#0" expanded="true" />
-            <element signature="e#20730#20752#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_person.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/notification_square_blue.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="599">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2831,25 +2680,308 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_view_as_list.png">
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_drawer.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_share.png">
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_drawer.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_save.png">
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_drawer.png">
       <provider selected="true" editor-type-id="images">
         <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_event_available_white_36dp.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/drawer_separator.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.23776224" vertical-offset="0" max-vertical-offset="595">
+          <caret line="8" column="43" selection-start-line="8" selection-start-column="43" selection-end-line="8" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/drawer_item.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.23776224" vertical-offset="17" max-vertical-offset="867">
+          <caret line="9" column="41" selection-start-line="9" selection-start-column="41" selection-end-line="9" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/objects/MountaineerActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.24168126" vertical-offset="2497" max-vertical-offset="7888">
+          <caret line="208" column="40" selection-start-line="208" selection-start-column="27" selection-end-line="208" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_filter.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="13889">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/user_profile.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="599">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/user_activity.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
+          <caret line="11" column="56" selection-start-line="11" selection-start-column="56" selection-end-line="11" selection-end-column="56" />
+          <folding>
+            <element signature="e#472#495#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/search_filter.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="599">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/saved_search.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="599">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/profile_edit.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="599">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#417#441#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/activity_details.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.22704507" vertical-offset="0" max-vertical-offset="599">
+          <caret line="8" column="40" selection-start-line="8" selection-start-column="40" selection-end-line="8" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values-v17/styles.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.312187" vertical-offset="0" max-vertical-offset="599">
+          <caret line="11" column="41" selection-start-line="11" selection-start-column="41" selection-end-line="11" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/styles.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="357">
+          <caret line="11" column="43" selection-start-line="11" selection-start-column="43" selection-end-line="11" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/saved_search_item.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2972028" vertical-offset="0" max-vertical-offset="1632">
+          <caret line="10" column="29" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
+          <folding>
+            <element signature="e#442#467#0" expanded="false" />
+            <element signature="e#502#527#0" expanded="false" />
+            <element signature="e#563#588#0" expanded="false" />
+            <element signature="e#2116#2151#0" expanded="false" />
+            <element signature="e#2623#2658#0" expanded="false" />
+            <element signature="e#3090#3125#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/activity_search.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.42570952" vertical-offset="0" max-vertical-offset="599">
+          <caret line="15" column="57" selection-start-line="15" selection-start-column="57" selection-end-line="15" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/objects/Mountaineer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1167" max-vertical-offset="16337">
+          <caret line="156" column="35" selection-start-line="156" selection-start-column="35" selection-end-line="156" selection-end-column="35" />
+          <folding>
+            <element signature="e#4238#4239#0" expanded="true" />
+            <element signature="e#4275#4276#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_navigation_drawer.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="572">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Program Files/Android/sdk/sources/android-19/android/widget/ListView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334" vertical-offset="27744" max-vertical-offset="63087">
+          <caret line="1708" column="0" selection-start-line="1708" selection-start-column="0" selection-end-line="1708" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/DrawerAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.27859777" vertical-offset="1107" max-vertical-offset="1904">
+          <caret line="93" column="52" selection-start-line="93" selection-start-column="52" selection-end-line="93" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/LoginActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5700389" vertical-offset="3209" max-vertical-offset="3723">
+          <caret line="222" column="8" selection-start-line="222" selection-start-column="8" selection-end-line="227" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/objects/FragmentListItem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.78413284" vertical-offset="0" max-vertical-offset="578">
+          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+          <folding>
+            <element signature="e#837#838#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/NavigationDrawerFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.39145908" vertical-offset="3171" max-vertical-offset="6562">
+          <caret line="227" column="16" selection-start-line="227" selection-start-column="16" selection-end-line="228" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="3.8967297" vertical-offset="7256" max-vertical-offset="9826">
+          <caret line="602" column="30" selection-start-line="602" selection-start-column="30" selection-end-line="602" selection-end-column="30" />
+          <folding>
+            <element signature="e#3586#3628#0" expanded="true" />
+            <element signature="e#3757#3780#0" expanded="true" />
+            <element signature="e#5252#5289#0" expanded="true" />
+            <element signature="e#5906#5939#0" expanded="true" />
+            <element signature="e#6034#6067#0" expanded="true" />
+            <element signature="e#7180#7212#0" expanded="true" />
+            <element signature="e#7307#7339#0" expanded="true" />
+            <element signature="e#8345#8385#0" expanded="true" />
+            <element signature="e#8480#8520#0" expanded="true" />
+            <element signature="e#9643#9678#0" expanded="true" />
+            <element signature="e#9773#9808#0" expanded="true" />
+            <element signature="e#10961#10996#0" expanded="true" />
+            <element signature="e#11091#11126#0" expanded="true" />
+            <element signature="e#12272#12308#0" expanded="true" />
+            <element signature="e#12403#12439#0" expanded="true" />
+            <element signature="e#13449#13483#0" expanded="true" />
+            <element signature="e#14272#14302#0" expanded="true" />
+            <element signature="e#24003#24036#0" expanded="true" />
+            <element signature="e#24106#24138#0" expanded="true" />
+            <element signature="e#24208#24248#0" expanded="true" />
+            <element signature="e#24318#24353#0" expanded="true" />
+            <element signature="e#24423#24458#0" expanded="true" />
+            <element signature="e#24528#24564#0" expanded="true" />
+            <element signature="e#25480#25500#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3471223" vertical-offset="1405" max-vertical-offset="2771">
+          <caret line="94" column="64" selection-start-line="94" selection-start-column="64" selection-end-line="94" selection-end-column="64" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/SavedSearchAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6884058" vertical-offset="599" max-vertical-offset="4522">
+          <caret line="80" column="48" selection-start-line="80" selection-start-column="48" selection-end-line="80" selection-end-column="48" />
+          <folding>
+            <element signature="e#12503#12651#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivityDetailsFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="5219" max-vertical-offset="6579">
+          <caret line="325" column="58" selection-start-line="325" selection-start-column="58" selection-end-line="325" selection-end-column="58" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/SavedSearchFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="6371" max-vertical-offset="7310">
+          <caret line="430" column="0" selection-start-line="430" selection-start-column="0" selection-end-line="430" selection-end-column="0" />
+          <folding>
+            <element signature="e#6429#6888#0" expanded="true" />
+            <element signature="e#6869#6870#0" expanded="true" />
+            <element signature="e#15546#15855#0" expanded="true" />
+            <element signature="e#15840#15841#0" expanded="true" />
+            <element signature="e#20828#20913#0" expanded="true" />
+          </folding>
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/adapters/ActivityAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.19699499" vertical-offset="4438" max-vertical-offset="10064">
-          <caret line="301" column="25" selection-start-line="301" selection-start-column="25" selection-end-line="301" selection-end-column="25" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="727" max-vertical-offset="10047">
+          <caret line="80" column="0" selection-start-line="80" selection-start-column="0" selection-end-line="80" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/travisyim/mountaineers/ui/ActivitySearchFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.48379052" vertical-offset="3053" max-vertical-offset="16830">
+          <caret line="243" column="16" selection-start-line="243" selection-start-column="16" selection-end-line="243" selection-end-column="16" />
           <folding />
         </state>
       </provider>

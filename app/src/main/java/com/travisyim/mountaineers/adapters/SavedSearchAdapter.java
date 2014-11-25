@@ -110,7 +110,7 @@ public class SavedSearchAdapter extends ArrayAdapter<SavedSearch> {
         if (mIsDeleteState) {  // In delete state
             holder.imageViewDelete.setVisibility(View.VISIBLE);
             holder.imageViewRename.setVisibility(View.VISIBLE);
-            holder.imageViewNext.setVisibility(View.INVISIBLE);
+            holder.imageViewNext.setVisibility(View.GONE);
         }
         else {
             holder.imageViewDelete.setVisibility(View.GONE);
@@ -299,5 +299,9 @@ public class SavedSearchAdapter extends ArrayAdapter<SavedSearch> {
         }
 
         return str.toString();
+    }
+
+    public void updateSavedSearchList(List<SavedSearch> savedSearches) {
+        mSavedSearches = savedSearches;
     }
 }

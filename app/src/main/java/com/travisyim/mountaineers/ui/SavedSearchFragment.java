@@ -246,17 +246,20 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
         // Ensure all processes have not been canceled
         if (!mIsCanceled) {
             // This method is called when the task of retrieving the full set of saved searches is complete
-            mSavedSearchList.clear();
+//            mSavedSearchList.clear();
 
             if (e == null) {
                 // Load saved search results and assign to the current Mountaineer object
                 mMember.setSavedSearchList(SavedSearchLoader.load(resultList));
 
-                // Reorganize the saved searches with updates by name
-                reorganizeList(mMember.getSavedSearchList());
+                mSavedSearchList = mMember.getSavedSearchList();
 
-                // Add all of these SavedSearches to the ListView
-                mSavedSearchList.addAll(mMember.getSavedSearchList());
+                // Reorganize the saved searches with updates by name
+//                reorganizeList(mMember.getSavedSearchList());
+                reorganizeList(mSavedSearchList);
+
+//                // Add all of these SavedSearches to the ListView
+//                mSavedSearchList.addAll(mMember.getSavedSearchList());
 
                 // Update search results
                 refreshSavedSearches();
@@ -427,12 +430,15 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
         // Ensure all processes have not been canceled
         if (!mIsCanceled) {
             // Pass the list to the adapter
-            if (getListView().getAdapter() == null) {  // First time using the list adapter
-                SavedSearchAdapter adapter = new SavedSearchAdapter(getListView().getContext(), mSavedSearchList);
-                setListAdapter(adapter);
-            } else {  // Results already shown so update the list
-                ((SavedSearchAdapter) getListAdapter()).notifyDataSetChanged();
-            }
+            SavedSearchAdapter adapter = new SavedSearchAdapter(getListView().getContext(), mSavedSearchList);
+            setListAdapter(adapter);
+
+//            if (getListView().getAdapter() == null) {  // First time using the list adapter
+//                SavedSearchAdapter adapter = new SavedSearchAdapter(getListView().getContext(), mSavedSearchList);
+//                setListAdapter(adapter);
+//            } else {  // Results already shown so update the list
+//                ((SavedSearchAdapter) getListAdapter()).notifyDataSetChanged();
+//            }
 
             if (mSavedSearchList.size() == 0) {
                 Toast toast = Toast.makeText(getActivity(), getActivity().getString

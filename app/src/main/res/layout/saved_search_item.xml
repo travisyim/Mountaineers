@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -9,77 +9,83 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_marginTop="@dimen/listview_padding"
         android:layout_marginLeft="@dimen/listview_padding"
         android:layout_marginRight="@dimen/listview_padding"
         android:background="@android:color/white">
 
-        <!-- android:adjustViewBounds="true" not working in 4.2 (i.e. buggy).
-            It prevents panoramic shots from showing up -->
-
-        <ImageView
-            android:id="@+id/imageViewDelete"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_action_cancel"
-            android:visibility="gone"/>
+            android:layout_toLeftOf="@+id/imageViewNext">
 
-        <ImageView
-            android:id="@+id/imageViewRename"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/imageViewDelete"
-            android:paddingLeft="8dp"
-            android:src="@drawable/ic_action_edit_dark"
-            android:visibility="gone"/>
+            <ImageView
+                android:id="@+id/imageViewDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:src="@drawable/ic_delete_grey600_36dp"
+                android:visibility="gone"/>
 
-        <TextView
-            android:id="@+id/textViewName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:paddingTop="8dp"
-            android:layout_toRightOf="@+id/imageViewRename"
-            android:text="Saved Search Name"
-            android:paddingLeft="@dimen/activity_horizontal_margin"/>
+            <ImageView
+                android:id="@+id/imageViewRename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/imageViewDelete"
+                android:paddingLeft="8dp"
+                android:src="@drawable/ic_mode_edit_grey600_36dp"
+                android:visibility="gone"/>
 
-        <TextView
-            android:id="@+id/textViewAccessDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:paddingBottom="8dp"
-            android:text="Last Access Date"
-            android:layout_toRightOf="@+id/imageViewRename"
-            android:layout_below="@id/textViewName"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:textColor="@android:color/darker_gray"/>
+            <TextView
+                android:id="@+id/textViewName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:paddingTop="8dp"
+                android:layout_toRightOf="@+id/imageViewRename"
+                android:text="Saved Search Name"
+                android:paddingLeft="@dimen/activity_horizontal_margin"/>
 
-        <TextView
-            android:id="@+id/textViewUpdateCounter"
-            android:layout_width="40dp"
-            android:layout_height="25dp"
-            android:gravity="center"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:text="0"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/imageViewNext"
-            android:background="@drawable/notification_square_blue"
-            android:textColor="@color/swipe_refresh3"/>
+            <TextView
+                android:id="@+id/textViewAccessDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:paddingBottom="8dp"
+                android:text="Last Access Date"
+                android:layout_toRightOf="@+id/imageViewRename"
+                android:layout_below="@id/textViewName"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:textColor="@android:color/darker_gray"/>
+
+            <TextView
+                android:id="@+id/textViewUpdateCounter"
+                android:layout_width="40dp"
+                android:layout_height="25dp"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="0"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/notification_square_blue"
+                android:textColor="@color/swipe_refresh3"/>
+
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/imageViewNext"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_action_next_item"/>
+            android:src="@drawable/ic_chevron_right_grey600_36dp"/>
 
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

@@ -6,9 +6,11 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -114,6 +116,21 @@ public class MainActivity extends Activity
         }
     }
 
+    /**
+     * Called when the activity has detected the user's press of the back
+     * key.  The default implementation simply finishes the current activity,
+     * but you can override this to do whatever you want.
+     */
+    @Override
+    public void onBackPressed() {
+        if (!isLoadingActivities()) {  // If loading something do not process back button press
+            super.onBackPressed();
+        }
+        else {
+            Toast.makeText(this, getString(R.string.toast_filter_wait), Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
@@ -148,6 +165,9 @@ public class MainActivity extends Activity
                     }
                 }
 
+                // Show the requested fragment
+                fragmentManager.beginTransaction().replace(R.id.container, fragment, mTitle.toString()).commit();
+
                 break;
             case 2:  // Activity Search
                 // Google Analytics tracking code - Activity Search
@@ -170,6 +190,9 @@ public class MainActivity extends Activity
                         restoreActionBar();
                     }
                 }
+
+                // Show the requested fragment
+                fragmentManager.beginTransaction().replace(R.id.container, fragment, mTitle.toString()).commit();
 
                 break;
             case 3:  // Saved Searches
@@ -197,6 +220,9 @@ public class MainActivity extends Activity
                     }
                 }
 
+                // Show the requested fragment
+                fragmentManager.beginTransaction().replace(R.id.container, fragment, mTitle.toString()).commit();
+
                 break;
             case 5:  // Completed Activities
                 // Google Analytics tracking code - Completed Activities
@@ -222,6 +248,9 @@ public class MainActivity extends Activity
                         restoreActionBar();
                     }
                 }
+
+                // Show the requested fragment
+                fragmentManager.beginTransaction().replace(R.id.container, fragment, mTitle.toString()).commit();
 
                 break;
             case 6:  // Signed Up Activities
@@ -249,15 +278,18 @@ public class MainActivity extends Activity
                     }
                 }
 
+                // Show the requested fragment
+                fragmentManager.beginTransaction().replace(R.id.container, fragment, mTitle.toString()).commit();
+
                 break;
             case 7:  // Favorite Activities
                 // Google Analytics tracking code - Favorite Activities
                 t = ((MountaineersApp) getApplication()).getTracker
                         (MountaineersApp.TrackerName.APP_TRACKER);
-                t.setScreenName(getString(R.string.title_favorites));
+                t.setScreenName(getString(R.string.title_bookmarked));
                 t.send(new HitBuilders.AppViewBuilder().build());
 
-                mTitle = getString(R.string.title_favorites);
+                mTitle = getString(R.string.title_bookmarked);
 
                 if (mFavoriteActivityFragment == null) {
                     fragment = FavoriteActivityFragment.newInstance(position + 1);
@@ -272,11 +304,48 @@ public class MainActivity extends Activity
                     }
                 }
 
+                // Show the requested fragment
+                fragmentManager.beginTransaction().replace(R.id.container, fragment, mTitle.toString()).commit();
+
+                break;
+            case 9:  // Send comments
+                // Google Analytics tracking code - Signed Up Activities
+                t = ((MountaineersApp) getApplication()).getTracker
+                        (MountaineersApp.TrackerName.APP_TRACKER);
+                t.setScreenName(getString(R.string.title_comments));
+                t.send(new HitBuilders.AppViewBuilder().build());
+
+                Intent email = new Intent(Intent.ACTION_SENDTO);
+                String uriText = "mailto:" + Uri.encode("mountaineers.org@gmail.com") +
+                        "?subject=" + Uri.encode("Comment from " + mMember.getName());
+                Uri uri = Uri.parse(uriText);
+
+                email.setData(uri);
+
+                startActivity(Intent.createChooser(email, "Choose an E-mail client"));
+
+                break;
+            case 10:  // Favorite Activities
+                // Google Analytics tracking code - Favorite Activities
+                t = ((MountaineersApp) getApplication()).getTracker
+                        (MountaineersApp.TrackerName.APP_TRACKER);
+                t.setScreenName(getString(R.string.title_rate));
+                t.send(new HitBuilders.AppViewBuilder().build());
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+
+                try {
+                    intent.setData(Uri.parse("market://details?id=com.travisyim.mountaineers"));
+                    startActivity(intent);
+                }
+                catch (Exception e) {  // Issue accessing Google Play store app
+                    // Go to website instead
+                    intent.setData(Uri.parse("http://play.google.com/store/apps/details?id=com.travisyim.mountaineers"));
+                    startActivity(intent);
+                }
+
                 break;
         }
-
-        // Show the requested fragment
-        fragmentManager.beginTransaction().replace(R.id.container, fragment, mTitle.toString()).commit();
     }
 
     @Override
@@ -329,117 +398,117 @@ public class MainActivity extends Activity
     }
 
     @Override
-         public void onTaskCompleted(final int stage, final AsyncTaskResult<Boolean> result) {
-             /* This method is called when a task that is part of the login process completes.  The first
-              * step is getting the member login webpage and that is called in the onCreate() method. The
-              * other necessary steps are further captured and launched from this method as they happen
-              * sequentially using AsyncTask */
+     public void onTaskCompleted(final int stage, final AsyncTaskResult<Boolean> result) {
+         /* This method is called when a task that is part of the login process completes.  The first
+          * step is getting the member login webpage and that is called in the onCreate() method. The
+          * other necessary steps are further captured and launched from this method as they happen
+          * sequentially using AsyncTask */
 
-             switch (stage) {
-                 case Mountaineer.STAGE_GET_LOGIN_WEB_PAGE:
-                     // Check for success in downloading the member login web page
-                     if (result.getError() == null && result.getResult()) {  // Success!
-                         // Demo the drawer demo if necessary
-                         mNavigationDrawerFragment.demoDrawer();
+         switch (stage) {
+             case Mountaineer.STAGE_GET_LOGIN_WEB_PAGE:
+                 // Check for success in downloading the member login web page
+                 if (result.getError() == null && result.getResult()) {  // Success!
+                     // Demo the drawer demo if necessary
+                     mNavigationDrawerFragment.demoDrawer();
 
-                         // Login as the user using their previously entered credentials
-                         mMember.login(this);
-                     }
-                     else {  // Error!
-                         /* This check only ensures that the member login web page url was downloaded
-                          * properly.  It does not check to see if it is in the format that we expect -
-                          * this check will happen as the result of the next step */
-                         showError(result.getError().getMessage());
-
-                         setProgressBarIndeterminateVisibility(false);  // Hide progress circle
-                         showLoginScreen();  // Send user to login screen
-                     }
-
-                     break;
-                 case Mountaineer.STAGE_LOGIN:
-                     // Check for success in logging in as user and getting user profile URL
-                     if (result.getError() == null && result.getResult()) {  // Success!
-                         /* The login process for a user who is returning as the Parse Current User
-                          * differs from a user who has just logged in via the Login Activity.  At this
-                          * point in the process, the paths diverge.  For a returning current user, jump
-                          * straight into getting the member data.  Unlike the new log in, there is no
-                          * need to save user credentials to Parse since they successfully logged into
-                          * the Mountaineers site with their existing credentials. */
-
-                         mMember.getSavedSearches(this);
-                     }
-                     else {  // Error!
-                         /* This check only ensures that the login web page url is in the format that we
-                          * expect, that the app could properly log in as the user with the provided
-                          * credentials and that the user profile URL was successfully accessed */
-                         showError(result.getError().getMessage());
-
-                         setProgressBarIndeterminateVisibility(false);  // Hide progress circle
-                         showLoginScreen();  // Send user to login screen
-                     }
-
-                     break;
-                 case Mountaineer.STAGE_GET_SAVED_SEARCHES:
-                     // Check for success in logging in as user and getting user profile URL
-                     if (result.getError() == null && result.getResult()) {  // Success!
-                         /* The login process for a user who is returning as the Parse Current User
-                          * differs from a user who has just logged in via the Login Activity.  At this
-                          * point in the process, the paths diverge.  For a returning current user, jump
-                          * straight into getting the member data.  Unlike the new log in, there is no
-                          * need to save user credentials to Parse since they successfully logged into
-                          * the Mountaineers site with their existing credentials. */
-
-                         // Save the cookie!
-                         mCookie = mMember.getCookies().get(0);
-
-                         // Update the navigation drawer to show saved search updates
-                         updateNavigationDrawerCounters();
-
-                         // Scrape member profile data from website
-                         mMember.getMemberData(this);
-                     }
-                     else {  // Error!
-                         /* This check only ensures that the login web page url is in the format that we
-                          * expect, that the app could properly log in as the user with the provided
-                          * credentials and that the user profile URL was successfully accessed */
-                         showError(result.getError().getMessage());
-
-                         setProgressBarIndeterminateVisibility(false);  // Hide progress circle
-                         showLoginScreen();  // Send user to login screen
-                     }
-
-                     break;
-                 case Mountaineer.STAGE_GET_MEMBER_DATA:
-                     // Add user object ID to current installation
-                     if (ParseUser.getCurrentUser() != null) {
-                         try {
-                             ParseInstallation.getCurrentInstallation().put
-                                     (ParseConstants.KEY_USER_OBJECT_ID,
-                                             ParseUser.getCurrentUser().getObjectId());
-                             ParseInstallation.getCurrentInstallation().saveInBackground();
-                         }
-                         catch (Exception e) { /* Intentionally left blank */ }
-                     }
-
-                     // Check for success in scraping user data
-                     if (result.getError() != null || !result.getResult()) {  // Error!
-                         /* This check ensures that the member profile web page is in the format that we
-                          * expect and that the app could properly scrape this data */
-                         showError(result.getError().getMessage());
-
-                         setProgressBarIndeterminateVisibility(false);  // Hide progress circle
-                         showLoginScreen();  // Send user to login screen
-                     }
-
-                     // Update the navigation drawer to show user profile image
-                     mNavigationDrawerFragment.updateProfileImage(mMember.getProfileImageUrl());
+                     // Login as the user using their previously entered credentials
+                     mMember.login(this);
+                 }
+                 else {  // Error!
+                     /* This check only ensures that the member login web page url was downloaded
+                      * properly.  It does not check to see if it is in the format that we expect -
+                      * this check will happen as the result of the next step */
+                     showError(result.getError().getMessage());
 
                      setProgressBarIndeterminateVisibility(false);  // Hide progress circle
-                     mFinishedUserData = true;  // Flag as finished getting user profile date
+                     showLoginScreen();  // Send user to login screen
+                 }
 
-                     break;
-             }
+                 break;
+             case Mountaineer.STAGE_LOGIN:
+                 // Check for success in logging in as user and getting user profile URL
+                 if (result.getError() == null && result.getResult()) {  // Success!
+                     /* The login process for a user who is returning as the Parse Current User
+                      * differs from a user who has just logged in via the Login Activity.  At this
+                      * point in the process, the paths diverge.  For a returning current user, jump
+                      * straight into getting the member data.  Unlike the new log in, there is no
+                      * need to save user credentials to Parse since they successfully logged into
+                      * the Mountaineers site with their existing credentials. */
+
+                     mMember.getSavedSearches(this);
+                 }
+                 else {  // Error!
+                     /* This check only ensures that the login web page url is in the format that we
+                      * expect, that the app could properly log in as the user with the provided
+                      * credentials and that the user profile URL was successfully accessed */
+                     showError(result.getError().getMessage());
+
+                     setProgressBarIndeterminateVisibility(false);  // Hide progress circle
+                     showLoginScreen();  // Send user to login screen
+                 }
+
+                 break;
+             case Mountaineer.STAGE_GET_SAVED_SEARCHES:
+                 // Check for success in logging in as user and getting user profile URL
+                 if (result.getError() == null && result.getResult()) {  // Success!
+                     /* The login process for a user who is returning as the Parse Current User
+                      * differs from a user who has just logged in via the Login Activity.  At this
+                      * point in the process, the paths diverge.  For a returning current user, jump
+                      * straight into getting the member data.  Unlike the new log in, there is no
+                      * need to save user credentials to Parse since they successfully logged into
+                      * the Mountaineers site with their existing credentials. */
+
+                     // Save the cookie!
+                     mCookie = mMember.getCookies().get(0);
+
+                     // Update the navigation drawer to show saved search updates
+                     updateNavigationDrawerCounters();
+
+                     // Scrape member profile data from website
+                     mMember.getMemberData(this);
+                 }
+                 else {  // Error!
+                     /* This check only ensures that the login web page url is in the format that we
+                      * expect, that the app could properly log in as the user with the provided
+                      * credentials and that the user profile URL was successfully accessed */
+                     showError(result.getError().getMessage());
+
+                     setProgressBarIndeterminateVisibility(false);  // Hide progress circle
+                     showLoginScreen();  // Send user to login screen
+                 }
+
+                 break;
+             case Mountaineer.STAGE_GET_MEMBER_DATA:
+                 // Add user object ID to current installation
+                 if (ParseUser.getCurrentUser() != null) {
+                     try {
+                         ParseInstallation.getCurrentInstallation().put
+                                 (ParseConstants.KEY_USER_OBJECT_ID,
+                                         ParseUser.getCurrentUser().getObjectId());
+                         ParseInstallation.getCurrentInstallation().saveInBackground();
+                     }
+                     catch (Exception e) { /* Intentionally left blank */ }
+                 }
+
+                 // Check for success in scraping user data
+                 if (result.getError() != null || !result.getResult()) {  // Error!
+                     /* This check ensures that the member profile web page is in the format that we
+                      * expect and that the app could properly scrape this data */
+                     showError(result.getError().getMessage());
+
+                     setProgressBarIndeterminateVisibility(false);  // Hide progress circle
+                     showLoginScreen();  // Send user to login screen
+                 }
+
+                 // Update the navigation drawer to show user profile image
+                 mNavigationDrawerFragment.updateProfileImage(mMember.getProfileImageUrl());
+
+                 setProgressBarIndeterminateVisibility(false);  // Hide progress circle
+                 mFinishedUserData = true;  // Flag as finished getting user profile date
+
+                 break;
          }
+     }
 
     // TODO: Standardize the method of assigning titles to the fragments
     // The lower level fragments are currently being assigned in the higher-level fragment
@@ -461,7 +530,7 @@ public class MainActivity extends Activity
                 mTitle = getString(R.string.title_signed_up);
                 break;
             case 8:
-                mTitle = getString(R.string.title_favorites);
+                mTitle = getString(R.string.title_bookmarked);
                 break;
         }
 

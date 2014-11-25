@@ -90,6 +90,13 @@ public class DrawerAdapter extends BaseAdapter {
                 imageViewIcon.setTag(imageViewIcon.getHeight() * 2);
             }
             else {  // Yes - show profile image
+                // Check if the user is coming from the login screen
+                if (imageViewIcon.getTag().toString().equals("0")) {  // Yes
+                    // Save original image height (icon height x 2) in the imageView's tag
+                    imageViewIcon.setTag(imageViewIcon.getHeight() * 2);
+                }
+
+                // Load the user's profile image
                 Picasso.with(mContext).load(drawerItem.getProfileImage())
                         .transform(new PicassoCustom.CropCircleTransformation())
                         .resize(0, new Integer(imageViewIcon.getTag().toString()))

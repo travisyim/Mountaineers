@@ -104,7 +104,7 @@ public class NavigationDrawerFragment extends Fragment {
             mFromSavedInstanceState = true;
         }
 
-        // Select either the default item (0) or the last selected item.
+        // Select either the default item (2) or the last selected item.
         selectItem(mCurrentSelectedPosition);
     }
 
@@ -136,21 +136,38 @@ public class NavigationDrawerFragment extends Fragment {
                     mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
                 }
                 else {  // Valid time to change item
-                    selectItem(position);
+                    /* Check if selected item is related to app feedback.  If so, put the focus
+                     * back on the previously selected item */
+                    if (position > 8) {  // App feedback
+                        // Save position of original selection
+                        int tempPosition = mCurrentSelectedPosition;
+
+                        selectItem(position);  // Allow action
+
+                        // Check the previous selections and set it as the previous selection again
+                        mDrawerListView.setItemChecked(tempPosition, true);
+                        mCurrentSelectedPosition = tempPosition;
+                    }  // Not app feedback
+                    else {  // No need to track previous position
+                        selectItem(position);
+                    }
                 }
             }
         });
 
         // Load drawer items to list
         mDrawerItems = new Object[]{
-                new FragmentListItem(getString(R.string.title_profile), R.drawable.ic_action_person, 0),
+                new FragmentListItem(getString(R.string.title_profile), R.drawable.ic_account_circle_white_36dp, 0),
                 "Activity Search",
-                new FragmentListItem(getString(R.string.title_browse), R.drawable.ic_action_search, 0),
-                new FragmentListItem(getString(R.string.title_saved_searches), R.drawable.ic_action_save, 0),
+                new FragmentListItem(getString(R.string.title_browse), R.drawable.ic_search_white_36dp, 0),
+                new FragmentListItem(getString(R.string.title_saved_searches), R.drawable.ic_save_white_36dp, 0),
                 "My Activities",
-                new FragmentListItem(getString(R.string.title_completed), R.drawable.ic_action_accept, 0),
-                new FragmentListItem(getString(R.string.title_signed_up), R.drawable.ic_action_view_as_list, 0),
-                new FragmentListItem(getString(R.string.title_favorites), R.drawable.ic_action_important, 0),
+                new FragmentListItem(getString(R.string.title_completed), R.drawable.ic_event_available_white_36dp, 0),
+                new FragmentListItem(getString(R.string.title_signed_up), R.drawable.ic_event_note_white_36dp, 0),
+                new FragmentListItem(getString(R.string.title_bookmarked), R.drawable.ic_photo_album_white_36dp, 0),
+                "App Feedback",
+                new FragmentListItem(getString(R.string.title_comments), R.drawable.ic_speaker_notes_white_36dp, 0),
+                new FragmentListItem(getString(R.string.title_rate), R.drawable.ic_star_white_36dp, 0),
         };
 
         // New navigation drawer adapter in work
