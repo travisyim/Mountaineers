@@ -24,7 +24,6 @@ public class ParseConstants {
     public static final String KEY_ACTIVITY_ID = "activityId";
     public static final String KEY_ACTIVITY_TITLE = "title";
     public static final String KEY_ACTIVITY_TITLE_HEADER = "titleHeader";
-    public static final String KEY_ACTIVITY_TYPE = "type";
     public static final String KEY_ACTIVITY_START_DATE = "activityStartDate";
     public static final String KEY_ACTIVITY_END_DATE = "activityEndDate";
     public static final String KEY_ACTIVITY_URL = "activityUrl";

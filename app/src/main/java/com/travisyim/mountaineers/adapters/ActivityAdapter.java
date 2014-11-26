@@ -19,6 +19,7 @@ import com.travisyim.mountaineers.objects.FilterOptions;
 import com.travisyim.mountaineers.objects.MountaineerActivity;
 import com.travisyim.mountaineers.utils.ActivityComparator;
 import com.travisyim.mountaineers.utils.DateUtil;
+import com.travisyim.mountaineers.utils.StringUtil;
 
 import org.json.JSONException;
 
@@ -26,9 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
     private Context mContext;
@@ -278,7 +277,8 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
     }
 
     public void applyTextFilter(final String queryText) {
-        Set<String> keywords = new HashSet<String>();
+        String[] queryKeywords;
+        String[] activityKeywords = null;
         int newIndex = 0;
         boolean found;
 
@@ -286,35 +286,34 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
 
         // Filter the activities list based on the search text
         if (queryText != null && !queryText.isEmpty()) {  // Search string defined
-            // Add all keywords when query String is split by spaces
-            keywords.addAll(Arrays.asList(queryText.trim().toLowerCase().split("\\s+")));
-            // Add all keywords when query String is split by spaces
-            keywords.addAll(Arrays.asList(queryText.trim().toLowerCase().split("\\b")));
+            // Determine unique query keywords
+            queryKeywords = StringUtil.getKeywords(queryText);
 
-            // Loop through master list of activities to search for keywords
+            // Loop through master list of activities to search for queryKeywords
             for (MountaineerActivity activity : mMasterActivities) {
                 found = false;
 
-                /* Search activity name and leader name to ensure all keywords are present (all
-                 * keywords must be found) */
-                for (String keyword : keywords) {
-                    try {
-                        // Ensure we are not evaluating either blank space or "'s"
-                        if (!keyword.trim().isEmpty() && !keyword.equals("'s") &&
-                                !keyword.equals("'") && !keyword.equals("s")) {
-                            // Search for the given keyword as a whole word (bounded by \b)
-                            if (activity.getTitle().toLowerCase().matches(".*\\b" + keyword + "\\b.*")
-                                    || activity.getLeaderName().join(" ").toLowerCase()
-                                    .matches(".*\\b" + keyword + "\\b.*")) {
-                                found = true;
-                                break;
-                            }
-                        }
+                // Determine unique activity keywords
+                try {
+                    activityKeywords = StringUtil.getKeywords(activity.getTitle() + " "
+                            + activity.getTitleHeader() + " "
+                            + (activity.getLeaderName() != null ? activity.getLeaderName().join(" ").replaceAll("\"", "") : null) + " "
+                            + (activity.getType() != null ? activity.getType().join(" ").replaceAll("\"", "") : null) + " "
+                            + (activity.getDifficulty() != null ? activity.getDifficulty().join(" ").replaceAll("\"", "") : null) + " ");
+                }
+                catch (JSONException e) { /* Intentionally left blank */}
+
+                /* Search activity name and leader name to ensure all queryKeywords are present (all
+                 * queryKeywords must be found) */
+                for (String keyword : queryKeywords) {
+                    // Search for a given query keyword in the activity keywords
+                    if (Arrays.asList(activityKeywords).contains(keyword)) {
+                        found = true;
+                        break;
                     }
-                    catch (JSONException e) { /* Intentionally left blank */}
                 }
 
-                if (found) {  // All keywords found so add them to the listview adapter
+                if (found) {  // All queryKeywords found so add them to the listview adapter
                     // Check if this is an activity search launched by a saved search
                     if (!mIsSavedSearch) {  // Not a saved search
                         this.add(activity);
@@ -580,6 +579,7 @@ public class ActivityAdapter extends ArrayAdapter<MountaineerActivity> {
             return true;
         }
         else {  // No
+            activity.setUnread(false);  // Mark this activity as unseen by the user
             mActivities.add(activity);  // Add activity to bottom of list
             return false;
         }

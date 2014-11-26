@@ -98,6 +98,7 @@ public class DrawerAdapter extends BaseAdapter {
 
                 // Load the user's profile image
                 Picasso.with(mContext).load(drawerItem.getProfileImage())
+                        .placeholder(drawerItem.getIcon())
                         .transform(new PicassoCustom.CropCircleTransformation())
                         .resize(0, new Integer(imageViewIcon.getTag().toString()))
                         .into(imageViewIcon);

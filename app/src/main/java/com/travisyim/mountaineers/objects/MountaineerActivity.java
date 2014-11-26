@@ -22,7 +22,9 @@ public class MountaineerActivity implements Serializable {
     private String mImageUrl;
     private JSONArray mLeaderName;
     private String mTitle;
+    private String mTitleHeader;
     private JSONArray mType;
+    private JSONArray mDifficulty;
     private String mObjectID;
     private Date mRegistrationCloseTime;
     private Date mRegistrationOpenTime;
@@ -174,6 +176,14 @@ public class MountaineerActivity implements Serializable {
         mCanceled = isCanceled;
     }
 
+    public final JSONArray getDifficulty() {
+        return mDifficulty;
+    }
+
+    public final void setDifficulty(final JSONArray difficulty) {
+        mDifficulty = difficulty;
+    }
+
     public final double getEndLatitude() {
         return mEndLatitude;
     }
@@ -220,6 +230,14 @@ public class MountaineerActivity implements Serializable {
 
     public final void setTitle(final String title) {
         mTitle = title;
+    }
+
+    public final String getTitleHeader() {
+        return mTitleHeader;
+    }
+
+    public final void setTitleHeader(final String titleHeader) {
+        mTitleHeader = titleHeader;
     }
 
     public String getObjectID() {

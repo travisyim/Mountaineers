@@ -41,9 +41,11 @@ import com.travisyim.mountaineers.utils.DateUtil;
 import com.travisyim.mountaineers.utils.ListUtil;
 import com.travisyim.mountaineers.utils.OnParseTaskCompleted;
 import com.travisyim.mountaineers.utils.ParseConstants;
+import com.travisyim.mountaineers.utils.StringUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -878,20 +880,27 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             if (mQueryText != null && mQueryText.length() > 0) {
                 // Keywords array
                 savedSearch.put(ParseConstants.KEY_KEYWORDS, new JSONArray());  // Clear previous keywords
-
-                savedSearch.addAllUnique(ParseConstants.KEY_KEYWORDS, getKeywords(mQueryText));
+                // Add all unique keywords
+                savedSearch.addAllUnique(ParseConstants.KEY_KEYWORDS,
+                        Arrays.asList(StringUtil.getKeywords(mQueryText)));
             }
 
             // Start Date
-            if (mFilterOptions.getStartDate() != null) {
+            if (mFilterOptions.getStartDate() != null) {  // Defined
                 savedSearch.put(ParseConstants.KEY_ACTIVITY_START_DATE,
                         DateUtil.convertToUNC(mFilterOptions.getStartDate()));
             }
+            else {  // Undefined
+                savedSearch.put(ParseConstants.KEY_ACTIVITY_START_DATE, JSONObject.NULL);
+            }
 
             // End Date
-            if (mFilterOptions.getEndDate() != null) {
+            if (mFilterOptions.getEndDate() != null) {  // Defined
                 savedSearch.put(ParseConstants.KEY_ACTIVITY_END_DATE,
                         DateUtil.convertToUNC(mFilterOptions.getEndDate()));
+            }
+            else {  // Undefined
+                savedSearch.put(ParseConstants.KEY_ACTIVITY_START_DATE, JSONObject.NULL);
             }
 
             // Filter Options
@@ -972,26 +981,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             alert.setMessage(getActivity().getString(R.string.error_message_saved_search));
             alert.show();
         }
-    }
-
-    private List<String> getKeywords(final String mQueryText) {
-        List<String> keywords = new ArrayList<String>();
-
-//        var ignoreWords = ["the", "in", "and", "to", "of", "at", "for", "from", "a", "an", "s"];  // Words to ignore
-
-        // Split query text by spaces and word boundaries
-        keywords.addAll(Arrays.asList(mQueryText.trim().toLowerCase().split("\\s+")));
-        keywords.addAll(Arrays.asList(mQueryText.trim().toLowerCase().split("\\b")));
-
-        for (int i = 0; i < keywords.size(); i++) {
-            String str = keywords.get(i);
-
-            if (str.isEmpty()) {  // Check for empty String
-                keywords.remove(i);
-            }
-        }
-
-        return keywords;
     }
 
     private void showSaveDialog() {

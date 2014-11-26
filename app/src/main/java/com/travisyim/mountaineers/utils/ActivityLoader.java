@@ -68,9 +68,12 @@ public class ActivityLoader {
             activity.setEndLongitude(result.getDouble(ParseConstants.KEY_END_LONGITUDE));
             // Activity picture URL
             activity.setImageUrl(result.getString(ParseConstants.KEY_IMAGE_URL));
-            activity.setLeaderName(result.getJSONArray(ParseConstants.KEY_LEADER_NAME));  // Leader name
+            // Leader name
+            activity.setLeaderName(result.getJSONArray(ParseConstants.KEY_LEADER_NAME));
             // Activity title
             activity.setTitle(result.getString(ParseConstants.KEY_ACTIVITY_TITLE));
+            // Activity title header
+            activity.setTitleHeader(result.getString(ParseConstants.KEY_ACTIVITY_TITLE_HEADER));
             activity.setObjectID(result.getObjectId());  // Parse object ID
             // Registration open and close dates
             activity.setRegistrationOpenTime(DateUtil.convertFromUNC(result.getDate
@@ -85,6 +88,8 @@ public class ActivityLoader {
             activity.setStatus(result.getString(ParseConstants.KEY_STATUS));
             // Type
             activity.setType(result.getJSONArray(ParseConstants.KEY_TYPE));
+            // Difficulty
+            activity.setDifficulty(result.getJSONArray(ParseConstants.KEY_DIFFICULTY));
 
             // Favorite lookup
             if (isFavorites) {

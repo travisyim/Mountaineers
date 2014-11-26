@@ -433,13 +433,6 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
             SavedSearchAdapter adapter = new SavedSearchAdapter(getListView().getContext(), mSavedSearchList);
             setListAdapter(adapter);
 
-//            if (getListView().getAdapter() == null) {  // First time using the list adapter
-//                SavedSearchAdapter adapter = new SavedSearchAdapter(getListView().getContext(), mSavedSearchList);
-//                setListAdapter(adapter);
-//            } else {  // Results already shown so update the list
-//                ((SavedSearchAdapter) getListAdapter()).notifyDataSetChanged();
-//            }
-
             if (mSavedSearchList.size() == 0) {
                 Toast toast = Toast.makeText(getActivity(), getActivity().getString
                         (R.string.toast_empty_saved_searches), Toast.LENGTH_LONG);
