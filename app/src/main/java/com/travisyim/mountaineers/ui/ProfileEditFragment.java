@@ -27,6 +27,7 @@ public class ProfileEditFragment extends Fragment {
     private String mProfileEditURL;
     private String mCookie;
     private boolean mLogOut = false;
+    private boolean mIsCanceled = false;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String ARG_PARENT_TITLE = "parentFragmentTitle";
@@ -110,10 +111,12 @@ public class ProfileEditFragment extends Fragment {
              */
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
+                if (!mIsCanceled) {  // Ensured the user hasn't gone back to the previous fragment
+                    super.onPageStarted(view, url, favicon);
 
-                // Show the progress circle
-                getActivity().setProgressBarIndeterminateVisibility(true);
+                    // Show the progress circle
+                    getActivity().setProgressBarIndeterminateVisibility(true);
+                }
             }
 
             public void onPageFinished(WebView view, String url) {
@@ -151,7 +154,10 @@ public class ProfileEditFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
+
         // Stop loading the webpage and hide the progress circle
+        mIsCanceled = true;
         mWebView.stopLoading();
         getActivity().setProgressBarIndeterminateVisibility(false);
 
@@ -165,8 +171,6 @@ public class ProfileEditFragment extends Fragment {
             // Reset the title back to that of the parent fragment
             getActivity().getActionBar().setTitle(mParentFragmentTitle);
         }
-
-        super.onDestroy();
     }
 
     @Override

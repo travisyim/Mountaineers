@@ -26,6 +26,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -1325,6 +1326,9 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
             savedSearch.put(ParseConstants.KEY_SNOWSHOEING_BEGINNER, mFilterOptions.isSnowshoeingBeginner());
             savedSearch.put(ParseConstants.KEY_SNOWSHOEING_BASIC, mFilterOptions.isSnowshoeingBasic());
             savedSearch.put(ParseConstants.KEY_SNOWSHOEING_INTERMEDIATE, mFilterOptions.isSnowshoeingIntermediate());
+
+            // Set ACL permissions (only accessible by user)
+            savedSearch.setACL(new ParseACL(ParseUser.getCurrentUser()));
 
             // Save search to Parse backend
             savedSearch.saveInBackground(new SaveCallback() {
