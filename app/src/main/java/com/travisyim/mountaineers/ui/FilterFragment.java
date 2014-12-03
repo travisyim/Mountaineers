@@ -234,12 +234,12 @@ public class FilterFragment extends Fragment {
                 }
                 // Completed Activity
                 else if (mParentFragmentTitle.equals(getString(R.string.title_completed))) {
-                    ((CompletedActivityFragment) getFragmentManager().findFragmentByTag
+                    ((UserActivityFragment) getFragmentManager().findFragmentByTag
                             (mParentFragmentTitle)).onFiltersSelected(mFilterOptions);
                 }
                 // Signed Up Activity
                 else if (mParentFragmentTitle.equals(getString(R.string.title_signed_up))) {
-                    ((SignedUpActivityFragment) getFragmentManager().findFragmentByTag
+                    ((UserActivityFragment) getFragmentManager().findFragmentByTag
                             (mParentFragmentTitle)).onFiltersSelected(mFilterOptions);
                 }
                 // Favorite Activity

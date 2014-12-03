@@ -3,10 +3,9 @@ package com.travisyim.mountaineers.ui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -34,14 +33,18 @@ import com.travisyim.mountaineers.objects.FilterOptions;
 import com.travisyim.mountaineers.objects.Mountaineer;
 import com.travisyim.mountaineers.objects.MountaineerActivity;
 import com.travisyim.mountaineers.utils.ActivityLoader;
+import com.travisyim.mountaineers.utils.ListUtil;
 import com.travisyim.mountaineers.utils.OnParseTaskCompleted;
 import com.travisyim.mountaineers.utils.OnTaskCompleted;
 import com.travisyim.mountaineers.utils.ParseConstants;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class SignedUpActivityFragment extends ListFragment implements OnTaskCompleted,
+public class UserActivityFragment extends ListFragment implements OnTaskCompleted,
         OnParseTaskCompleted, FilterFragment.OnFiltersSelectedListener,
         ActivityDetailsFragment.OnFavoriteSelectedListener {
     private Fragment mActivityDetailsFragment;
@@ -49,7 +52,6 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
     private FilterOptions mFilterOptions = new FilterOptions();
     private List<MountaineerActivity> mActivityList = new ArrayList<MountaineerActivity>();
     private Mountaineer mMember;
-    private DrawerLayout mDrawerLayout;
     private MenuItem mSearchMenuItem;
     private SearchView mSearchView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -57,16 +59,18 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
     private List<String> mFavoritesList;
     private String mQueryText;
     private int mActivityPosition;
-    private boolean newSearch;
+    private boolean mReturnFromFilter = false;
+    private boolean mReturnFromDetails = false;
     private boolean mAlreadyLoaded = false;
-    private boolean mIsCollapsed = false;
-    private boolean mHasSearchLostFocus = false;
     private boolean mIsCanceled = false;
+    private boolean mIsMaxLimitReached = false;
+    private boolean mIsSignedUpActivity;
 
-    private final String TAG = SignedUpActivityFragment.class.getSimpleName() + ":";
+    private final String TAG = UserActivityFragment.class.getSimpleName() + ":";
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String ARG_MEMBER = "member";
     private static final String ARG_ACTIVITY_NAME = "activityName";
+    private static final String ARG_LEADER_NAMES = "leaderNames";
     private static final String ARG_ACTIVITY_URL = "activityURL";
     private static final String ARG_LOCATION = "location";
     private static final String ARG_FAVORITE = "isFavorite";
@@ -74,23 +78,42 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
     private static final String ARG_ACTIVITY_END_DATE = "endDate";
     private static final String ARG_ACTIVITY_REG_OPEN_DATE = "regOpenDate";
     private static final String ARG_ACTIVITY_REG_CLOSE_DATE = "regCloseDate";
+    private static final String ARG_USER_ACTIVITY_IS_SIGNED_UP = "isSignedUp";
 
-    // Returns a new instance of this fragment for the given section number
-    public static SignedUpActivityFragment newInstance(int sectionNumber) {
-        SignedUpActivityFragment fragment = new SignedUpActivityFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        fragment.setArguments(args);
-        return fragment;
+    public UserActivityFragment() {
     }
 
-    public SignedUpActivityFragment() {
+    // Returns a new instance of this fragment for the given section number
+    public static UserActivityFragment newInstance(int sectionNumber, ActivityLoader.ActivityType type) {
+        UserActivityFragment fragment = new UserActivityFragment();
+        Bundle args = new Bundle();
+
+        /* Save the arguments to be accessed later in setArguments (must wait because member
+         * variables are not yet accessible */
+        // TODO: Clean up number formats
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+
+        // Determine the type of user activity this fragment is to represent
+        if (type == ActivityLoader.ActivityType.SIGNED_UP) {  // Signed Up activities
+            args.putBoolean(ARG_USER_ACTIVITY_IS_SIGNED_UP, true);
+        }
+        else {  // Completed activities
+            args.putBoolean(ARG_USER_ACTIVITY_IS_SIGNED_UP, false);
+        }
+
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        // Set additional arguments passed in after creating new fragment instance
         ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+
+        // Get user activity type
+        mIsSignedUpActivity = getArguments().getBoolean(ARG_USER_ACTIVITY_IS_SIGNED_UP);
 
         // Get the member object
         mMember = (Mountaineer) getArguments().getSerializable(ARG_MEMBER);
@@ -106,20 +129,19 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_signed_up_activity, container, false);
-
-        mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+        View rootView = inflater.inflate(R.layout.fragment_user_activity, container, false);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setColorScheme(R.color.swipe_refresh1, R.color.swipe_refresh2,
                 R.color.swipe_refresh3, R.color.swipe_refresh4);
 
+        // Setup SwipeRefresh behavior
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 // Flag as updating activities
                 ((MainActivity) getActivity()).setLoadingActivities(true);
-                getUserActivityData();
+                getUserActivityData();  // Get user activity list from website & Parse data
             }
         });
 
@@ -127,30 +149,42 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
 
         /* Get full member activity history list from the latest Parse data if this is the first
          * time creating this fragment */
 
         // Make sure the user is logged in before completing the following activities
         if (ParseUser.getCurrentUser() != null) {
-            mSwipeRefreshLayout.setRefreshing(true);  // Turn on update indicator
-            // Flag as updating activities
-            ((MainActivity) getActivity()).setLoadingActivities(true);
-
             // Only run this on the first time the fragment is shown
             if (!mAlreadyLoaded) {
-                getUserActivityData();
+                mAlreadyLoaded = true;
+
+                // Flag as updating activities
+                ((MainActivity) getActivity()).setLoadingActivities(true);
+                mSwipeRefreshLayout.setRefreshing(true);  // Turn on update indicator
+
+                getUserActivityData();  // Get user activity list from website & Parse data
             }
-            else {
-                /* Refresh favorites (important in case the user has deselected a favorite Signed Up
+            else if (!mReturnFromDetails && !mReturnFromFilter) {
+                // Flag as updating activities
+                ((MainActivity) getActivity()).setLoadingActivities(true);
+                mSwipeRefreshLayout.setRefreshing(true);  // Turn on update indicator
+
+                /* Refresh favorites (important in case the user has deselected a favorite user
                  * activity from the Favorites fragment */
                 refreshFavorites();
 
                 // Apply user defined filters to the latest list of activities
                 ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
                 ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+            }
+            else if (mReturnFromFilter) {  // User returning from filter options
+                mReturnFromFilter = false;  // Reset this flag
+            }
+            else if (mReturnFromDetails) {  // User returning from activity details
+                mReturnFromDetails = false;  // Reset flag
             }
         }
     }
@@ -165,21 +199,70 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
         mSearchMenuItem = menu.findItem(R.id.search);
         mSearchView = (SearchView) mSearchMenuItem.getActionView();
         mSearchView.setQueryHint(getActivity().getString(R.string.hint_searchview));
+        mSearchView.setSubmitButtonEnabled(true);
+
+        // Get the search submit button image view
+        int submitButtonId = mSearchView.getContext().getResources()
+                .getIdentifier("android:id/search_go_btn", null, null);
+        View submitButton = mSearchView.findViewById(submitButtonId);
+
+        // Set on click listener
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Show the max limit message if applicable
+                if (mIsMaxLimitReached) {
+                    showMaxLimitToast();
+                }
+
+                // This is triggered when the submit button on the search menu is clicked
+                mQueryText = String.valueOf(mSearchView.getQuery());  // Save query text
+
+                mSearchMenuItem.collapseActionView();  // Collapse search view
+
+                // Update results
+                ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
+                ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+            }
+        });
+
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // Show the max limit message if applicable
+                if (mIsMaxLimitReached) {
+                    showMaxLimitToast();
+                }
+
+                // This is triggered when the enter button on the keyboard is pressed
+                mQueryText = query;  // Save query text
+
+                mSearchMenuItem.collapseActionView();  // Collapse search view
+
+                // Update results
+                ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
+                ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // This is triggered when the query string changes but is not currently used
+                return false;
+            }
+        });
 
         mSearchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                newSearch = true;  // Mark this as a new search
-                mIsCollapsed = false;  // Set this collapsed flag
-
                 // Run the old search text (must be done in a runnable or will not work)
                 mSearchView.post(new Runnable() {
                     @Override
                     public void run() {
                         mSearchView.setQuery(mQueryText, false);
 
-                        /* The following allows the user to input text after the previous query
-                         * text */
+                        // The following allows the user to input text after the previous query text
                         mSearchView.setIconified(false);
                     }
                 });
@@ -189,47 +272,6 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                mIsCollapsed = true;  // Set this collapsed flag
-
-                return true;
-            }
-        });
-
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                mQueryText = query;  // Save query text
-                mSearchMenuItem.collapseActionView();  // Collapse search view
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                /* Check to see if this change is due to the user clicking on the Navigation Drawer
-                 * icon.  If so, do not reset the query text. */
-                if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {  // User is trying to search
-                    if (newSearch && newText.isEmpty()) {  // New search by user
-                        newSearch = false;
-                    }
-                    else if (mIsCollapsed) { // Triggered by collapsing Searchview
-                        mIsCollapsed = false;
-                    }
-                    else if (mHasSearchLostFocus) { // Triggered by clicking an activity or filter
-                        mHasSearchLostFocus = false;
-                    }
-                    // Check to see if the Activity Search fragment is still updating results
-                    else if (!mSwipeRefreshLayout.isRefreshing() ||
-                            (newSearch && !newText.isEmpty())) {
-                        newSearch = false;
-                        mQueryText = newText;  // Update previously searched query text
-
-                        // Not updating so apply both text and filter options to the activity list
-                        ((ActivityAdapter) getListAdapter()).applyTextFilter(newText);
-                        ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
-                    }
-                }
-
                 return true;
             }
         });
@@ -239,11 +281,10 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
-        // Check to see if the Signed Up Activity fragment is still updating results
+        // Check to see if the User Activity fragment is still updating results
         if (!mSwipeRefreshLayout.isRefreshing()) {
-            mHasSearchLostFocus = true;  // Flag this as clicked
-
             mActivityPosition = position;  // Capture position of listitem clicked
+            mReturnFromDetails = true;  // User is launching an activity details fragment
 
             // Launch Activity Details fragment to show activity's webpage
             if (mActivityDetailsFragment == null) {
@@ -288,12 +329,25 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
                 args.putString(ARG_LOCATION, "");
             }
 
+            // Pass in Leader Name(s)
+            try {  // Join leader names together and remove quotes (due to being stored in JSON array)
+                args.putString(ARG_LEADER_NAMES, mActivityList.get(position).getLeaderName()
+                        .join(", ").replace("\"", ""));
+            }
+            catch (JSONException e) {
+                // Error with leader names so pass in empty String
+                args.putString(ARG_LEADER_NAMES, "");
+            }
+
             // Update ActionBar title to show name
             getActivity().getActionBar().setTitle(getString(R.string.title_activity_details));
 
-            // Load activity details fragment
-            getFragmentManager().beginTransaction().replace(R.id.container, mActivityDetailsFragment)
-                    .addToBackStack(null).commit();
+            // Load activity details fragment with fade and slide animations
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out,
+                    R.animator.slide_in_right, R.animator.slide_out_right);
+
+            transaction.replace(R.id.container, mActivityDetailsFragment).addToBackStack(null).commit();
         }
         else {  // Still updating so prevent user from moving to the Activity Details page
             Toast.makeText(getActivity(), getActivity().getString(R.string.toast_filter_wait),
@@ -310,11 +364,10 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
                 ((MainActivity) getActivity()).showLoginScreen();
                 return true;
             case R.id.action_filter:  // Filter
+                /* Check to see if the User Activity fragment is still updating results or if the
+                 * drawer is open */
                 if (!((MainActivity) getActivity()).isDrawerOpen()) {
-                    // Check to see if the Signed Up Activity fragment is still updating results
                     if (!mSwipeRefreshLayout.isRefreshing()) {
-                        mHasSearchLostFocus = true;  // Flag this as clicked
-
                         // Not updating so load filter fragment
                         if (mFilterFragment == null) {
                             // TODO: Fix up section numbering scheme
@@ -323,12 +376,18 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
                                     mFilterOptions, getActivity().getActionBar().getTitle().toString());
                         }
 
+                        // Set this flag to produce null behavior when hitting back in filter fragment
+                        mReturnFromFilter = true;
+
                         // Update ActionBar title to show name
                         getActivity().getActionBar().setTitle(getString(R.string.title_activity_filters));
 
-                        // Launch Filter fragment
-                        getFragmentManager().beginTransaction().replace(R.id.container, mFilterFragment)
-                                .addToBackStack(null).commit();
+                        // Load filter fragment with fade and slide animations
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out,
+                                R.animator.slide_in_right, R.animator.slide_out_right);
+
+                        transaction.replace(R.id.container, mFilterFragment).addToBackStack(null).commit();
                     } else {  // Still updating so prevent user from moving to the filter page
                         Toast.makeText(getActivity(), getActivity().getString(R.string.toast_filter_wait),
                                 Toast.LENGTH_SHORT).show();
@@ -343,33 +402,30 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
 
     @Override
     public void onFavoriteSelected(boolean isFavorite) {
-        // Update activity with the favorite state if it has changed
-        if (mActivityList.get(mActivityPosition).isFavorite() != isFavorite) {
-            // Favorite value has changed so update it
-            mActivityList.get(mActivityPosition).setFavorite(isFavorite);  // Local update
+        // Favorite value has changed so update it
+        mActivityList.get(mActivityPosition).setFavorite(isFavorite);  // Local update
 
-            // Parse backend update
-            if (isFavorite) {  // Add entry to user's favorites array list
-                ParseUser.getCurrentUser().add(ParseConstants.KEY_FAVORITES,
-                        mActivityList.get(mActivityPosition).getObjectID());
-            }
-            else {  // Delete entry to user's favorites array list
-                List<String> objectId = new ArrayList<String>();
-                objectId.add(mActivityList.get(mActivityPosition).getObjectID());
-                ParseUser.getCurrentUser().removeAll(ParseConstants.KEY_FAVORITES, objectId);
-            }
-
-            try {
-                ParseUser.getCurrentUser().saveInBackground();
-            }
-            catch (Exception e) { /* Intentionally left blank */ }
+        // Parse backend update
+        if (isFavorite) {  // Add entry to user's favorites array list
+            ParseUser.getCurrentUser().add(ParseConstants.KEY_FAVORITES,
+                    mActivityList.get(mActivityPosition).getObjectID());
         }
+        else {  // Delete entry to user's favorites array list
+            List<String> objectId = new ArrayList<String>();
+            objectId.add(mActivityList.get(mActivityPosition).getObjectID());
+            ParseUser.getCurrentUser().removeAll(ParseConstants.KEY_FAVORITES, objectId);
+        }
+
+        try {
+            ParseUser.getCurrentUser().saveInBackground();
+        }
+        catch (Exception e) { /* Intentionally left blank */ }
     }
 
     @Override
     public void onFiltersSelected(FilterOptions filterOptions) {
         /* This method is called when the user has defined filter options and has returned to the
-         * Signed Up Activity fragment */
+         * User Activity fragment */
         mFilterOptions = filterOptions;
 
         // Apply both text and filter options to the activity list
@@ -381,14 +437,24 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
     public void onParseTaskCompleted(List<ParseObject> resultList, ParseException e) {
         // Ensure all processes have not been canceled
         if (!mIsCanceled) {
-        /* This method is called when the task of retrieving the full set of Signed Up activities is
-         * complete */
+            /* This method is called when the task of retrieving the full set of User activities
+             * is complete */
             mActivityList.clear();
 
             if (e == null) {
+                // Reverse the list to get oldest start date activities first
+                Collections.reverse(resultList);
+
                 // Load activity list with results
-                mActivityList.addAll(ActivityLoader.load
-                        (resultList, mFavoritesList, mMember, ActivityLoader.ActivityType.SIGNED_UP));
+                mActivityList.addAll(ActivityLoader.load(resultList, mFavoritesList, mMember,
+                        mIsSignedUpActivity ? ActivityLoader.ActivityType.SIGNED_UP :
+                                ActivityLoader.ActivityType.COMPLETED));
+
+                // See if the max limit is reached
+                if (mActivityList.size() == ParseConstants.QUERY_LIMIT) {
+                    mIsMaxLimitReached = true;
+                    showMaxLimitToast();
+                }
 
                 // Update search results
                 refreshActivities();
@@ -429,11 +495,21 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
 
                 // Let the user decide if he/she wants to try refreshing again.  Otherwise, leave blank.
             }
-            else {  // If successful scraping user future activities, find these items on the backend
+            else {  // If successful scraping user activities, find these items on the backend
                 // Get a string array of all activity URLs
-                if (mMember.getCurrentActivity() != null) {
-                    for (int i = 0; i < mMember.getCurrentActivity()[0].length; i++) {
-                        mActivityURLs.add(mMember.getCurrentActivity()[2][i]);  // Activity URL
+                if (mIsSignedUpActivity) {  // Signed up activities
+                    if (mMember.getCurrentActivity() != null) {
+                        for (int i = 0; i < mMember.getCurrentActivity()[0].length; i++) {
+                            mActivityURLs.add(mMember.getCurrentActivity()[2][i]);  // Activity URL
+                        }
+                    }
+                }
+                else {  // Completed activities
+                    // Get a string array of all activity URLs
+                    if (mMember.getPastActivity() != null) {
+                        for (int i = 0; i < mMember.getPastActivity()[0].length; i++) {
+                            mActivityURLs.add(mMember.getPastActivity()[2][i]);  // Activity URL
+                        }
                     }
                 }
 
@@ -446,14 +522,14 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
                             ParseQuery<ParseObject> query;
 
                             // Intermediate check to ensure all processes have not been canceled
-                            if (!mIsCanceled) {
-                                // Get list of favorite activities
-                                mFavoritesList = ParseUser.getCurrentUser().getList(ParseConstants.KEY_FAVORITES);
+                            if (!mIsCanceled) {  // Get list of favorite activities
+                                List<String> tempFavorites = ParseUser.getCurrentUser().getList(ParseConstants.KEY_FAVORITES);
+                                mFavoritesList = ListUtil.copy(tempFavorites);
 
                                 query = ParseQuery.getQuery(ParseConstants.CLASS_ACTIVITY);
                                 query.whereContainedIn(ParseConstants.KEY_ACTIVITY_URL, mActivityURLs);
-                                query.orderByAscending(ParseConstants.KEY_ACTIVITY_START_DATE);
-                                query.addAscendingOrder(ParseConstants.KEY_ACTIVITY_TITLE);
+                                query.orderByDescending(ParseConstants.KEY_ACTIVITY_START_DATE);
+                                query.addDescendingOrder(ParseConstants.KEY_ACTIVITY_TITLE);
                                 query.setLimit(ParseConstants.QUERY_LIMIT); // Limit to 500 results max
 
                                 query.findInBackground(new FindCallback<ParseObject>() {
@@ -491,7 +567,8 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
             if (getListView().getAdapter() == null) {  // First time using the list adapter
                 ActivityAdapter adapter = new ActivityAdapter(getListView().getContext(), mActivityList, null);
                 setListAdapter(adapter);
-            } else {  // Results already shown so update the list
+            }
+            else {  // Results already shown so update the list
                 ((ActivityAdapter) getListAdapter()).setMasterActivityList(mActivityList);
             }
 
@@ -499,14 +576,10 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
             ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
             ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
 
-            // If not already loaded, change this flag
-            if (!mAlreadyLoaded) {
-                mAlreadyLoaded = true;
-            }
-
             if (mActivityList.size() == 0) {
                 Toast toast = Toast.makeText(getActivity(), getActivity().getString
-                        (R.string.toast_sign_up), Toast.LENGTH_LONG);
+                        (mIsSignedUpActivity ? R.string.toast_sign_up :
+                                R.string.toast_complete), Toast.LENGTH_LONG);
                 ((TextView) ((LinearLayout) toast.getView()).getChildAt(0))
                         .setGravity(Gravity.CENTER_HORIZONTAL);
                 toast.show();
@@ -514,7 +587,7 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
 
             getListView().setEmptyView(getActivity().findViewById(R.id.textViewEmpty));
 
-            // Flag as updating activities
+            // Flag as finished updating activities
             ((MainActivity) getActivity()).setLoadingActivities(false);
             mSwipeRefreshLayout.setRefreshing(false);  // Turn off update indicator
         }
@@ -535,7 +608,8 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
                     // Intermediate check to ensure all processes have not been canceled
                     if (!mIsCanceled) {
                         // Get list of favorite activities
-                        mFavoritesList = ParseUser.getCurrentUser().getList(ParseConstants.KEY_FAVORITES);
+                        List<String> tempFavorites = ParseUser.getCurrentUser().getList(ParseConstants.KEY_FAVORITES);
+                        mFavoritesList = ListUtil.copy(tempFavorites);
 
                         for (MountaineerActivity activity : mActivityList) {
                             if (mFavoritesList != null) {  // Favorite activities defined
@@ -543,6 +617,7 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
 
                                 if (favoriteObjectIdPosition >= 0) {  // This activity is a favorite
                                     activity.setFavorite(true);  // Set favorite flag to true
+
                                     // Remove the favorite ObjectId from the list (for efficiency)
                                     mFavoritesList.remove(favoriteObjectIdPosition);
                                 } else {  // Activity object ID not found in favorites list
@@ -570,7 +645,15 @@ public class SignedUpActivityFragment extends ListFragment implements OnTaskComp
         }
     }
 
-    /* This method resets the Signed Up Activity fragment in the event the user logs out and logs
+    private void showMaxLimitToast() {
+        Toast toast = Toast.makeText(getActivity(), getActivity().getString
+                (R.string.toast_max_activities), Toast.LENGTH_LONG);
+        ((TextView) ((LinearLayout) toast.getView()).getChildAt(0))
+                .setGravity(Gravity.CENTER_HORIZONTAL);
+        toast.show();
+    }
+
+    /* This method resets the User Activity fragment in the event the user logs out and logs
      * right back in */
     public void resetFragment() {
         mAlreadyLoaded = false;

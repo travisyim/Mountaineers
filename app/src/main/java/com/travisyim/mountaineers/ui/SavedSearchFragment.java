@@ -245,9 +245,6 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
     public void onParseTaskCompleted(List<ParseObject> resultList, ParseException e) {
         // Ensure all processes have not been canceled
         if (!mIsCanceled) {
-            // This method is called when the task of retrieving the full set of saved searches is complete
-//            mSavedSearchList.clear();
-
             if (e == null) {
                 // Load saved search results and assign to the current Mountaineer object
                 mMember.setSavedSearchList(SavedSearchLoader.load(resultList));
@@ -255,11 +252,7 @@ public class SavedSearchFragment extends ListFragment implements OnParseTaskComp
                 mSavedSearchList = mMember.getSavedSearchList();
 
                 // Reorganize the saved searches with updates by name
-//                reorganizeList(mMember.getSavedSearchList());
                 reorganizeList(mSavedSearchList);
-
-//                // Add all of these SavedSearches to the ListView
-//                mSavedSearchList.addAll(mMember.getSavedSearchList());
 
                 // Update search results
                 refreshSavedSearches();

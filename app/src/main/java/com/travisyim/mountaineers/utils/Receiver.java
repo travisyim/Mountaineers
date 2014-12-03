@@ -26,8 +26,6 @@ public class Receiver extends ParsePushBroadcastReceiver {
 
     @Override
     protected void onPushReceive(Context context, Intent intent) {
-//        super.onPushReceive(context, intent);
-
         String alert = null;
         int count = 0;
         int previousCount;
@@ -62,24 +60,10 @@ public class Receiver extends ParsePushBroadcastReceiver {
     protected void onPushOpen(Context context, Intent intent) {
         Class<? extends Activity> cls = getActivity(context, intent);
         Intent activityIntent;
-        String uriString = null;
 
         ParseAnalytics.trackAppOpened(intent);
 
-//        try {
-//            JSONObject pushData = new JSONObject(intent.getStringExtra("com.parse.Data"));
-//            uriString = pushData.optString("uri");
-//        } catch (JSONException e) {
-//            Log.v("com.parse.ParsePushReceiver", "Unexpected JSONException when receiving push data: ", e);
-//        }
-//
-//        if (uriString != null && !uriString.isEmpty()) {
-//            activityIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
-//        } else {
-            activityIntent = new Intent(context, MainActivity.class);
-//        }
-
-//        activityIntent.putExtras(intent.getExtras());
+        activityIntent = new Intent(context, MainActivity.class);
 
         /* Trigger the navigation drawer by setting it to unlearned state (this will show user the #
          * of updates) */
@@ -118,7 +102,6 @@ public class Receiver extends ParsePushBroadcastReceiver {
                 (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
 
         Intent intent = new Intent("com.parse.push.intent.OPEN");
-//        Intent intent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)

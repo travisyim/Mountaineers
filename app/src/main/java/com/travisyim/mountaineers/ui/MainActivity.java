@@ -6,8 +6,12 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Window;
 import android.widget.Toast;
@@ -25,6 +29,7 @@ import com.travisyim.mountaineers.R;
 import com.travisyim.mountaineers.objects.AsyncTaskResult;
 import com.travisyim.mountaineers.objects.Mountaineer;
 import com.travisyim.mountaineers.objects.SavedSearch;
+import com.travisyim.mountaineers.utils.ActivityLoader;
 import com.travisyim.mountaineers.utils.OnTaskCompleted;
 import com.travisyim.mountaineers.utils.ParseConstants;
 import com.travisyim.mountaineers.utils.SimpleCrypto;
@@ -52,9 +57,14 @@ public class MainActivity extends Activity
 
     private static final String TAG = MainActivity.class.getSimpleName() + ":";
     private static final String ARG_MEMBER = "member";
+    private static final String VERSION_NUMBER = "version_number";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ParseUser currentUser = null;
+        String currentVersionName = null;
+        String registeredVersion;
+
         super.onCreate(savedInstanceState);
         Crashlytics.start(this);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -68,8 +78,26 @@ public class MainActivity extends Activity
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        // Determine startup behavior of app
-        ParseUser currentUser = ParseUser.getCurrentUser();
+        // Get the previous registered app version
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        registeredVersion = sp.getString(VERSION_NUMBER, null);
+
+        // Get the current app version
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            currentVersionName = pInfo.versionName;
+        }
+        catch (PackageManager.NameNotFoundException e) {/* Intentionally left blank */}
+
+        // Determine if this is a brand new upgraded install
+        if (registeredVersion != null && registeredVersion.equals(currentVersionName)) {
+            // No - allow user to auto login if applicable
+            currentUser = ParseUser.getCurrentUser();
+        }
+        else {  // Yes - force user to log out and log back in
+            ParseUser.getCurrentUser().logOut();  // Log user out
+            sp.edit().putString(VERSION_NUMBER, currentVersionName).apply();  // Save version
+        }
 
         // Either send user to login screen or grab latest user data from website
         if (currentUser == null) {  // No user logged in so start login screen
@@ -234,7 +262,8 @@ public class MainActivity extends Activity
                 mTitle = getString(R.string.title_completed);
 
                 if (mCompletedActivityFragment == null) {
-                    fragment = CompletedActivityFragment.newInstance(position + 1);
+                    fragment = UserActivityFragment.newInstance
+                            (position + 1, ActivityLoader.ActivityType.COMPLETED);
 
                     args = fragment.getArguments();
                     args.putSerializable(ARG_MEMBER, (Serializable) mMember);
@@ -263,7 +292,8 @@ public class MainActivity extends Activity
                 mTitle = getString(R.string.title_signed_up);
 
                 if (mSignedUpActivityFragment == null) {
-                    fragment = SignedUpActivityFragment.newInstance(position + 1);
+                    fragment = UserActivityFragment.newInstance
+                            (position + 1, ActivityLoader.ActivityType.SIGNED_UP);
 
                     args = fragment.getArguments();
                     args.putSerializable(ARG_MEMBER, (Serializable) mMember);
@@ -309,7 +339,7 @@ public class MainActivity extends Activity
 
                 break;
             case 9:  // Send comments
-                // Google Analytics tracking code - Signed Up Activities
+                // Google Analytics tracking code - Send Comments
                 t = ((MountaineersApp) getApplication()).getTracker
                         (MountaineersApp.TrackerName.APP_TRACKER);
                 t.setScreenName(getString(R.string.title_comments));
@@ -325,8 +355,8 @@ public class MainActivity extends Activity
                 startActivity(Intent.createChooser(email, "Choose an E-mail client"));
 
                 break;
-            case 10:  // Favorite Activities
-                // Google Analytics tracking code - Favorite Activities
+            case 10:  // Rate this app
+                // Google Analytics tracking code - Rate this app
                 t = ((MountaineersApp) getApplication()).getTracker
                         (MountaineersApp.TrackerName.APP_TRACKER);
                 t.setScreenName(getString(R.string.title_rate));
@@ -358,21 +388,24 @@ public class MainActivity extends Activity
 
         // Check to see if this is the result from Login Activity
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            // Reset the Activity Search fragment
-            ((ActivitySearchFragment) mActivitySearchFragment).resetFragment();
-
             // Check if the other activity fragments exists and if so, reset them
+            if (mActivitySearchFragment != null) {  // Browse
+                mActivitySearchFragment = null;
+            }
+            if (mUserProfileFragment != null) {  // Profile
+                mUserProfileFragment = null;
+            }
             if (mCompletedActivityFragment != null) {  // Completed
-                ((CompletedActivityFragment) mCompletedActivityFragment).resetFragment();
+                mCompletedActivityFragment = null;
             }
             if (mSignedUpActivityFragment != null) {  // Signed Up
-                ((SignedUpActivityFragment) mSignedUpActivityFragment).resetFragment();
+                mSignedUpActivityFragment = null;
             }
             if (mFavoriteActivityFragment != null) {  // Favorite
-                ((FavoriteActivityFragment) mFavoriteActivityFragment).resetFragment();
+                mFavoriteActivityFragment = null;
             }
             if (mSavedSearchFragment != null) {  // Saved Searches
-                ((SavedSearchFragment) mSavedSearchFragment).resetFragment();
+                mSavedSearchFragment = null;
             }
 
             mNavigationDrawerFragment.resetDrawer();  // Show the Activities Search fragment
@@ -388,8 +421,8 @@ public class MainActivity extends Activity
 
             setProgressBarIndeterminateVisibility(true);  // Show progress circle
 
-            // Scrape member profile data from website
-            mMember.getMemberData(this);
+            // Get member's saved searches from Parse
+            mMember.getSavedSearches(this);
         }
         // 99 represents pressing back when the user is on the Login screen
         else if (requestCode == 1 && resultCode == 99) {
@@ -569,17 +602,22 @@ public class MainActivity extends Activity
         return mFinishedUserData;
     }
 
-    public final void setLoadingActivities(final boolean isLoading) {
-        mLoadingActivities = isLoading;
-    }
-
     public final boolean isLoadingActivities() {
         return mLoadingActivities;
+    }
+
+    public final void setLoadingActivities(final boolean isLoading) {
+        mLoadingActivities = isLoading;
     }
 
     // Alerts fragments to the state of the drawer
     public boolean isDrawerOpen() {
         return mIsDrawerOpen;
+    }
+
+    // Sets the state of the drawer
+    public void setDrawerOpen(final boolean isDrawerOpen) {
+        mIsDrawerOpen = isDrawerOpen;
     }
 
     // The following method is only used in Activity Search where there is currently no access to the member variable
@@ -592,11 +630,6 @@ public class MainActivity extends Activity
         }
 
         return savedSearchList;
-    }
-
-    // Sets the state of the drawer
-    public void setDrawerOpen(final boolean isDrawerOpen) {
-        mIsDrawerOpen = isDrawerOpen;
     }
 
     public void updateNavigationDrawerCounters() {

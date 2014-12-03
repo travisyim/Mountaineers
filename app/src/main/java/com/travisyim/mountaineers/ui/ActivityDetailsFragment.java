@@ -42,7 +42,6 @@ public class ActivityDetailsFragment extends Fragment {
     private String mLocation;
     private boolean mIsFavorite;
     private boolean mLogOut;
-    private boolean mIsActivityPageLoad;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String ARG_PARENT_TITLE = "parentFragmentTitle";
@@ -113,8 +112,6 @@ public class ActivityDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_activity_details, container, false);
 
-        mIsActivityPageLoad = true;  // Mark this as loading the activity web page
-
         // Sync cookie from initial login phase with the WebView so that the user is logged in
         CookieSyncManager.createInstance(getActivity());
         CookieManager cookieManager = CookieManager.getInstance();
@@ -152,39 +149,23 @@ public class ActivityDetailsFragment extends Fragment {
             public void onPageFinished(WebView view, String url) {
                 // Stop the progress circle
                 try {
-                    if (mIsActivityPageLoad) {  // First activity web page load
-                        // Hide unnecessary areas of the web page (i.e. headers, etc)
-                        view.loadUrl("javascript:" +
-                                "(function() {" +
-                                "document.getElementById('abs').style.display='none';" +
-                                "document.getElementById('nabs').style.display='none';" +
-                                "document.getElementById('header').style.display='none';" +
-                                "document.getElementById('navigation').style.display='none';" +
-                                "document.getElementById('breadcrumbs').style.display='none';" +
-                                "document.getElementById('footer').style.display='none';" +
-                                "document.getElementById('main').getElementsByClassName('wrapper')[0].getElementsByClassName('column grid-1 backcolumn')[0].style.display='none';" +
-                                "document.getElementById('viewlet-below-content').style.display='none';" +
-                                "document.getElementsByClassName('uv-icon uv-bottom-right')[0].style.display='none';" +
-                                "})()");
-
-                        // Any web page navigated will not be the activity web page
-                        mIsActivityPageLoad = false;
-                    }
-                    else {  // Not the first activity web page load
-                        // Hide unnecessary areas of the web page (i.e. headers, etc)
-                        view.loadUrl("javascript:" +
-                                "(function() {" +
-                                "document.getElementById('abs').style.display='none';" +
-                                "document.getElementById('nabs').style.display='none';" +
-                                "document.getElementById('header').style.display='none';" +
-                                "document.getElementById('navigation').style.display='none';" +
-                                "document.getElementById('breadcrumbs').style.display='none';" +
-                                "document.getElementById('footer').style.display='none';" +
-                                "document.getElementsByClassName('uv-icon uv-bottom-right')[0].style.display='none';" +
-                                "document.getElementById('main').getElementsByClassName('wrapper')[0].getElementsByClassName('column grid-1 backcolumn')[0].style.display='none';" +
-                                "document.getElementById('viewlet-below-content').style.display='none';" +
-                                "})()");
-                    }
+                    // Hide unnecessary areas of the web page (i.e. headers, etc)
+                    view.loadUrl("javascript:" +
+                            "(function() {" +
+                                "if (document.getElementById('abs')) {document.getElementById('abs').style.display='none';}" +
+                                "if (document.getElementById('nabs')) {document.getElementById('nabs').style.display='none';}" +
+                                "if (document.getElementById('header')) {document.getElementById('header').style.display='none';}" +
+                                "if (document.getElementById('navigation')) {document.getElementById('navigation').style.display='none';}" +
+                                "if (document.getElementById('main').getElementsByClassName('wrapper')[0].getElementsByClassName('column grid-1 backcolumn')[0]) {document.getElementById('main').getElementsByClassName('wrapper')[0].getElementsByClassName('column grid-1 backcolumn')[0].style.display='none';}" +
+                                "if (document.getElementById('footer')) {document.getElementById('footer').style.display='none';}" +
+                                "if (document.getElementsByClassName('uv-icon uv-bottom-right')[0]) {document.getElementsByClassName('uv-icon uv-bottom-right')[0].style.display='none';}" +
+                                "if (!document.getElementById('edit-bar')) {" +
+                                    "if (document.getElementById('breadcrumbs')) {document.getElementById('breadcrumbs').style.display='none';}" +
+                                    "if (document.getElementById('viewlet-below-content')) {document.getElementById('viewlet-below-content').style.display='none';}"+
+                                "} else {" +
+                                    "if (document.getElementById('breadcrumbs').getElementsByClassName('wrapper')[0]) {document.getElementById('breadcrumbs').getElementsByClassName('wrapper')[0].style.display='none';}" +
+                                "}" +
+                            "})()");
 
                     getActivity().setProgressBarIndeterminateVisibility(false);
                 }
@@ -251,12 +232,12 @@ public class ActivityDetailsFragment extends Fragment {
                 }
                 // Completed Activity
                 else if (mParentFragmentTitle.equals(getString(R.string.title_completed))) {
-                    ((CompletedActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
+                    ((UserActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
                             .onFavoriteSelected(mIsFavorite);
                 }
                 // Signed Up Activity
                 else if (mParentFragmentTitle.equals(getString(R.string.title_signed_up))) {
-                    ((SignedUpActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
+                    ((UserActivityFragment) getFragmentManager().findFragmentByTag(mParentFragmentTitle))
                             .onFavoriteSelected(mIsFavorite);
                 }
                 // Favorite Activity

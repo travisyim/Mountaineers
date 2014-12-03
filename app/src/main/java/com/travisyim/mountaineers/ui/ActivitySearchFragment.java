@@ -65,6 +65,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     private List<String> mFavoritesList;
     private List<String> mTempSavedSearchList = new ArrayList<String>();
     private Date mPreviousSearchStartDate;
+    private Date mPreviousSearchEndDate;
     private String mParentFragmentTitle;
     private String mSavedSearchName;
     private String mQueryText;
@@ -77,6 +78,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     private boolean mIsCanceled = false;
     private boolean mIsSavedSearch = false;
     private boolean mIsUpdatingSavedSearch = false;
+    private boolean mIsMaxLimitReached = false;
 
     private final String TAG = ActivitySearchFragment.class.getSimpleName() + ":";
     private static final String ARG_PARENT_TITLE = "parentFragmentTitle";
@@ -124,8 +126,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
         ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
 
         /* If any of the data below is provided that means this was created from the Saved Search
-         * fragment.  Otherwise, this exists because we are looking at the default Activity Search
-         * fragment in which the app starts in (after the user logs in) */
+         * fragment */
         // Get the reference to the filter options
         if (getArguments().getString(ARG_PARENT_TITLE) != null) {
             mIsSavedSearch = true;
@@ -151,6 +152,12 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                 // Ensure the desired post filter update behavior (just like if filters were just applied)
                 mReturnFromFilter = true;
             }
+
+            // Google Analytics tracking code - Saved search load
+            Tracker t = ((MountaineersApp) getActivity().getApplication()).getTracker
+                    (MountaineersApp.TrackerName.APP_TRACKER);
+            t.setScreenName(getString(R.string.title_browse) + " (" + getString(R.string.title_saved_searches) +")");
+            t.send(new HitBuilders.AppViewBuilder().build());
         }
     }
 
@@ -161,21 +168,8 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
         setHasOptionsMenu(true);
 
         if (!mAlreadyLoaded) {
-            // Google Analytics tracking code - Activity Search first load
-            Tracker t = ((MountaineersApp) getActivity().getApplication()).getTracker
-                    (MountaineersApp.TrackerName.APP_TRACKER);
-
-            if (mIsSavedSearch) {
-                t.setScreenName(getString(R.string.title_browse) + " (" + getString(R.string.title_saved_searches) +")");
-            }
-            else {
-                t.setScreenName(getString(R.string.title_browse));
-            }
-
-            t.send(new HitBuilders.AppViewBuilder().build());
-
-            // If the FilterOptions object was not passed in, then create it
-            // The FilterOptions object is only passed in when opening a Saved Search
+            /* If the FilterOptions object was not passed in, then create it.  The FilterOptions
+             * object is only passed in when opening a Saved Search */
             if (mFilterOptions == null) {
                 mFilterOptions = new FilterOptions();  // Create new filter options
 
@@ -297,6 +291,11 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Show the max limit message if applicable
+                if (mIsMaxLimitReached) {
+                    showMaxLimitToast();
+                }
+
                 // This is triggered when the submit button on the search menu is clicked
                 mQueryText = String.valueOf(mSearchView.getQuery());  // Save query text
 
@@ -311,6 +310,11 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                // Show the max limit message if applicable
+                if (mIsMaxLimitReached) {
+                    showMaxLimitToast();
+                }
+
                 // This is triggered when the enter button on the keyboard is pressed
                 mQueryText = query;  // Save query text
 
@@ -447,6 +451,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                     if (!mSwipeRefreshLayout.isRefreshing()) {
                         // Not updating so load filter fragment
                         if (mFilterFragment == null) {
+                            // TODO: Fix up section numbering scheme
                             mFilterFragment = FilterFragment.newInstance
                                     ((float) (this.getArguments().getFloat(ARG_SECTION_NUMBER) + 0.1),
                                     mFilterOptions, getActivity().getActionBar().getTitle().toString());
@@ -491,27 +496,24 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
     @Override
     public void onFavoriteSelected(boolean isFavorite) {
-        // Update activity with the favorite state if it has changed
-        if (mActivityList.get(mActivityPosition).isFavorite() != isFavorite) {
-            // Favorite value has changed so update it
-            mActivityList.get(mActivityPosition).setFavorite(isFavorite);  // Local update
+        // Favorite value has changed so update it
+        mActivityList.get(mActivityPosition).setFavorite(isFavorite);  // Local update
 
-            // Parse backend update
-            if (isFavorite) {  // Add entry to user's favorites array list
-                ParseUser.getCurrentUser().add(ParseConstants.KEY_FAVORITES,
-                        mActivityList.get(mActivityPosition).getObjectID());
-            }
-            else {  // Delete entry to user's favorites array list
-                List<String> objectId = new ArrayList<String>();
-                objectId.add(mActivityList.get(mActivityPosition).getObjectID());
-                ParseUser.getCurrentUser().removeAll(ParseConstants.KEY_FAVORITES, objectId);
-            }
-
-            try {
-                ParseUser.getCurrentUser().saveInBackground();
-            }
-            catch (Exception e) { /* Intentionally left blank */ }
+        // Parse backend update
+        if (isFavorite) {  // Add entry to user's favorites array list
+            ParseUser.getCurrentUser().add(ParseConstants.KEY_FAVORITES,
+                    mActivityList.get(mActivityPosition).getObjectID());
         }
+        else {  // Delete entry to user's favorites array list
+            List<String> objectId = new ArrayList<String>();
+            objectId.add(mActivityList.get(mActivityPosition).getObjectID());
+            ParseUser.getCurrentUser().removeAll(ParseConstants.KEY_FAVORITES, objectId);
+        }
+
+        try {
+            ParseUser.getCurrentUser().saveInBackground();
+        }
+        catch (Exception e) { /* Intentionally left blank */ }
     }
 
     @Override
@@ -525,8 +527,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
     @Override
     public void onParseTaskCompleted(List<ParseObject> resultList, ParseException e) {
-        Toast toast;
-
         // Ensure all processes have not been canceled
         if (!mIsCanceled) {
             // This method is called when the task of retrieving the full set of activities is complete
@@ -543,35 +543,16 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                 // Set the default empty textview corresponding to the listview
                 getListView().setEmptyView(getActivity().findViewById(R.id.textViewEmpty));
 
-                // See if the results encapsulate the end of our data range
-                if (mFilterOptions.getEndDate() == null) {  // No end date defined
-                    if (mActivityList.size() == ParseConstants.QUERY_LIMIT) {  // Max limit reached
-                        toast = Toast.makeText(getActivity(), getActivity().getString
-                                (R.string.toast_max_activities), Toast.LENGTH_LONG);
-                        ((TextView) ((LinearLayout) toast.getView()).getChildAt(0))
-                                .setGravity(Gravity.CENTER_HORIZONTAL);
-                        toast.show();
-                    }
-                } else {  // End date defined
-                    if (mActivityList.size() == ParseConstants.QUERY_LIMIT) {  // Max limit reached
-                        // See if the end date is captured in the 500 results
-                        if (mFilterOptions.getEndDate().getTime() >= mActivityList
-                                .get(mActivityList.size() - 1).getActivityEndDate().getTime()) {
-                        /* The defined end date either falls outside or on the day of the last
-                         * result's start date. */
-                            toast = Toast.makeText(getActivity(), getActivity().getString
-                                    (R.string.toast_max_activities), Toast.LENGTH_LONG);
-                            ((TextView) ((LinearLayout) toast.getView()).getChildAt(0))
-                                    .setGravity(Gravity.CENTER_HORIZONTAL);
-                            toast.show();
-                        }
-                    }
+                // See if the max limit is reached
+                if (mActivityList.size() == ParseConstants.QUERY_LIMIT) {
+                    mIsMaxLimitReached = true;
+                    showMaxLimitToast();
                 }
 
                 // Update search results
                 refreshActivities();
             } else {
-                toast = Toast.makeText(getActivity(), getActivity().getString
+                Toast toast = Toast.makeText(getActivity(), getActivity().getString
                         (R.string.toast_parse_error), Toast.LENGTH_LONG);
                 ((TextView) ((LinearLayout) toast.getView()).getChildAt(0))
                         .setGravity(Gravity.CENTER_HORIZONTAL);
@@ -588,43 +569,61 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
     }
 
     private void FilterUpdates() {
+        /* The logic in this method controls when to make new queries to the Parse backend.  Since
+         * requests are limited, the program should be most efficient at determining when new
+         * requests should be made */
+        final ActivityAdapter listAdapter = (ActivityAdapter) getListAdapter();
+        mIsMaxLimitReached = false;
+
         // If this is a saved search then update the search's last view date before updating list
         if (mIsSavedSearch) {
-            ((ActivityAdapter) getListAdapter()).updateLastViewed(mLastViewed);
+            listAdapter.updateLastViewed(mLastViewed);
         }
 
-        /* Either submit a new query or apply filters depending on how the start date selection has
-         * changed (if it has at all) */
-        if (mFilterOptions.getStartDate() == null) {  // No start date defined
-            if (mPreviousSearchStartDate == null) {  // No start date defined previously
-                // No start date change - apply both text and filter options to the activity list
-                ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
-            }
-            else {  // Previous query used a defined start date
-                /* Flag that there's a Parse update that needs to occur so we can start the swipe
-                 * refreshing (does not work if we call the refreshing command directly here) */
-                mIsSubstantialUpdate = true;
+        /* Either submit a new query or apply filters depending on how the start/end date selection
+         * has changed (if it has at all) */
+        // Previous start and end dates were both undefined
+        if (mPreviousSearchStartDate == null && mPreviousSearchEndDate == null) {
+            // Current start and end dates are both undefined
+            if (mFilterOptions.getStartDate() == null && mFilterOptions.getEndDate() == null) {
+                // Previous results generated maximum number of results allowed
+                if (listAdapter.getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
+                    mIsMaxLimitReached = true;
+                    showMaxLimitToast();
+                }
 
-                // Search again since the start date has been opened up
-                getActivityList();
+                // Apply both text and filter options to the activity list
+                listAdapter.applyTextFilter(mQueryText);
+                listAdapter.applyFilterOptions(mFilterOptions);
             }
-        }
-        else {  // Defined start date
-            if (mPreviousSearchStartDate == null) {  // No start date defined previously
-                // Check for the number of activities
-                if (((ActivityAdapter) getListAdapter()).getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
-                    // More than 500 results (query will only return 500 results at a time)
-                    if (mFilterOptions.getStartDate().getTime() <
-                            ((ActivityAdapter) getListAdapter()).getMinStartDate().getTime()) {
-                        /* Start date is defined prior to any activities on Parse - do not search
-                         * again - just update filtered results since we have the range covered */
-                        ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                        ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+            // Current start date is defined and end date is undefined
+            else if (mFilterOptions.getStartDate() != null && mFilterOptions.getEndDate() == null) {
+                // Previous results generated maximum number of results allowed
+                if (listAdapter.getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
+                    // Current start date is equal to or prior to previous min start date
+                    if (mFilterOptions.getStartDate().getTime() <= listAdapter.getMinStartDate().getTime()) {
+                        mIsMaxLimitReached = true;
+                        showMaxLimitToast();
                     }
-                    else if (mFilterOptions.getEndDate() == null ||
-                            mFilterOptions.getEndDate().getTime() >=
-                                    ((ActivityAdapter) getListAdapter()).getMaxStartDate().getTime()) {
+                }
+
+                // Apply both text and filter options to the activity list
+                listAdapter.applyTextFilter(mQueryText);
+                listAdapter.applyFilterOptions(mFilterOptions);
+            }
+            // Current start date is undefined and end date is defined
+            else if (mFilterOptions.getStartDate() == null && mFilterOptions.getEndDate() != null) {
+                // Previous results generated maximum number of results allowed
+                if (listAdapter.getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
+                    // Current end date is equal to or past previous max start date
+                    if (mFilterOptions.getEndDate().getTime() >= listAdapter.getMaxStartDate().getTime()) {
+                        mIsMaxLimitReached = true;
+                        showMaxLimitToast();
+
+                        // Apply both text and filter options to the activity list
+                        listAdapter.applyTextFilter(mQueryText);
+                        listAdapter.applyFilterOptions(mFilterOptions);
+                    } else {  // Current end date is prior to previous max start date
                         /* Flag that there's a Parse update that needs to occur so we can start the swipe
                          * refreshing (does not work if we call the refreshing command directly here) */
                         mIsSubstantialUpdate = true;
@@ -632,39 +631,38 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                         // Search again
                         getActivityList();
                     }
-                    else {  // No need to update results from Parse
-                        // Do not query Parse - just update filtered results
-                        ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                        ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
-                    }
                 }
-                else {  // Less than 500 total activities
-                    // Do not query Parse - just update filtered results
-                    ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                    ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+                // Previous results generated less than the maximum number of results allowed
+                else {
+                    // Apply both text and filter options to the activity list
+                    listAdapter.applyTextFilter(mQueryText);
+                    listAdapter.applyFilterOptions(mFilterOptions);
                 }
             }
-            else {  // Start date was defined for the previous search
-                if (mFilterOptions.getStartDate().getTime() < mPreviousSearchStartDate.getTime()) {
-                    /* Flag that there's a Parse update that needs to occur so we can start the swipe
-                     * refreshing (does not work if we call the refreshing command directly here) */
-                    mIsSubstantialUpdate = true;
+            // Current start and end dates are both defined
+            else {
+                // Previous results generated maximum number of results allowed
+                if (listAdapter.getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
+                    // Current end date is equal to or past previous max start date
+                    if (mFilterOptions.getEndDate().getTime() >= listAdapter.getMaxStartDate().getTime()) {
+                        // Current start date is equal to or prior to previous min start date
+                        if (mFilterOptions.getStartDate().getTime() <= listAdapter.getMinStartDate().getTime()) {
+                            mIsMaxLimitReached = true;
+                            showMaxLimitToast();
+                        }
 
-                    // Search again since the start date has been opened up
-                    getActivityList();
-                }
-                else if (mFilterOptions.getStartDate().getTime() == mPreviousSearchStartDate.getTime()) {
-                    // Do not query Parse - just update filtered results
-                    ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                    ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
-                }
-                else {  // Current start date is greater than the previous search's start date
-                    // Check for the number of activities
-                    if (((ActivityAdapter) getListAdapter()).getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
-                        // More than 500 results (Query will only return 500 results at a time)
-                        if (mFilterOptions.getEndDate() == null ||
-                                mFilterOptions.getEndDate().getTime() >=
-                                        ((ActivityAdapter) getListAdapter()).getMaxStartDate().getTime()) {
+                        // Apply both text and filter options to the activity list
+                        listAdapter.applyTextFilter(mQueryText);
+                        listAdapter.applyFilterOptions(mFilterOptions);
+                    }
+                    // Current end date is past previous min start date
+                    else if (mFilterOptions.getEndDate().getTime() > listAdapter.getMinStartDate().getTime()) {
+                        // Current start date is past previous min start date
+                        if (mFilterOptions.getStartDate().getTime() > listAdapter.getMinStartDate().getTime()) {
+                            // Apply both text and filter options to the activity list
+                            listAdapter.applyTextFilter(mQueryText);
+                            listAdapter.applyFilterOptions(mFilterOptions);
+                        } else {  // Current start date is equal to or prior to previous min start date
                             /* Flag that there's a Parse update that needs to occur so we can start the swipe
                              * refreshing (does not work if we call the refreshing command directly here) */
                             mIsSubstantialUpdate = true;
@@ -672,16 +670,399 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                             // Search again
                             getActivityList();
                         }
-                        else {  // No need to update results from Parse
-                            // Do not query Parse - just update filtered results
-                            ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                            ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+                    }
+                    // Current end date is equal to or prior to previous min start date
+                    else {
+                            /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                             * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+                    }
+                }
+                // Previous results generated less than the maximum number of results allowed
+                else {
+                    // Apply both text and filter options to the activity list
+                    listAdapter.applyTextFilter(mQueryText);
+                    listAdapter.applyFilterOptions(mFilterOptions);
+                }
+            }
+        }
+
+        // Previous start date was defined and end date was undefined
+        else if (mPreviousSearchStartDate != null && mPreviousSearchEndDate == null) {
+            // Current start and end dates are both undefined
+            if (mFilterOptions.getStartDate() == null && mFilterOptions.getEndDate() == null) {
+                // Previous results generated maximum number of results allowed
+                if (listAdapter.getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
+                    mIsMaxLimitReached = true;
+                    showMaxLimitToast();
+
+                    // Apply both text and filter options to the activity list
+                    listAdapter.applyTextFilter(mQueryText);
+                    listAdapter.applyFilterOptions(mFilterOptions);
+                }
+                // Previous results generated less than the maximum number of results allowed
+                else {
+                    /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                     * refreshing (does not work if we call the refreshing command directly here) */
+                    mIsSubstantialUpdate = true;
+
+                    // Search again
+                    getActivityList();
+                }
+            }
+            // Current start date is defined and end date is undefined
+            else if (mFilterOptions.getStartDate() != null && mFilterOptions.getEndDate() == null) {
+                // Previous results generated maximum number of results allowed
+                if (listAdapter.getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
+                    // Current start date is equal to or prior to previous min start date
+                    if (mFilterOptions.getStartDate().getTime() <= listAdapter.getMinStartDate().getTime()) {
+                        mIsMaxLimitReached = true;
+                        showMaxLimitToast();
+                    }
+
+                    // Apply both text and filter options to the activity list
+                    listAdapter.applyTextFilter(mQueryText);
+                    listAdapter.applyFilterOptions(mFilterOptions);
+                }
+                // Previous results generated less than the maximum number of results allowed
+                else {
+                    // Current start date is equal to or past previous start date
+                    if (mFilterOptions.getStartDate().getTime() >= mPreviousSearchStartDate.getTime()) {
+                        // Apply both text and filter options to the activity list
+                        listAdapter.applyTextFilter(mQueryText);
+                        listAdapter.applyFilterOptions(mFilterOptions);
+                    } else {  // Current start date is prior to previous start date
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+                    }
+                }
+            }
+            // Current start date is undefined and end date is defined
+            else if (mFilterOptions.getStartDate() == null && mFilterOptions.getEndDate() != null) {
+                // Previous results generated maximum number of results allowed
+                if (listAdapter.getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
+                    // Current end date is equal to or past previous max start date
+                    if (mFilterOptions.getEndDate().getTime() >= listAdapter.getMaxStartDate().getTime()) {
+                        mIsMaxLimitReached = true;
+                        showMaxLimitToast();
+
+                        // Apply both text and filter options to the activity list
+                        listAdapter.applyTextFilter(mQueryText);
+                        listAdapter.applyFilterOptions(mFilterOptions);
+                    } else {  // Current end date is prior to previous max start date
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+                    }
+                }
+                // Previous results generated less than the maximum number of results allowed
+                else {
+                    /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                     * refreshing (does not work if we call the refreshing command directly here) */
+                    mIsSubstantialUpdate = true;
+
+                    // Search again
+                    getActivityList();
+                }
+            }
+            // Current start and end dates are both defined
+            else {
+                // Previous results generated maximum number of results allowed
+                if (listAdapter.getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
+                    // Current end date is equal to or past previous max start date
+                    if (mFilterOptions.getEndDate().getTime() >= listAdapter.getMaxStartDate().getTime()) {
+                        // Current start date is equal to or prior to previous min start date
+                        if (mFilterOptions.getStartDate().getTime() <= listAdapter.getMinStartDate().getTime()) {
+                            mIsMaxLimitReached = true;
+                            showMaxLimitToast();
+                        }
+
+                        // Apply both text and filter options to the activity list
+                        listAdapter.applyTextFilter(mQueryText);
+                        listAdapter.applyFilterOptions(mFilterOptions);
+                    }
+                    // Current end date is past previous min start date
+                    else if (mFilterOptions.getEndDate().getTime() > listAdapter.getMinStartDate().getTime()) {
+                        // Current start date is past previous min start date
+                        if (mFilterOptions.getStartDate().getTime() > listAdapter.getMinStartDate().getTime()) {
+                            // Apply both text and filter options to the activity list
+                            listAdapter.applyTextFilter(mQueryText);
+                            listAdapter.applyFilterOptions(mFilterOptions);
+                        }
+                        // Current start date is equal to or prior to previous min start date
+                        else {
+                            /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                             * refreshing (does not work if we call the refreshing command directly here) */
+                            mIsSubstantialUpdate = true;
+
+                            // Search again
+                            getActivityList();
+                        }
+                    } else {  // Current end date is equal to or prior to previous min start date
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+                    }
+                }
+                // Previous results generated less than the maximum number of results allowed
+                else {
+                    if (mFilterOptions.getStartDate().getTime() < mPreviousSearchStartDate.getTime()) {
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+                    } else {
+                        // Apply both text and filter options to the activity list
+                        listAdapter.applyTextFilter(mQueryText);
+                        listAdapter.applyFilterOptions(mFilterOptions);
+                    }
+                }
+            }
+        }
+
+        // Previous start date was undefined and end date was defined
+        else if (mPreviousSearchStartDate == null && mPreviousSearchEndDate != null) {
+            // Current end date is undefined
+            if (mFilterOptions.getEndDate() == null) {
+                /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                 * refreshing (does not work if we call the refreshing command directly here) */
+                mIsSubstantialUpdate = true;
+
+                // Search again
+                getActivityList();
+            }
+            // Current start date is undefined and end date is defined
+            else if (mFilterOptions.getStartDate() == null && mFilterOptions.getEndDate() != null) {
+                // Previous results generated maximum number of results allowed
+                if (listAdapter.getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
+                    // Current end date is equal to the previous end date
+                    if (mFilterOptions.getEndDate().getTime() == mPreviousSearchEndDate.getTime()) {
+                        mIsMaxLimitReached = true;
+                        showMaxLimitToast();
+
+                        // Apply both text and filter options to the activity list
+                        listAdapter.applyTextFilter(mQueryText);
+                        listAdapter.applyFilterOptions(mFilterOptions);
+                    } else {  // Current end date has changed from previous end date
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+                    }
+                }
+                // Previous results generated less than the maximum number of results allowed
+                else {
+                    // Current end date is past the previous end date
+                    if (mFilterOptions.getEndDate().getTime() > mPreviousSearchEndDate.getTime()) {
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+                    }
+                    // Current end date is equal to or prior to the previous end date
+                    else {
+                        // Apply both text and filter options to the activity list
+                        listAdapter.applyTextFilter(mQueryText);
+                        listAdapter.applyFilterOptions(mFilterOptions);
+                    }
+                }
+            }
+            // Current start and end dates are both defined
+            else {
+                // Previous results generated maximum number of results allowed
+                if (listAdapter.getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
+                    // Current end date is past the previous end date
+                    if (mFilterOptions.getEndDate().getTime() > mPreviousSearchEndDate.getTime()) {
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+                    }
+                    // Current end date is past the previous min start date
+                    else if (mFilterOptions.getEndDate().getTime() > listAdapter.getMinStartDate().getTime()) {
+                        // Current end date is past the previous min start date
+                        if (mFilterOptions.getStartDate().getTime() > listAdapter.getMinStartDate().getTime()) {
+                            // Apply both text and filter options to the activity list
+                            listAdapter.applyTextFilter(mQueryText);
+                            listAdapter.applyFilterOptions(mFilterOptions);
+                        }
+                        // Current end date is equal to or prior to the previous min start date
+                        else {
+                            /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                             * refreshing (does not work if we call the refreshing command directly here) */
+                            mIsSubstantialUpdate = true;
+
+                            // Search again
+                            getActivityList();
+                        }
+                    } else {  // Current end date is equal to or prior to the previous min start date
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+
+                    }
+                }
+                // Previous results generated less than the maximum number of results allowed
+                else {
+                    // Current end date is past the previous end date
+                    if (mFilterOptions.getEndDate().getTime() > mPreviousSearchEndDate.getTime()) {
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+                    }
+                    // Current end date is equal to or prior to the previous end date
+                    else {
+                        // Apply both text and filter options to the activity list
+                        listAdapter.applyTextFilter(mQueryText);
+                        listAdapter.applyFilterOptions(mFilterOptions);
+                    }
+                }
+            }
+        }
+
+        // Previous start and end dates were both defined
+        else {
+            // Current end date is both undefined
+            if (mFilterOptions.getEndDate() == null) {
+                /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                 * refreshing (does not work if we call the refreshing command directly here) */
+                mIsSubstantialUpdate = true;
+
+                // Search again
+                getActivityList();
+            }
+            // Current start date is undefined and end date is defined
+            else if (mFilterOptions.getStartDate() == null && mFilterOptions.getEndDate() != null) {
+                // Previous results generated maximum number of results allowed
+                if (listAdapter.getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
+                    // Current end date is equal to previous end date
+                    if (mFilterOptions.getEndDate().getTime() == mPreviousSearchEndDate.getTime()) {
+                        mIsMaxLimitReached = true;
+                        showMaxLimitToast();
+
+                        // Apply both text and filter options to the activity list
+                        listAdapter.applyTextFilter(mQueryText);
+                        listAdapter.applyFilterOptions(mFilterOptions);
+                    }
+                    // Current end date is not equal to previous end date
+                    else {
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+                    }
+                }
+                // Previous results generated less than the maximum number of results allowed
+                else {
+                    /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                     * refreshing (does not work if we call the refreshing command directly here) */
+                    mIsSubstantialUpdate = true;
+
+                    // Search again
+                    getActivityList();
+                }
+            }
+            // Current start and end dates are both defined
+            else {
+                // Previous results generated maximum number of results allowed
+                if (listAdapter.getMasterActivityListCount() == ParseConstants.QUERY_LIMIT) {
+                    // Current end date is past the previous end date
+                    if (mFilterOptions.getEndDate().getTime() > mPreviousSearchEndDate.getTime()) {
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+                    }
+                    // Current end date is past the previous min start date
+                    else if (mFilterOptions.getEndDate().getTime() > listAdapter.getMinStartDate().getTime()) {
+                        // Current start date is past the previous min start date
+                        if (mFilterOptions.getStartDate().getTime() > listAdapter.getMinStartDate().getTime()) {
+                            // Apply both text and filter options to the activity list
+                            listAdapter.applyTextFilter(mQueryText);
+                            listAdapter.applyFilterOptions(mFilterOptions);
+                        }
+                        // Current start date is equal to or prior to the previous min start date
+                        else {
+                            /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                             * refreshing (does not work if we call the refreshing command directly here) */
+                            mIsSubstantialUpdate = true;
+
+                            // Search again
+                            getActivityList();
                         }
                     }
-                    else {  // Less than 500 total activities
-                        // Do not query Parse - just update filtered results
-                        ((ActivityAdapter) getListAdapter()).applyTextFilter(mQueryText);
-                        ((ActivityAdapter) getListAdapter()).applyFilterOptions(mFilterOptions);
+                    else {
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+                    }
+                }
+                // Previous results generated less than the maximum number of results allowed
+                else {
+                    if (mFilterOptions.getEndDate().getTime() > mPreviousSearchEndDate.getTime()) {
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
+                    }
+                    else if (mFilterOptions.getEndDate().getTime() >= mPreviousSearchStartDate.getTime()) {
+                        if (mFilterOptions.getStartDate().getTime() >= mPreviousSearchStartDate.getTime()) {
+                            // Apply both text and filter options to the activity list
+                            listAdapter.applyTextFilter(mQueryText);
+                            listAdapter.applyFilterOptions(mFilterOptions);
+                        }
+                        else {
+                            /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                             * refreshing (does not work if we call the refreshing command directly here) */
+                            mIsSubstantialUpdate = true;
+
+                            // Search again
+                            getActivityList();
+                        }
+                    }
+                    else {
+                        /* Flag that there's a Parse update that needs to occur so we can start the swipe
+                         * refreshing (does not work if we call the refreshing command directly here) */
+                        mIsSubstantialUpdate = true;
+
+                        // Search again
+                        getActivityList();
                     }
                 }
             }
@@ -710,13 +1091,20 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
             query = ParseQuery.getQuery(ParseConstants.CLASS_ACTIVITY);
 
-            // Set query constraint based on the start date
+            // Track start and end date filter values
             mPreviousSearchStartDate = mFilterOptions.getStartDate();
+            mPreviousSearchEndDate = mFilterOptions.getEndDate();
 
             // Apply start date filter only if it is defined (i.e. not null)
             if (mFilterOptions.getStartDate() != null) {  // Start date defined
                 query.whereGreaterThanOrEqualTo(ParseConstants.KEY_ACTIVITY_START_DATE,
                         DateUtil.convertToUNC(mFilterOptions.getStartDate()));
+            }
+
+            // Apply end date filter only if it is defined (i.e. not null)
+            if (mFilterOptions.getEndDate() != null) {  // End date defined
+                query.whereLessThanOrEqualTo(ParseConstants.KEY_ACTIVITY_START_DATE,
+                        DateUtil.convertToUNC(mFilterOptions.getEndDate()));
             }
 
         /* A query constraint is not set on the end date.  Instead, up to 500 activities will be
@@ -825,20 +1213,6 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
         else {
             mIsCanceled = false;
         }
-    }
-
-    /* This method resets the Activity Search fragment in the event the user logs out and logs right
-     * back in */
-    public void resetFragment() {
-        mAlreadyLoaded = false;
-        mIsCanceled = false;
-        mQueryText = "";  // Reset search text
-        mFilterFragment = null;
-        mFilterOptions = new FilterOptions();  // Create new filter options
-
-        // Set the default date range of the results shown starting from the current date
-        mFilterOptions.setStartDate(DateUtil.convertToDate(DateUtil.convertToString(new Date(),
-                DateUtil.TYPE_BUTTON_DATE), DateUtil.TYPE_BUTTON_DATE));
     }
 
     // This method saves the current search
@@ -1046,5 +1420,27 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
 
             alert.show();
         }
+    }
+
+    private void showMaxLimitToast() {
+        Toast toast = Toast.makeText(getActivity(), getActivity().getString
+                (R.string.toast_max_activities), Toast.LENGTH_LONG);
+        ((TextView) ((LinearLayout) toast.getView()).getChildAt(0))
+                .setGravity(Gravity.CENTER_HORIZONTAL);
+        toast.show();
+    }
+
+    /* This method resets the Activity Search fragment in the event the user logs out and logs right
+     * back in */
+    public void resetFragment() {
+        mAlreadyLoaded = false;
+        mIsCanceled = false;
+        mQueryText = "";  // Reset search text
+        mFilterFragment = null;
+        mFilterOptions = new FilterOptions();  // Create new filter options
+
+        // Set the default date range of the results shown starting from the current date
+        mFilterOptions.setStartDate(DateUtil.convertToDate(DateUtil.convertToString(new Date(),
+                DateUtil.TYPE_BUTTON_DATE), DateUtil.TYPE_BUTTON_DATE));
     }
 }

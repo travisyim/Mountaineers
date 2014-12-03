@@ -27,7 +27,6 @@ public class ProfileEditFragment extends Fragment {
     private String mProfileEditURL;
     private String mCookie;
     private boolean mLogOut = false;
-    private boolean mIsWebPageLoad;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String ARG_PARENT_TITLE = "parentFragmentTitle";
@@ -81,8 +80,6 @@ public class ProfileEditFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile_edit, container, false);
 
-        mIsWebPageLoad = true;  // Mark this as loading the activity web page
-
         // Sync cookie from initial login phase with the WebView so that the user is logged in
         CookieSyncManager.createInstance(getActivity());
         CookieManager cookieManager = CookieManager.getInstance();
@@ -122,41 +119,20 @@ public class ProfileEditFragment extends Fragment {
             public void onPageFinished(WebView view, String url) {
                 // Stop the progress circle
                 try {
-                    if (mIsWebPageLoad) {  // First profile web page load
-                        // Hide unnecessary areas of the webpage (i.e. headers, etc)
-                        view.loadUrl("javascript:" +
-                                "(function() {" +
-                                "document.getElementById('abs').style.display='none';" +
-                                "document.getElementById('nabs').style.display='none';" +
-                                "document.getElementById('header').style.display='none';" +
-                                "document.getElementById('navigation').style.display='none';" +
-                                "document.getElementById('edit-bar').style.display='none';" +
-                                "document.getElementById('breadcrumbs').style.display='none';" +
-                                "document.getElementById('footer').style.display='none';" +
-                                "document.getElementById('main').getElementsByClassName('wrapper')[0].getElementsByClassName('column grid-3 leftportlets')[0].style.display='none';" +
-                                "document.getElementById('viewlet-below-content').style.display='none';" +
-                                "document.getElementsByClassName('uv-icon uv-bottom-right')[0].style.display='none';" +
-                                "})()");
-
-                        // Any web page navigated will not be the profile web page
-                        mIsWebPageLoad = false;
-                    }
-                    else {  // Not the first profile web page load
-                        // Hide unnecessary areas of the webpage (i.e. headers, etc)
-                        view.loadUrl("javascript:" +
-                                "(function() {" +
-                                "document.getElementById('abs').style.display='none';" +
-                                "document.getElementById('nabs').style.display='none';" +
-                                "document.getElementById('header').style.display='none';" +
-                                "document.getElementById('navigation').style.display='none';" +
-                                "document.getElementById('breadcrumbs').style.display='none';" +
-                                "document.getElementById('footer').style.display='none';" +
-                                "document.getElementById('main').getElementsByClassName('wrapper')[0].getElementsByClassName('column grid-3 leftportlets')[0].style.display='none';" +
-                                "document.getElementsByClassName('uv-icon uv-bottom-right')[0].style.display='none';" +
-                                "document.getElementById('edit-bar').style.display='none';" +
-                                "document.getElementById('viewlet-below-content').style.display='none';" +
-                                "})()");
-                    }
+                    // Hide unnecessary areas of the webpage (i.e. headers, etc)
+                    view.loadUrl("javascript:" +
+                            "(function() {" +
+                            "if (document.getElementById('abs')) {document.getElementById('abs').style.display='none';}" +
+                            "if (document.getElementById('nabs')) {document.getElementById('nabs').style.display='none';}" +
+                            "if (document.getElementById('header')) {document.getElementById('header').style.display='none';}" +
+                            "if (document.getElementById('navigation')) {document.getElementById('navigation').style.display='none';}" +
+                            "if (document.getElementById('edit-bar')) {document.getElementById('edit-bar').style.display='none';}" +
+                            "if (document.getElementById('breadcrumbs')) {document.getElementById('breadcrumbs').style.display='none';}" +
+                            "if (document.getElementById('main').getElementsByClassName('wrapper')[0].getElementsByClassName('column grid-3 leftportlets')[0]) {document.getElementById('main').getElementsByClassName('wrapper')[0].getElementsByClassName('column grid-3 leftportlets')[0].style.display='none';}" +
+                            "if (document.getElementById('viewlet-below-content')) {document.getElementById('viewlet-below-content').style.display='none';}" +
+                            "if (document.getElementById('footer')) {document.getElementById('footer').style.display='none';}" +
+                            "if (document.getElementsByClassName('uv-icon uv-bottom-right')[0]) {document.getElementsByClassName('uv-icon uv-bottom-right')[0].style.display='none';}" +
+                            "})()");
 
                     getActivity().setProgressBarIndeterminateVisibility(false);
                 }

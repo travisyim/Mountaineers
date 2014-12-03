@@ -61,7 +61,7 @@ public class NavigationDrawerFragment extends Fragment {
     private Object[] mDrawerItems;
     private String mTitle;
 
-    private int mCurrentSelectedPosition = 2;  // Initial start index of drawer (shows Activities)
+    private int mCurrentSelectedPosition = 2;  // Initial start index of drawer (shows Browse)
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
@@ -394,7 +394,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     public void resetDrawer() {
         // Reset the drawer selection to Activity Search
-        selectItem(1);
+        selectItem(2);
     }
 
     public void demoDrawer() {

@@ -5,5 +5,5 @@
     android:choiceMode="singleChoice"
     android:divider="@android:color/transparent"
     android:dividerHeight="0dp"
-    android:background="@color/swipe_refresh2"
+    android:background="@drawable/bg_light_green_tile"
     tools:context=".NavigationDrawerFragment" />
