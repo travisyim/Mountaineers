@@ -106,6 +106,7 @@ public class ActivityDetailsFragment extends Fragment {
 
         setHasOptionsMenu(true);
         mLogOut = false;
+        mIsCanceled = false;
     }
 
     @Override

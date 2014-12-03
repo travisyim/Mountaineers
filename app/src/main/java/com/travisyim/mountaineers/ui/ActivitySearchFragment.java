@@ -1275,7 +1275,7 @@ public class ActivitySearchFragment extends ListFragment implements OnParseTaskC
                         DateUtil.convertToUNC(mFilterOptions.getEndDate()));
             }
             else {  // Undefined
-                savedSearch.put(ParseConstants.KEY_ACTIVITY_START_DATE, JSONObject.NULL);
+                savedSearch.put(ParseConstants.KEY_ACTIVITY_END_DATE, JSONObject.NULL);
             }
 
             // Filter Options

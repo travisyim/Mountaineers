@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -451,8 +452,6 @@ public class MainActivity extends Activity
                      /* This check only ensures that the member login web page url was downloaded
                       * properly.  It does not check to see if it is in the format that we expect -
                       * this check will happen as the result of the next step */
-                     showError(result.getError().getMessage());
-
                      setProgressBarIndeterminateVisibility(false);  // Hide progress circle
                      showLoginScreen();  // Send user to login screen
                  }
@@ -474,8 +473,7 @@ public class MainActivity extends Activity
                      /* This check only ensures that the login web page url is in the format that we
                       * expect, that the app could properly log in as the user with the provided
                       * credentials and that the user profile URL was successfully accessed */
-                     showError(result.getError().getMessage());
-
+                     // The user could not be validate so just send user back to login screen
                      setProgressBarIndeterminateVisibility(false);  // Hide progress circle
                      showLoginScreen();  // Send user to login screen
                  }
@@ -505,9 +503,7 @@ public class MainActivity extends Activity
                       * expect, that the app could properly log in as the user with the provided
                       * credentials and that the user profile URL was successfully accessed */
                      showError(result.getError().getMessage());
-
                      setProgressBarIndeterminateVisibility(false);  // Hide progress circle
-                     showLoginScreen();  // Send user to login screen
                  }
 
                  break;
@@ -528,9 +524,7 @@ public class MainActivity extends Activity
                      /* This check ensures that the member profile web page is in the format that we
                       * expect and that the app could properly scrape this data */
                      showError(result.getError().getMessage());
-
                      setProgressBarIndeterminateVisibility(false);  // Hide progress circle
-                     showLoginScreen();  // Send user to login screen
                  }
 
                  // Update the navigation drawer to show user profile image
@@ -592,7 +586,12 @@ public class MainActivity extends Activity
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle(R.string.error_title)
                 .setMessage(errorMessage)
-                .setPositiveButton(android.R.string.ok, null);
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        showLoginScreen();  // Send user to login screen
+                    }
+                });
 
         AlertDialog alert = builder.create();
         alert.show();

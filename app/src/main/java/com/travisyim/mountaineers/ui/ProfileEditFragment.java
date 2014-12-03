@@ -26,8 +26,8 @@ public class ProfileEditFragment extends Fragment {
     private String mParentFragmentTitle;
     private String mProfileEditURL;
     private String mCookie;
-    private boolean mLogOut = false;
-    private boolean mIsCanceled = false;
+    private boolean mLogOut;
+    private boolean mIsCanceled;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String ARG_PARENT_TITLE = "parentFragmentTitle";
@@ -74,6 +74,7 @@ public class ProfileEditFragment extends Fragment {
 
         setHasOptionsMenu(true);
         mLogOut = false;
+        mIsCanceled = false;
     }
 
     @Override
